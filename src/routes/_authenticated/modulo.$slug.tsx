@@ -49,6 +49,13 @@ function ModulePage() {
   }, []);
 
   useEffect(() => {
+    if (slug === "treinamento-premium") {
+      navigate({ to: "/treinamento-premium", replace: true });
+      return;
+    }
+  }, [slug, navigate]);
+
+  useEffect(() => {
     (async () => {
       setLoading(true);
       const { data: u } = await supabase.auth.getUser();

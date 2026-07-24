@@ -14,12 +14,14 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
+import { Route as AuthenticatedTreinamentoPremiumRouteImport } from './routes/_authenticated/treinamento-premium'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedJornadaRouteImport } from './routes/_authenticated/jornada'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedFerramentasRouteImport } from './routes/_authenticated/ferramentas'
 import { Route as AuthenticatedCentroOperacionalRouteImport } from './routes/_authenticated/centro-operacional'
 import { Route as AuthenticatedModuloSlugRouteImport } from './routes/_authenticated/modulo.$slug'
+import { Route as AuthenticatedTreinamentoPremiumNivelSlugRouteImport } from './routes/_authenticated/treinamento-premium.nivel.$slug'
 
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
@@ -45,6 +47,12 @@ const ApiChatRoute = ApiChatRouteImport.update({
   path: '/api/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedTreinamentoPremiumRoute =
+  AuthenticatedTreinamentoPremiumRouteImport.update({
+    id: '/treinamento-premium',
+    path: '/treinamento-premium',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
@@ -77,6 +85,12 @@ const AuthenticatedModuloSlugRoute = AuthenticatedModuloSlugRouteImport.update({
   path: '/modulo/$slug',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedTreinamentoPremiumNivelSlugRoute =
+  AuthenticatedTreinamentoPremiumNivelSlugRouteImport.update({
+    id: '/nivel/$slug',
+    path: '/nivel/$slug',
+    getParentRoute: () => AuthenticatedTreinamentoPremiumRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -87,8 +101,10 @@ export interface FileRoutesByFullPath {
   '/home': typeof AuthenticatedHomeRoute
   '/jornada': typeof AuthenticatedJornadaRoute
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/modulo/$slug': typeof AuthenticatedModuloSlugRoute
+  '/treinamento-premium/nivel/$slug': typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -99,8 +115,10 @@ export interface FileRoutesByTo {
   '/home': typeof AuthenticatedHomeRoute
   '/jornada': typeof AuthenticatedJornadaRoute
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/modulo/$slug': typeof AuthenticatedModuloSlugRoute
+  '/treinamento-premium/nivel/$slug': typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -113,8 +131,10 @@ export interface FileRoutesById {
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/jornada': typeof AuthenticatedJornadaRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
+  '/_authenticated/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/modulo/$slug': typeof AuthenticatedModuloSlugRoute
+  '/_authenticated/treinamento-premium/nivel/$slug': typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -127,8 +147,10 @@ export interface FileRouteTypes {
     | '/home'
     | '/jornada'
     | '/perfil'
+    | '/treinamento-premium'
     | '/api/chat'
     | '/modulo/$slug'
+    | '/treinamento-premium/nivel/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -139,8 +161,10 @@ export interface FileRouteTypes {
     | '/home'
     | '/jornada'
     | '/perfil'
+    | '/treinamento-premium'
     | '/api/chat'
     | '/modulo/$slug'
+    | '/treinamento-premium/nivel/$slug'
   id:
     | '__root__'
     | '/'
@@ -152,8 +176,10 @@ export interface FileRouteTypes {
     | '/_authenticated/home'
     | '/_authenticated/jornada'
     | '/_authenticated/perfil'
+    | '/_authenticated/treinamento-premium'
     | '/api/chat'
     | '/_authenticated/modulo/$slug'
+    | '/_authenticated/treinamento-premium/nivel/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -201,6 +227,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiChatRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/treinamento-premium': {
+      id: '/_authenticated/treinamento-premium'
+      path: '/treinamento-premium'
+      fullPath: '/treinamento-premium'
+      preLoaderRoute: typeof AuthenticatedTreinamentoPremiumRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/perfil': {
       id: '/_authenticated/perfil'
       path: '/perfil'
@@ -243,8 +276,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedModuloSlugRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/treinamento-premium/nivel/$slug': {
+      id: '/_authenticated/treinamento-premium/nivel/$slug'
+      path: '/nivel/$slug'
+      fullPath: '/treinamento-premium/nivel/$slug'
+      preLoaderRoute: typeof AuthenticatedTreinamentoPremiumNivelSlugRouteImport
+      parentRoute: typeof AuthenticatedTreinamentoPremiumRoute
+    }
   }
 }
+
+interface AuthenticatedTreinamentoPremiumRouteChildren {
+  AuthenticatedTreinamentoPremiumNivelSlugRoute: typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
+}
+
+const AuthenticatedTreinamentoPremiumRouteChildren: AuthenticatedTreinamentoPremiumRouteChildren =
+  {
+    AuthenticatedTreinamentoPremiumNivelSlugRoute:
+      AuthenticatedTreinamentoPremiumNivelSlugRoute,
+  }
+
+const AuthenticatedTreinamentoPremiumRouteWithChildren =
+  AuthenticatedTreinamentoPremiumRoute._addFileChildren(
+    AuthenticatedTreinamentoPremiumRouteChildren,
+  )
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedCentroOperacionalRoute: typeof AuthenticatedCentroOperacionalRoute
@@ -252,6 +307,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedJornadaRoute: typeof AuthenticatedJornadaRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
+  AuthenticatedTreinamentoPremiumRoute: typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   AuthenticatedModuloSlugRoute: typeof AuthenticatedModuloSlugRoute
 }
 
@@ -261,6 +317,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedJornadaRoute: AuthenticatedJornadaRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
+  AuthenticatedTreinamentoPremiumRoute:
+    AuthenticatedTreinamentoPremiumRouteWithChildren,
   AuthenticatedModuloSlugRoute: AuthenticatedModuloSlugRoute,
 }
 
