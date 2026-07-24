@@ -14,7 +14,110 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      modules: {
+        Row: {
+          accent_from: string | null
+          accent_to: string | null
+          cover_url: string | null
+          created_at: string
+          id: string
+          lessons_count: number
+          long_description: string | null
+          name: string
+          order_index: number
+          short_description: string
+          slug: string
+        }
+        Insert: {
+          accent_from?: string | null
+          accent_to?: string | null
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          lessons_count?: number
+          long_description?: string | null
+          name: string
+          order_index: number
+          short_description: string
+          slug: string
+        }
+        Update: {
+          accent_from?: string | null
+          accent_to?: string | null
+          cover_url?: string | null
+          created_at?: string
+          id?: string
+          lessons_count?: number
+          long_description?: string | null
+          name?: string
+          order_index?: number
+          short_description?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          onboarded: boolean
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+          onboarded?: boolean
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          onboarded?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_module_progress: {
+        Row: {
+          id: string
+          last_accessed_at: string
+          lessons_completed: number
+          module_id: string
+          percent: number
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          last_accessed_at?: string
+          lessons_completed?: number
+          module_id: string
+          percent?: number
+          user_id: string
+        }
+        Update: {
+          id?: string
+          last_accessed_at?: string
+          lessons_completed?: number
+          module_id?: string
+          percent?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_module_progress_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
