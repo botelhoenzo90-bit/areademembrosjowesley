@@ -206,6 +206,13 @@ function HomePage() {
         </div>
       </section>
 
+      {/* NOVOS CONTEÚDOS */}
+      <SectionRow title="Novos Conteúdos" icon={<Sparkles className="h-4 w-4 text-gold" />}>
+        {modules.slice(0, 6).map((m) => (
+          <ModuleCard key={`novo-${m.slug}`} data={m} />
+        ))}
+      </SectionRow>
+
       {/* CONTINUE WATCHING */}
       {inProgress.length > 0 && (
         <SectionRow title="Continuar assistindo" icon={<Play className="h-4 w-4 text-gold" />}>
@@ -214,6 +221,7 @@ function HomePage() {
           ))}
         </SectionRow>
       )}
+
 
       {/* MY JOURNEY */}
       <SectionRow title="Minha Jornada" icon={<BookOpen className="h-4 w-4 text-gold" />}>
