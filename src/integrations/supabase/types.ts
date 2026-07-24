@@ -14,6 +14,214 @@ export type Database = {
   }
   public: {
     Tables: {
+      action_plans: {
+        Row: {
+          created_at: string
+          id: string
+          indicators: Json
+          objective: string
+          steps: Json
+          timeline: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          indicators?: Json
+          objective: string
+          steps?: Json
+          timeline?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          indicators?: Json
+          objective?: string
+          steps?: Json
+          timeline?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          content: string
+          conversation_id: string
+          created_at: string
+          id: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      exercises: {
+        Row: {
+          completed: boolean
+          content: string
+          created_at: string
+          id: string
+          theme: string
+          title: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          content: string
+          created_at?: string
+          id?: string
+          theme: string
+          title: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          content?: string
+          created_at?: string
+          id?: string
+          theme?: string
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      lessons: {
+        Row: {
+          created_at: string
+          description: string
+          duration_minutes: number
+          id: string
+          module_id: string
+          order_index: number
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          duration_minutes?: number
+          id?: string
+          module_id: string
+          order_index: number
+          thumbnail_url?: string | null
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          duration_minutes?: number
+          id?: string
+          module_id?: string
+          order_index?: number
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      missions: {
+        Row: {
+          checklist: Json
+          completed: boolean
+          created_at: string
+          deadline: string | null
+          id: string
+          objective: string
+          period: string
+          steps: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          checklist?: Json
+          completed?: boolean
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          objective: string
+          period: string
+          steps?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          checklist?: Json
+          completed?: boolean
+          created_at?: string
+          deadline?: string | null
+          id?: string
+          objective?: string
+          period?: string
+          steps?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       modules: {
         Row: {
           accent_from: string | null
@@ -82,6 +290,41 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      user_lesson_progress: {
+        Row: {
+          completed_at: string | null
+          id: string
+          lesson_id: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          id?: string
+          lesson_id: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          id?: string
+          lesson_id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_lesson_progress_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_module_progress: {
         Row: {
