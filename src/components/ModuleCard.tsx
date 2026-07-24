@@ -1,4 +1,5 @@
 import { Play, CheckCircle2 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
 export type ModuleCardData = {
   slug: string;
@@ -11,13 +12,14 @@ export type ModuleCardData = {
   accent_to?: string | null;
 };
 
-export function ModuleCard({ data, onClick }: { data: ModuleCardData; onClick?: () => void }) {
+export function ModuleCard({ data }: { data: ModuleCardData }) {
   const status =
     data.percent >= 100 ? "Concluído" : data.percent > 0 ? "Em andamento" : "Novo";
 
   return (
-    <button
-      onClick={onClick}
+    <Link
+      to="/modulo/$slug"
+      params={{ slug: data.slug }}
       className="group relative w-64 shrink-0 overflow-hidden rounded-2xl border border-border bg-surface text-left shadow-elevated transition-all duration-300 hover:-translate-y-1 hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-primary/50"
     >
       <div className="relative aspect-[3/4] w-full overflow-hidden">
@@ -57,13 +59,12 @@ export function ModuleCard({ data, onClick }: { data: ModuleCardData; onClick?: 
           </div>
         </div>
 
-        {/* Hover overlay play */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
           <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-primary shadow-glow">
             <Play className="h-5 w-5 fill-current text-primary-foreground" />
           </span>
         </div>
       </div>
-    </button>
+    </Link>
   );
 }
