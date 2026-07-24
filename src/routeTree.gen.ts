@@ -21,6 +21,7 @@ import { Route as AuthenticatedJornadaRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedFerramentasRouteImport } from './routes/_authenticated/ferramentas'
 import { Route as AuthenticatedCentroOperacionalRouteImport } from './routes/_authenticated/centro-operacional'
+import { Route as AuthenticatedBonusRouteImport } from './routes/_authenticated/bonus'
 import { Route as AuthenticatedModuloSlugRouteImport } from './routes/_authenticated/modulo.$slug'
 import { Route as AuthenticatedTreinamentoPremiumNivelSlugRouteImport } from './routes/_authenticated/treinamento-premium.nivel.$slug'
 
@@ -87,6 +88,11 @@ const AuthenticatedCentroOperacionalRoute =
     path: '/centro-operacional',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedBonusRoute = AuthenticatedBonusRouteImport.update({
+  id: '/bonus',
+  path: '/bonus',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedModuloSlugRoute = AuthenticatedModuloSlugRouteImport.update({
   id: '/modulo/$slug',
   path: '/modulo/$slug',
@@ -103,6 +109,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/bonus': typeof AuthenticatedBonusRoute
   '/centro-operacional': typeof AuthenticatedCentroOperacionalRoute
   '/ferramentas': typeof AuthenticatedFerramentasRoute
   '/home': typeof AuthenticatedHomeRoute
@@ -118,6 +125,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/bonus': typeof AuthenticatedBonusRoute
   '/centro-operacional': typeof AuthenticatedCentroOperacionalRoute
   '/ferramentas': typeof AuthenticatedFerramentasRoute
   '/home': typeof AuthenticatedHomeRoute
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/_authenticated/bonus': typeof AuthenticatedBonusRoute
   '/_authenticated/centro-operacional': typeof AuthenticatedCentroOperacionalRoute
   '/_authenticated/ferramentas': typeof AuthenticatedFerramentasRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
@@ -152,6 +161,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/onboarding'
+    | '/bonus'
     | '/centro-operacional'
     | '/ferramentas'
     | '/home'
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/onboarding'
+    | '/bonus'
     | '/centro-operacional'
     | '/ferramentas'
     | '/home'
@@ -183,6 +194,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/onboarding'
+    | '/_authenticated/bonus'
     | '/_authenticated/centro-operacional'
     | '/_authenticated/ferramentas'
     | '/_authenticated/home'
@@ -289,6 +301,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCentroOperacionalRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/bonus': {
+      id: '/_authenticated/bonus'
+      path: '/bonus'
+      fullPath: '/bonus'
+      preLoaderRoute: typeof AuthenticatedBonusRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/modulo/$slug': {
       id: '/_authenticated/modulo/$slug'
       path: '/modulo/$slug'
@@ -322,6 +341,7 @@ const AuthenticatedTreinamentoPremiumRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedBonusRoute: typeof AuthenticatedBonusRoute
   AuthenticatedCentroOperacionalRoute: typeof AuthenticatedCentroOperacionalRoute
   AuthenticatedFerramentasRoute: typeof AuthenticatedFerramentasRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
@@ -333,6 +353,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedBonusRoute: AuthenticatedBonusRoute,
   AuthenticatedCentroOperacionalRoute: AuthenticatedCentroOperacionalRoute,
   AuthenticatedFerramentasRoute: AuthenticatedFerramentasRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
