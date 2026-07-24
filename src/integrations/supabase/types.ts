@@ -264,6 +264,89 @@ export type Database = {
         }
         Relationships: []
       }
+      premium_levels: {
+        Row: {
+          cover_key: string
+          created_at: string
+          final_message: string | null
+          id: string
+          name: string
+          objective: string
+          order_index: number
+          slug: string
+          theme: string
+          updated_at: string
+        }
+        Insert: {
+          cover_key: string
+          created_at?: string
+          final_message?: string | null
+          id?: string
+          name: string
+          objective: string
+          order_index: number
+          slug: string
+          theme: string
+          updated_at?: string
+        }
+        Update: {
+          cover_key?: string
+          created_at?: string
+          final_message?: string | null
+          id?: string
+          name?: string
+          objective?: string
+          order_index?: number
+          slug?: string
+          theme?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      premium_workshops: {
+        Row: {
+          created_at: string
+          description: string
+          duration_minutes: number
+          id: string
+          level_id: string
+          order_index: number
+          title: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          duration_minutes?: number
+          id?: string
+          level_id: string
+          order_index: number
+          title: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          duration_minutes?: number
+          id?: string
+          level_id?: string
+          order_index?: number
+          title?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "premium_workshops_level_id_fkey"
+            columns: ["level_id"]
+            isOneToOne: false
+            referencedRelation: "premium_levels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -326,6 +409,47 @@ export type Database = {
           },
         ]
       }
+      user_level_progress: {
+        Row: {
+          created_at: string
+          id: string
+          last_accessed_at: string | null
+          level_id: string
+          percent: number
+          updated_at: string
+          user_id: string
+          workshops_completed: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_accessed_at?: string | null
+          level_id: string
+          percent?: number
+          updated_at?: string
+          user_id: string
+          workshops_completed?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_accessed_at?: string | null
+          level_id?: string
+          percent?: number
+          updated_at?: string
+          user_id?: string
+          workshops_completed?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_level_progress_level_id_fkey"
+            columns: ["level_id"]
+            isOneToOne: false
+            referencedRelation: "premium_levels"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_module_progress: {
         Row: {
           id: string
@@ -357,6 +481,44 @@ export type Database = {
             columns: ["module_id"]
             isOneToOne: false
             referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_workshop_progress: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          id: string
+          status: string
+          updated_at: string
+          user_id: string
+          workshop_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          workshop_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          workshop_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_workshop_progress_workshop_id_fkey"
+            columns: ["workshop_id"]
+            isOneToOne: false
+            referencedRelation: "premium_workshops"
             referencedColumns: ["id"]
           },
         ]
