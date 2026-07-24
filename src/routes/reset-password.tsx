@@ -42,7 +42,7 @@ function ResetPasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password.length < 6) { toast.error("A senha precisa ter ao menos 6 caracteres"); return; }
+    if (!password) { toast.error("Digite uma senha"); return; }
     if (password !== confirm) { toast.error("As senhas não conferem"); return; }
     setBusy(true);
     try {

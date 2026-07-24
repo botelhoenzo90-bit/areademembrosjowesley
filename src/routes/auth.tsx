@@ -61,7 +61,7 @@ function AuthPage() {
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirm) { toast.error("As senhas não conferem"); return; }
-    if (password.length < 6) { toast.error("A senha precisa ter ao menos 6 caracteres"); return; }
+    if (!password) { toast.error("Digite uma senha"); return; }
     const cleanEmail = email.trim().toLowerCase();
     const cleanName = name.trim();
     setBusy(true);
