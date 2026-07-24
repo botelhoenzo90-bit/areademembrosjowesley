@@ -15,11 +15,13 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedTreinamentoPremiumRouteImport } from './routes/_authenticated/treinamento-premium'
+import { Route as AuthenticatedReprogramacaoMentalRouteImport } from './routes/_authenticated/reprogramacao-mental'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedJornadaRouteImport } from './routes/_authenticated/jornada'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedFerramentasRouteImport } from './routes/_authenticated/ferramentas'
 import { Route as AuthenticatedCentroOperacionalRouteImport } from './routes/_authenticated/centro-operacional'
+import { Route as AuthenticatedBonusRouteImport } from './routes/_authenticated/bonus'
 import { Route as AuthenticatedModuloSlugRouteImport } from './routes/_authenticated/modulo.$slug'
 import { Route as AuthenticatedTreinamentoPremiumNivelSlugRouteImport } from './routes/_authenticated/treinamento-premium.nivel.$slug'
 
@@ -53,6 +55,12 @@ const AuthenticatedTreinamentoPremiumRoute =
     path: '/treinamento-premium',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedReprogramacaoMentalRoute =
+  AuthenticatedReprogramacaoMentalRouteImport.update({
+    id: '/reprogramacao-mental',
+    path: '/reprogramacao-mental',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
@@ -80,6 +88,11 @@ const AuthenticatedCentroOperacionalRoute =
     path: '/centro-operacional',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedBonusRoute = AuthenticatedBonusRouteImport.update({
+  id: '/bonus',
+  path: '/bonus',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedModuloSlugRoute = AuthenticatedModuloSlugRouteImport.update({
   id: '/modulo/$slug',
   path: '/modulo/$slug',
@@ -96,11 +109,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/bonus': typeof AuthenticatedBonusRoute
   '/centro-operacional': typeof AuthenticatedCentroOperacionalRoute
   '/ferramentas': typeof AuthenticatedFerramentasRoute
   '/home': typeof AuthenticatedHomeRoute
   '/jornada': typeof AuthenticatedJornadaRoute
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/reprogramacao-mental': typeof AuthenticatedReprogramacaoMentalRoute
   '/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/modulo/$slug': typeof AuthenticatedModuloSlugRoute
@@ -110,11 +125,13 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/bonus': typeof AuthenticatedBonusRoute
   '/centro-operacional': typeof AuthenticatedCentroOperacionalRoute
   '/ferramentas': typeof AuthenticatedFerramentasRoute
   '/home': typeof AuthenticatedHomeRoute
   '/jornada': typeof AuthenticatedJornadaRoute
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/reprogramacao-mental': typeof AuthenticatedReprogramacaoMentalRoute
   '/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/modulo/$slug': typeof AuthenticatedModuloSlugRoute
@@ -126,11 +143,13 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/_authenticated/bonus': typeof AuthenticatedBonusRoute
   '/_authenticated/centro-operacional': typeof AuthenticatedCentroOperacionalRoute
   '/_authenticated/ferramentas': typeof AuthenticatedFerramentasRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/jornada': typeof AuthenticatedJornadaRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
+  '/_authenticated/reprogramacao-mental': typeof AuthenticatedReprogramacaoMentalRoute
   '/_authenticated/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/modulo/$slug': typeof AuthenticatedModuloSlugRoute
@@ -142,11 +161,13 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/onboarding'
+    | '/bonus'
     | '/centro-operacional'
     | '/ferramentas'
     | '/home'
     | '/jornada'
     | '/perfil'
+    | '/reprogramacao-mental'
     | '/treinamento-premium'
     | '/api/chat'
     | '/modulo/$slug'
@@ -156,11 +177,13 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/onboarding'
+    | '/bonus'
     | '/centro-operacional'
     | '/ferramentas'
     | '/home'
     | '/jornada'
     | '/perfil'
+    | '/reprogramacao-mental'
     | '/treinamento-premium'
     | '/api/chat'
     | '/modulo/$slug'
@@ -171,11 +194,13 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/onboarding'
+    | '/_authenticated/bonus'
     | '/_authenticated/centro-operacional'
     | '/_authenticated/ferramentas'
     | '/_authenticated/home'
     | '/_authenticated/jornada'
     | '/_authenticated/perfil'
+    | '/_authenticated/reprogramacao-mental'
     | '/_authenticated/treinamento-premium'
     | '/api/chat'
     | '/_authenticated/modulo/$slug'
@@ -234,6 +259,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTreinamentoPremiumRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/reprogramacao-mental': {
+      id: '/_authenticated/reprogramacao-mental'
+      path: '/reprogramacao-mental'
+      fullPath: '/reprogramacao-mental'
+      preLoaderRoute: typeof AuthenticatedReprogramacaoMentalRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/perfil': {
       id: '/_authenticated/perfil'
       path: '/perfil'
@@ -269,6 +301,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCentroOperacionalRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/bonus': {
+      id: '/_authenticated/bonus'
+      path: '/bonus'
+      fullPath: '/bonus'
+      preLoaderRoute: typeof AuthenticatedBonusRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/modulo/$slug': {
       id: '/_authenticated/modulo/$slug'
       path: '/modulo/$slug'
@@ -302,21 +341,25 @@ const AuthenticatedTreinamentoPremiumRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedBonusRoute: typeof AuthenticatedBonusRoute
   AuthenticatedCentroOperacionalRoute: typeof AuthenticatedCentroOperacionalRoute
   AuthenticatedFerramentasRoute: typeof AuthenticatedFerramentasRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedJornadaRoute: typeof AuthenticatedJornadaRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
+  AuthenticatedReprogramacaoMentalRoute: typeof AuthenticatedReprogramacaoMentalRoute
   AuthenticatedTreinamentoPremiumRoute: typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   AuthenticatedModuloSlugRoute: typeof AuthenticatedModuloSlugRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedBonusRoute: AuthenticatedBonusRoute,
   AuthenticatedCentroOperacionalRoute: AuthenticatedCentroOperacionalRoute,
   AuthenticatedFerramentasRoute: AuthenticatedFerramentasRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedJornadaRoute: AuthenticatedJornadaRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
+  AuthenticatedReprogramacaoMentalRoute: AuthenticatedReprogramacaoMentalRoute,
   AuthenticatedTreinamentoPremiumRoute:
     AuthenticatedTreinamentoPremiumRouteWithChildren,
   AuthenticatedModuloSlugRoute: AuthenticatedModuloSlugRoute,

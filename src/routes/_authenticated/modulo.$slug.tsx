@@ -53,6 +53,18 @@ function ModulePage() {
       navigate({ to: "/treinamento-premium", replace: true });
       return;
     }
+    if (slug === "reprogramacao-mental") {
+      navigate({ to: "/reprogramacao-mental", replace: true });
+      return;
+    }
+    if (slug === "ferramentas-de-crescimento") {
+      navigate({ to: "/ferramentas", replace: true });
+      return;
+    }
+    if (slug === "bonus-exclusivos") {
+      navigate({ to: "/bonus", replace: true });
+      return;
+    }
   }, [slug, navigate]);
 
   useEffect(() => {
