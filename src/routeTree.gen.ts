@@ -15,6 +15,7 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ApiChatRouteImport } from './routes/api/chat'
 import { Route as AuthenticatedTreinamentoPremiumRouteImport } from './routes/_authenticated/treinamento-premium'
+import { Route as AuthenticatedReprogramacaoMentalRouteImport } from './routes/_authenticated/reprogramacao-mental'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedJornadaRouteImport } from './routes/_authenticated/jornada'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
@@ -51,6 +52,12 @@ const AuthenticatedTreinamentoPremiumRoute =
   AuthenticatedTreinamentoPremiumRouteImport.update({
     id: '/treinamento-premium',
     path: '/treinamento-premium',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedReprogramacaoMentalRoute =
+  AuthenticatedReprogramacaoMentalRouteImport.update({
+    id: '/reprogramacao-mental',
+    path: '/reprogramacao-mental',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
@@ -101,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/home': typeof AuthenticatedHomeRoute
   '/jornada': typeof AuthenticatedJornadaRoute
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/reprogramacao-mental': typeof AuthenticatedReprogramacaoMentalRoute
   '/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/modulo/$slug': typeof AuthenticatedModuloSlugRoute
@@ -115,6 +123,7 @@ export interface FileRoutesByTo {
   '/home': typeof AuthenticatedHomeRoute
   '/jornada': typeof AuthenticatedJornadaRoute
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/reprogramacao-mental': typeof AuthenticatedReprogramacaoMentalRoute
   '/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/modulo/$slug': typeof AuthenticatedModuloSlugRoute
@@ -131,6 +140,7 @@ export interface FileRoutesById {
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/jornada': typeof AuthenticatedJornadaRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
+  '/_authenticated/reprogramacao-mental': typeof AuthenticatedReprogramacaoMentalRoute
   '/_authenticated/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/modulo/$slug': typeof AuthenticatedModuloSlugRoute
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/jornada'
     | '/perfil'
+    | '/reprogramacao-mental'
     | '/treinamento-premium'
     | '/api/chat'
     | '/modulo/$slug'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/jornada'
     | '/perfil'
+    | '/reprogramacao-mental'
     | '/treinamento-premium'
     | '/api/chat'
     | '/modulo/$slug'
@@ -176,6 +188,7 @@ export interface FileRouteTypes {
     | '/_authenticated/home'
     | '/_authenticated/jornada'
     | '/_authenticated/perfil'
+    | '/_authenticated/reprogramacao-mental'
     | '/_authenticated/treinamento-premium'
     | '/api/chat'
     | '/_authenticated/modulo/$slug'
@@ -232,6 +245,13 @@ declare module '@tanstack/react-router' {
       path: '/treinamento-premium'
       fullPath: '/treinamento-premium'
       preLoaderRoute: typeof AuthenticatedTreinamentoPremiumRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/reprogramacao-mental': {
+      id: '/_authenticated/reprogramacao-mental'
+      path: '/reprogramacao-mental'
+      fullPath: '/reprogramacao-mental'
+      preLoaderRoute: typeof AuthenticatedReprogramacaoMentalRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/perfil': {
@@ -307,6 +327,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedJornadaRoute: typeof AuthenticatedJornadaRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
+  AuthenticatedReprogramacaoMentalRoute: typeof AuthenticatedReprogramacaoMentalRoute
   AuthenticatedTreinamentoPremiumRoute: typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   AuthenticatedModuloSlugRoute: typeof AuthenticatedModuloSlugRoute
 }
@@ -317,6 +338,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedJornadaRoute: AuthenticatedJornadaRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
+  AuthenticatedReprogramacaoMentalRoute: AuthenticatedReprogramacaoMentalRoute,
   AuthenticatedTreinamentoPremiumRoute:
     AuthenticatedTreinamentoPremiumRouteWithChildren,
   AuthenticatedModuloSlugRoute: AuthenticatedModuloSlugRoute,
