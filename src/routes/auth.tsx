@@ -36,14 +36,23 @@ function AuthPage() {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanEmail = email.trim().toLowerCase();
     setBusy(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await supabase.auth.signInWithPassword({ email: cleanEmail, password });
       if (error) throw error;
+      if (!data.session) throw new Error("Não foi possível iniciar sua sessão. Tente novamente.");
       toast.success("Bem-vindo de volta.");
       navigate({ to: "/home", replace: true });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Falha ao entrar");
+      const message = err instanceof Error ? err.message : "Falha ao entrar";
+      if (message.toLowerCase().includes("email not confirmed")) {
+        toast.error("Este email ainda não foi liberado para entrar. Crie uma nova conta ou tente novamente em instantes.");
+      } else if (message.toLowerCase().includes("invalid login credentials")) {
+        toast.error("Email ou senha incorretos. Confira os dados e tente novamente.");
+      } else {
+        toast.error(message);
+      }
     } finally {
       setBusy(false);
     }
@@ -53,22 +62,40 @@ function AuthPage() {
     e.preventDefault();
     if (password !== confirm) { toast.error("As senhas não conferem"); return; }
     if (password.length < 6) { toast.error("A senha precisa ter ao menos 6 caracteres"); return; }
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanName = name.trim();
     setBusy(true);
     try {
-      const redirectUrl = `${window.location.origin}/onboarding`;
-      const { error } = await supabase.auth.signUp({
-        email,
+      const { data, error } = await supabase.auth.signUp({
+        email: cleanEmail,
         password,
         options: {
-          emailRedirectTo: redirectUrl,
-          data: { display_name: name },
+          emailRedirectTo: window.location.origin,
+          data: { display_name: cleanName },
         },
       });
       if (error) throw error;
+      const session = data.session ?? (await supabase.auth.getSession()).data.session;
+      const userId = session?.user.id ?? data.user?.id;
+      if (!session || !userId) {
+        throw new Error("Conta criada, mas a sessão não abriu automaticamente. Volte em Entrar e acesse com o email e senha criados.");
+      }
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .upsert({ id: userId, display_name: cleanName || cleanEmail.split("@")[0], onboarded: false });
+      if (profileError) throw profileError;
       toast.success("Conta criada. Vamos começar sua jornada.");
       navigate({ to: "/onboarding", replace: true });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Falha ao criar conta");
+      const message = err instanceof Error ? err.message : "Falha ao criar conta";
+      if (message.toLowerCase().includes("user already registered")) {
+        toast.error("Este email já tem conta. Toque em Entrar e use sua senha.");
+        setMode("login");
+      } else if (message.toLowerCase().includes("email not confirmed")) {
+        toast.error("Este email ainda não foi liberado para entrar. Tente entrar novamente em instantes.");
+      } else {
+        toast.error(message);
+      }
     } finally {
       setBusy(false);
     }
@@ -76,9 +103,10 @@ function AuthPage() {
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanEmail = email.trim().toLowerCase();
     setBusy(true);
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
