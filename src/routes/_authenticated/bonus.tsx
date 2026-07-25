@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Gift, Lock, Plus, Sparkles, ExternalLink } from "lucide-react";
-import hero from "@/assets/module-6.jpg";
+import hero from "@/assets/cover-6.png.asset.json";
 import b1 from "@/assets/level-1.jpg";
 import b2 from "@/assets/level-2.jpg";
 import b3 from "@/assets/level-3.jpg";

@@ -8,7 +8,7 @@ import {
   Send, Plus, MessageSquare, Target, Dumbbell, ClipboardList, Sparkles,
   Loader2, Trash2, CheckCircle2, Circle, Clock,
 } from "lucide-react";
-import heroImg from "@/assets/module-2.jpg";
+import heroImg from "@/assets/cover-2.png.asset.json";
 
 export const Route = createFileRoute("/_authenticated/centro-operacional")({
   ssr: false,
