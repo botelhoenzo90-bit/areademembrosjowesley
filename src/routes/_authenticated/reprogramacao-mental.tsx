@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Play, Clock, CheckCircle2, Sparkles, Flame, ChevronRight, Plus } from "lucide-react";
-import hero from "@/assets/cover-4.png.asset.json";
+import heroAsset from "@/assets/cover-4.png.asset.json";
+const hero = heroAsset.url;
 import s1 from "@/assets/level-1.jpg";
 import s2 from "@/assets/level-2.jpg";
 import s3 from "@/assets/level-3.jpg";

@@ -1,10 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, ExternalLink, Plus, Sparkles } from "lucide-react";
-import hero from "@/assets/cover-5.png.asset.json";
-import p1 from "@/assets/cover-1.png.asset.json";
-import p2 from "@/assets/cover-2.png.asset.json";
-import p3 from "@/assets/cover-3.png.asset.json";
+import heroAsset from "@/assets/cover-5.png.asset.json";
+const hero = heroAsset.url;
+import p1Asset from "@/assets/cover-1.png.asset.json";
+const p1 = p1Asset.url;
+import p2Asset from "@/assets/cover-2.png.asset.json";
+const p2 = p2Asset.url;
+import p3Asset from "@/assets/cover-3.png.asset.json";
+const p3 = p3Asset.url;
 
 export const Route = createFileRoute("/_authenticated/ferramentas")({
   head: () => ({

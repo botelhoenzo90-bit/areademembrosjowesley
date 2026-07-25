@@ -2,12 +2,18 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Play, CheckCircle2, Clock, Sparkles, Loader2, ChevronRight } from "lucide-react";
-import m1 from "@/assets/cover-1.png.asset.json";
-import m2 from "@/assets/cover-2.png.asset.json";
-import m3 from "@/assets/cover-3.png.asset.json";
-import m4 from "@/assets/cover-4.png.asset.json";
-import m5 from "@/assets/cover-5.png.asset.json";
-import m6 from "@/assets/cover-6.png.asset.json";
+import m1Asset from "@/assets/cover-1.png.asset.json";
+const m1 = m1Asset.url;
+import m2Asset from "@/assets/cover-2.png.asset.json";
+const m2 = m2Asset.url;
+import m3Asset from "@/assets/cover-3.png.asset.json";
+const m3 = m3Asset.url;
+import m4Asset from "@/assets/cover-4.png.asset.json";
+const m4 = m4Asset.url;
+import m5Asset from "@/assets/cover-5.png.asset.json";
+const m5 = m5Asset.url;
+import m6Asset from "@/assets/cover-6.png.asset.json";
+const m6 = m6Asset.url;
 
 const COVER_BY_ORDER: Record<number, string> = { 1: m1, 2: m2, 3: m3, 4: m4, 5: m5, 6: m6 };
 
