@@ -4,12 +4,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { Play, Info, Search, Flame, BookOpen, LayoutGrid, Sparkles } from "lucide-react";
 import { ModuleCard, type ModuleCardData } from "@/components/ModuleCard";
 import heroImg from "@/assets/hero-welcome.jpg";
-import m1 from "@/assets/module-1.jpg";
-import m2 from "@/assets/module-2.jpg";
-import m3 from "@/assets/module-3.jpg";
-import m4 from "@/assets/module-4.jpg";
-import m5 from "@/assets/module-5.jpg";
-import m6 from "@/assets/module-6.jpg";
+import m1Asset from "@/assets/cover-1.png.asset.json";
+const m1 = m1Asset.url;
+import m2Asset from "@/assets/cover-2.png.asset.json";
+const m2 = m2Asset.url;
+import m3Asset from "@/assets/cover-3.png.asset.json";
+const m3 = m3Asset.url;
+import m4Asset from "@/assets/cover-4.png.asset.json";
+const m4 = m4Asset.url;
+import m5Asset from "@/assets/cover-5.png.asset.json";
+const m5 = m5Asset.url;
+import m6Asset from "@/assets/cover-6.png.asset.json";
+const m6 = m6Asset.url;
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
