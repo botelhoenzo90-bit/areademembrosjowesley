@@ -84,6 +84,10 @@ function HomePage() {
 
       setDisplayName(profile.display_name || "");
 
+      const unlockAt = unlockDateFrom(userRes.user?.created_at);
+      const premiumLocked = isLocked(unlockAt);
+      const lockLabel = premiumLocked ? `Libera em ${countdownLabel(unlockAt)}` : undefined;
+
       const progressMap = new Map((progress ?? []).map((p) => [p.module_id, p.percent]));
       const rows = (mods ?? []) as Row[];
       setModules(
@@ -96,8 +100,11 @@ function HomePage() {
           percent: progressMap.get(m.id) ?? 0,
           accent_from: m.accent_from,
           accent_to: m.accent_to,
+          locked: m.slug === "treinamento-premium" && premiumLocked,
+          lockLabel: m.slug === "treinamento-premium" ? lockLabel : undefined,
         })),
       );
+
       setLoading(false);
     };
     load();
