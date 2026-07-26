@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Play, Info, Search, Flame, BookOpen, LayoutGrid, Sparkles } from "lucide-react";
+import { Play, Info, Search, Flame, BookOpen, Sparkles } from "lucide-react";
 import { ModuleCard, type ModuleCardData } from "@/components/ModuleCard";
 import heroImg from "@/assets/hero-welcome.jpg";
 import m1Asset from "@/assets/cover-1.png.asset.json";
@@ -16,6 +16,13 @@ import m5Asset from "@/assets/cover-5.png.asset.json";
 const m5 = m5Asset.url;
 import m6Asset from "@/assets/cover-6.png.asset.json";
 const m6 = m6Asset.url;
+import j1Asset from "@/assets/jornada-1.png.asset.json";
+import j2Asset from "@/assets/jornada-2.png.asset.json";
+import j3Asset from "@/assets/jornada-3.png.asset.json";
+import j4Asset from "@/assets/jornada-4.png.asset.json";
+
+const JORNADA_COVERS = [j1Asset.url, j2Asset.url, j3Asset.url, j4Asset.url];
+
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
@@ -104,12 +111,8 @@ function HomePage() {
   const inProgress = modules.filter((m) => m.percent > 0 && m.percent < 100);
   const featured = modules[0]; // "SEJA BEM-VINDOS" as default hero
 
-  const filtered = search
-    ? modules.filter((m) =>
-        m.name.toLowerCase().includes(search.toLowerCase()) ||
-        m.short_description.toLowerCase().includes(search.toLowerCase()),
-      )
-    : modules;
+  void search;
+
 
   const firstName = displayName?.split(" ")[0] ?? "";
 
@@ -213,7 +216,7 @@ function HomePage() {
       </section>
 
       {/* NOVOS CONTEÚDOS */}
-      <SectionRow title="Novos Conteúdos" icon={<Sparkles className="h-4 w-4 text-gold" />}>
+      <SectionRow title="Neuro Consciência" icon={<Sparkles className="h-4 w-4 text-gold" />}>
         {modules.slice(0, 6).map((m) => (
           <ModuleCard key={`novo-${m.slug}`} data={m} />
         ))}
@@ -230,18 +233,12 @@ function HomePage() {
 
 
       {/* MY JOURNEY */}
-      <SectionRow title="Minha Jornada" icon={<BookOpen className="h-4 w-4 text-gold" />}>
-        {(inProgress.length ? inProgress : modules.slice(0, 4)).map((m) => (
-          <ModuleCard key={m.slug} data={m} />
+      <SectionRow title="Caminho Evolutivo" icon={<BookOpen className="h-4 w-4 text-gold" />}>
+        {modules.slice(0, 4).map((m, i) => (
+          <ModuleCard key={m.slug} data={{ ...m, cover_url: JORNADA_COVERS[i] ?? m.cover_url }} />
         ))}
       </SectionRow>
 
-      {/* MAIN MODULES */}
-      <SectionRow title="Módulos Principais" icon={<LayoutGrid className="h-4 w-4 text-gold" />}>
-        {filtered.map((m) => (
-          <ModuleCard key={m.slug} data={m} />
-        ))}
-      </SectionRow>
 
       <p className="mt-10 px-5 pb-4 text-center text-[10px] uppercase tracking-widest text-muted-foreground">
         Instituto Neuroconsciência
