@@ -29,6 +29,9 @@ export const Route = createFileRoute("/_authenticated/home")({
 
 const COVER_BY_ORDER: Record<number, string> = { 1: m1, 2: m2, 3: m3, 4: m4, 5: m5, 6: m6 };
 
+const NEW_COVERS = [n7.url, n8.url, n9.url, n10.url];
+
+
 const QUOTES = [
   "Pequenas mudanças diárias criam grandes transformações.",
   "A consciência é o primeiro passo da liberdade.",
