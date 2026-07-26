@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Play, Info, Search, Flame, BookOpen, LayoutGrid, Sparkles } from "lucide-react";
 import { ModuleCard, type ModuleCardData } from "@/components/ModuleCard";
+import { computePremiumLock, PREMIUM_SLUG } from "@/lib/premium-lock";
 import heroImg from "@/assets/hero-welcome.jpg";
 import m1Asset from "@/assets/cover-1.png.asset.json";
 const m1 = m1Asset.url;
@@ -65,12 +66,14 @@ function HomePage() {
   const [modules, setModules] = useState<ModuleCardData[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [signupAt, setSignupAt] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
       const { data: userRes } = await supabase.auth.getUser();
       const uid = userRes.user?.id;
       if (!uid) return;
+      setSignupAt(userRes.user?.created_at ?? null);
 
       const [{ data: profile }, { data: mods }, { data: progress }] = await Promise.all([
         supabase.from("profiles").select("display_name, onboarded").eq("id", uid).maybeSingle(),
@@ -118,6 +121,8 @@ function HomePage() {
         m.short_description.toLowerCase().includes(search.toLowerCase()),
       )
     : modules;
+
+  const premiumLock = computePremiumLock(signupAt);
 
   const firstName = displayName?.split(" ")[0] ?? "";
 
@@ -223,7 +228,12 @@ function HomePage() {
       {/* NEURO CONSCIÊNCIA */}
       <SectionRow title="Neuro consciência" icon={<Sparkles className="h-4 w-4 text-gold" />}>
         {modules.slice(0, 4).map((m, i) => (
-          <ModuleCard key={`novo-${m.slug}`} data={{ ...m, cover_url: NEW_COVERS[i] ?? m.cover_url }} />
+          <ModuleCard
+            key={`novo-${m.slug}`}
+            data={{ ...m, cover_url: NEW_COVERS[i] ?? m.cover_url }}
+            locked={m.slug === PREMIUM_SLUG && premiumLock.locked}
+            lockLabel={premiumLock.label}
+          />
         ))}
       </SectionRow>
 
@@ -231,7 +241,12 @@ function HomePage() {
       {inProgress.length > 0 && (
         <SectionRow title="Continuar assistindo" icon={<Play className="h-4 w-4 text-gold" />}>
           {inProgress.map((m) => (
-            <ModuleCard key={m.slug} data={m} />
+            <ModuleCard
+            key={m.slug}
+            data={m}
+            locked={m.slug === PREMIUM_SLUG && premiumLock.locked}
+            lockLabel={premiumLock.label}
+          />
           ))}
         </SectionRow>
       )}
@@ -240,7 +255,12 @@ function HomePage() {
       {/* CAMINHO EVOLUTIVO */}
       <SectionRow title="Caminho evolutivo" icon={<BookOpen className="h-4 w-4 text-gold" />}>
         {(inProgress.length ? inProgress : modules.slice(0, 4)).map((m) => (
-          <ModuleCard key={m.slug} data={m} />
+          <ModuleCard
+            key={m.slug}
+            data={m}
+            locked={m.slug === PREMIUM_SLUG && premiumLock.locked}
+            lockLabel={premiumLock.label}
+          />
         ))}
       </SectionRow>
 
