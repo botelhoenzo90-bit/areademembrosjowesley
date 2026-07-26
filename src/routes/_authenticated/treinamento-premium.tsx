@@ -2,6 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Play, Sparkles, Lock, CheckCircle2, Loader2, ChevronRight, Trophy, Clock, Layers } from "lucide-react";
+import { unlockDateFrom, isLocked, countdownLabel, PREMIUM_LOCK_DAYS } from "@/lib/premium-lock";
+
 import heroImg from "@/assets/premium-hero.jpg";
 import l1 from "@/assets/level-1.jpg";
 import l2 from "@/assets/level-2.jpg";
