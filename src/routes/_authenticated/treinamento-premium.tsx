@@ -2,6 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Play, Sparkles, Lock, CheckCircle2, Loader2, ChevronRight, Trophy, Clock, Layers } from "lucide-react";
+import { unlockDateFrom, isLocked, countdownLabel, PREMIUM_LOCK_DAYS } from "@/lib/premium-lock";
+
 import heroImg from "@/assets/premium-hero.jpg";
 import l1 from "@/assets/level-1.jpg";
 import l2 from "@/assets/level-2.jpg";
@@ -43,6 +45,13 @@ function PremiumPage() {
   const [lvlProgress, setLvlProgress] = useState<Record<string, LevelProg>>({});
   const [loading, setLoading] = useState(true);
   const [scrollY, setScrollY] = useState(0);
+  const [unlockAt, setUnlockAt] = useState<Date | null>(null);
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(t);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY);
@@ -50,10 +59,13 @@ function PremiumPage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+
   useEffect(() => {
     (async () => {
       const { data: u } = await supabase.auth.getUser();
       const uid = u.user?.id;
+      setUnlockAt(unlockDateFrom(u.user?.created_at));
+
       const [{ data: lvls }, { data: wks }] = await Promise.all([
         supabase.from("premium_levels").select("*").order("order_index"),
         supabase.from("premium_workshops").select("*").order("order_index"),
@@ -106,6 +118,40 @@ function PremiumPage() {
   if (loading) {
     return <div className="flex min-h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-gold" /></div>;
   }
+
+  void now;
+  if (isLocked(unlockAt)) {
+    return (
+      <main className="relative min-h-screen">
+        <div className="absolute inset-0">
+          <img src={heroImg} alt="" className="h-full w-full object-cover opacity-25" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/90 to-background/70" aria-hidden />
+        </div>
+        <div className="relative z-10 mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center px-6 text-center">
+          <span className="flex h-20 w-20 items-center justify-center rounded-full glass-strong shadow-glow">
+            <Lock className="h-8 w-8 text-gold" />
+          </span>
+          <h1 className="mt-6 font-display text-4xl text-foreground">Treinamento Premium</h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            Este módulo é liberado {PREMIUM_LOCK_DAYS} dias após a criação da sua conta.
+            Use esse tempo para concluir os módulos iniciais e preparar sua mente para a jornada.
+          </p>
+          <div className="mt-8 rounded-2xl border border-border glass px-8 py-6">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Libera em</p>
+            <p className="mt-2 font-display text-3xl text-gold">{countdownLabel(unlockAt)}</p>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {unlockAt?.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}
+            </p>
+          </div>
+          <button onClick={() => navigate({ to: "/home" })}
+            className="mt-8 inline-flex items-center gap-2 rounded-full glass px-6 py-3 text-sm text-foreground transition hover:bg-surface-elevated">
+            <ArrowLeft className="h-4 w-4" /> Voltar para a Home
+          </button>
+        </div>
+      </main>
+    );
+  }
+
 
   return (
     <main className="relative">

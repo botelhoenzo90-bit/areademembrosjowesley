@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Play, Info, Search, Flame, BookOpen, Sparkles } from "lucide-react";
 import { ModuleCard, type ModuleCardData } from "@/components/ModuleCard";
+import { unlockDateFrom, isLocked, countdownLabel } from "@/lib/premium-lock";
+
 import heroImg from "@/assets/hero-welcome.jpg";
 import m1Asset from "@/assets/cover-1.png.asset.json";
 const m1 = m1Asset.url;
@@ -84,6 +86,10 @@ function HomePage() {
 
       setDisplayName(profile.display_name || "");
 
+      const unlockAt = unlockDateFrom(userRes.user?.created_at);
+      const premiumLocked = isLocked(unlockAt);
+      const lockLabel = premiumLocked ? `Libera em ${countdownLabel(unlockAt)}` : undefined;
+
       const progressMap = new Map((progress ?? []).map((p) => [p.module_id, p.percent]));
       const rows = (mods ?? []) as Row[];
       setModules(
@@ -96,8 +102,11 @@ function HomePage() {
           percent: progressMap.get(m.id) ?? 0,
           accent_from: m.accent_from,
           accent_to: m.accent_to,
+          locked: m.slug === "treinamento-premium" && premiumLocked,
+          lockLabel: m.slug === "treinamento-premium" ? lockLabel : undefined,
         })),
       );
+
       setLoading(false);
     };
     load();
