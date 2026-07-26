@@ -1,4 +1,4 @@
-import { Play, CheckCircle2 } from "lucide-react";
+import { Play, CheckCircle2, Lock } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 export type ModuleCardData = {
@@ -10,18 +10,28 @@ export type ModuleCardData = {
   percent: number;
   accent_from?: string | null;
   accent_to?: string | null;
+  locked?: boolean;
+  lockLabel?: string;
 };
 
 export function ModuleCard({ data }: { data: ModuleCardData }) {
   const status =
+    data.locked ? "Bloqueado" :
     data.percent >= 100 ? "Concluído" : data.percent > 0 ? "Em andamento" : "Novo";
 
+  const cardClass =
+    "group relative w-64 shrink-0 overflow-hidden rounded-2xl border border-border bg-surface text-left shadow-elevated transition-all duration-300 hover:-translate-y-1 hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-primary/50";
+
+  const Wrapper = ({ children }: { children: React.ReactNode }) =>
+    data.locked ? (
+      <div className={`${cardClass} cursor-not-allowed`} aria-disabled>{children}</div>
+    ) : (
+      <Link to="/modulo/$slug" params={{ slug: data.slug }} className={cardClass}>{children}</Link>
+    );
+
   return (
-    <Link
-      to="/modulo/$slug"
-      params={{ slug: data.slug }}
-      className="group relative w-64 shrink-0 overflow-hidden rounded-2xl border border-border bg-surface text-left shadow-elevated transition-all duration-300 hover:-translate-y-1 hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-primary/50"
-    >
+    <Wrapper>
+
       <div className="relative aspect-[3/4] w-full overflow-hidden">
         <img
           src={data.cover_url}
