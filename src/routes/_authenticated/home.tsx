@@ -227,7 +227,7 @@ function HomePage() {
 
       {/* NEURO CONSCIÊNCIA */}
       <SectionRow title="Neuro consciência" icon={<Sparkles className="h-4 w-4 text-gold" />}>
-        {modules.slice(0, 4).map((m, i) => (
+        {filtered.map((m, i) => (
           <ModuleCard
             key={`novo-${m.slug}`}
             data={{ ...m, cover_url: NEW_COVERS[i] ?? m.cover_url }}
