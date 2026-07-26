@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Play, Info, Search, Flame, BookOpen, LayoutGrid, Sparkles } from "lucide-react";
+import { Play, Info, Search, Flame, BookOpen, Sparkles } from "lucide-react";
 import { ModuleCard, type ModuleCardData } from "@/components/ModuleCard";
 import heroImg from "@/assets/hero-welcome.jpg";
 import m1Asset from "@/assets/cover-1.png.asset.json";
@@ -16,6 +16,13 @@ import m5Asset from "@/assets/cover-5.png.asset.json";
 const m5 = m5Asset.url;
 import m6Asset from "@/assets/cover-6.png.asset.json";
 const m6 = m6Asset.url;
+import j1Asset from "@/assets/jornada-1.png.asset.json";
+import j2Asset from "@/assets/jornada-2.png.asset.json";
+import j3Asset from "@/assets/jornada-3.png.asset.json";
+import j4Asset from "@/assets/jornada-4.png.asset.json";
+
+const JORNADA_COVERS = [j1Asset.url, j2Asset.url, j3Asset.url, j4Asset.url];
+
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
