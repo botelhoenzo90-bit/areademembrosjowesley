@@ -16,6 +16,11 @@ import m5Asset from "@/assets/cover-5.png.asset.json";
 const m5 = m5Asset.url;
 import m6Asset from "@/assets/cover-6.png.asset.json";
 const m6 = m6Asset.url;
+import n7 from "@/assets/novo-7.png.asset.json";
+import n8 from "@/assets/novo-8.png.asset.json";
+import n9 from "@/assets/novo-9.png.asset.json";
+import n10 from "@/assets/novo-10.png.asset.json";
+
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
