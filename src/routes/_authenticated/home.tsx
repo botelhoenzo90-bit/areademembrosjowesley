@@ -212,10 +212,10 @@ function HomePage() {
         </div>
       </section>
 
-      {/* NOVOS CONTEÚDOS */}
-      <SectionRow title="Novos Conteúdos" icon={<Sparkles className="h-4 w-4 text-gold" />}>
-        {modules.slice(0, 6).map((m) => (
-          <ModuleCard key={`novo-${m.slug}`} data={m} />
+      {/* NEURO CONSCIÊNCIA */}
+      <SectionRow title="Neuro consciência" icon={<Sparkles className="h-4 w-4 text-gold" />}>
+        {modules.slice(0, 4).map((m, i) => (
+          <ModuleCard key={`novo-${m.slug}`} data={{ ...m, cover_url: NEW_COVERS[i] ?? m.cover_url }} />
         ))}
       </SectionRow>
 
@@ -229,19 +229,13 @@ function HomePage() {
       )}
 
 
-      {/* MY JOURNEY */}
-      <SectionRow title="Minha Jornada" icon={<BookOpen className="h-4 w-4 text-gold" />}>
+      {/* CAMINHO EVOLUTIVO */}
+      <SectionRow title="Caminho evolutivo" icon={<BookOpen className="h-4 w-4 text-gold" />}>
         {(inProgress.length ? inProgress : modules.slice(0, 4)).map((m) => (
           <ModuleCard key={m.slug} data={m} />
         ))}
       </SectionRow>
 
-      {/* MAIN MODULES */}
-      <SectionRow title="Módulos Principais" icon={<LayoutGrid className="h-4 w-4 text-gold" />}>
-        {filtered.map((m) => (
-          <ModuleCard key={m.slug} data={m} />
-        ))}
-      </SectionRow>
 
       <p className="mt-10 px-5 pb-4 text-center text-[10px] uppercase tracking-widest text-muted-foreground">
         Instituto Neuroconsciência
