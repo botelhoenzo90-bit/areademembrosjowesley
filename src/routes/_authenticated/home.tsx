@@ -237,18 +237,12 @@ function HomePage() {
 
 
       {/* MY JOURNEY */}
-      <SectionRow title="Minha Jornada" icon={<BookOpen className="h-4 w-4 text-gold" />}>
-        {(inProgress.length ? inProgress : modules.slice(0, 4)).map((m) => (
-          <ModuleCard key={m.slug} data={m} />
+      <SectionRow title="Caminho Evolutivo" icon={<BookOpen className="h-4 w-4 text-gold" />}>
+        {modules.slice(0, 4).map((m, i) => (
+          <ModuleCard key={m.slug} data={{ ...m, cover_url: JORNADA_COVERS[i] ?? m.cover_url }} />
         ))}
       </SectionRow>
 
-      {/* MAIN MODULES */}
-      <SectionRow title="Módulos Principais" icon={<LayoutGrid className="h-4 w-4 text-gold" />}>
-        {filtered.map((m) => (
-          <ModuleCard key={m.slug} data={m} />
-        ))}
-      </SectionRow>
 
       <p className="mt-10 px-5 pb-4 text-center text-[10px] uppercase tracking-widest text-muted-foreground">
         Instituto Neuroconsciência
