@@ -111,12 +111,8 @@ function HomePage() {
   const inProgress = modules.filter((m) => m.percent > 0 && m.percent < 100);
   const featured = modules[0]; // "SEJA BEM-VINDOS" as default hero
 
-  const filtered = search
-    ? modules.filter((m) =>
-        m.name.toLowerCase().includes(search.toLowerCase()) ||
-        m.short_description.toLowerCase().includes(search.toLowerCase()),
-      )
-    : modules;
+  void search;
+
 
   const firstName = displayName?.split(" ")[0] ?? "";
 
