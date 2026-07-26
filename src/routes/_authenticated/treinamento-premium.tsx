@@ -43,12 +43,20 @@ function PremiumPage() {
   const [lvlProgress, setLvlProgress] = useState<Record<string, LevelProg>>({});
   const [loading, setLoading] = useState(true);
   const [scrollY, setScrollY] = useState(0);
+  const [unlockAt, setUnlockAt] = useState<Date | null>(null);
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 60000);
+    return () => clearInterval(t);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
 
   useEffect(() => {
     (async () => {
