@@ -62,6 +62,8 @@ function PremiumPage() {
     (async () => {
       const { data: u } = await supabase.auth.getUser();
       const uid = u.user?.id;
+      setUnlockAt(unlockDateFrom(u.user?.created_at));
+
       const [{ data: lvls }, { data: wks }] = await Promise.all([
         supabase.from("premium_levels").select("*").order("order_index"),
         supabase.from("premium_workshops").select("*").order("order_index"),
