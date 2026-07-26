@@ -3,6 +3,8 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Play, Info, Search, Flame, BookOpen, Sparkles } from "lucide-react";
 import { ModuleCard, type ModuleCardData } from "@/components/ModuleCard";
+import { unlockDateFrom, isLocked, countdownLabel } from "@/lib/premium-lock";
+
 import heroImg from "@/assets/hero-welcome.jpg";
 import m1Asset from "@/assets/cover-1.png.asset.json";
 const m1 = m1Asset.url;
