@@ -1,4 +1,4 @@
-import { Play, CheckCircle2, Lock } from "lucide-react";
+import { Play, CheckCircle2 } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 export type ModuleCardData = {
@@ -12,27 +12,16 @@ export type ModuleCardData = {
   accent_to?: string | null;
 };
 
-export function ModuleCard({
-  data,
-  locked = false,
-  lockLabel,
-}: {
-  data: ModuleCardData;
-  locked?: boolean;
-  lockLabel?: string;
-}) {
-  const status = locked
-    ? "Bloqueado"
-    : data.percent >= 100
-    ? "Concluído"
-    : data.percent > 0
-    ? "Em andamento"
-    : "Novo";
+export function ModuleCard({ data }: { data: ModuleCardData }) {
+  const status =
+    data.percent >= 100 ? "Concluído" : data.percent > 0 ? "Em andamento" : "Novo";
 
-  const cardClass =
-    "group relative w-64 shrink-0 overflow-hidden rounded-2xl border border-border bg-surface text-left shadow-elevated transition-all duration-300 hover:-translate-y-1 hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-primary/50";
-
-  const inner = (
+  return (
+    <Link
+      to="/modulo/$slug"
+      params={{ slug: data.slug }}
+      className="group relative w-64 shrink-0 overflow-hidden rounded-2xl border border-border bg-surface text-left shadow-elevated transition-all duration-300 hover:-translate-y-1 hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-primary/50"
+    >
       <div className="relative aspect-[3/4] w-full overflow-hidden">
         <img
           src={data.cover_url}
@@ -70,38 +59,12 @@ export function ModuleCard({
           </div>
         </div>
 
-        {locked ? (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/70 backdrop-blur-[2px]">
-            <span className="flex h-14 w-14 items-center justify-center rounded-full glass-strong border border-gold/40">
-              <Lock className="h-6 w-6 text-gold" />
-            </span>
-            {lockLabel && (
-              <span className="rounded-full glass px-3 py-1 text-[10px] uppercase tracking-widest text-gold">
-                {lockLabel}
-              </span>
-            )}
-          </div>
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-primary shadow-glow">
-              <Play className="h-5 w-5 fill-current text-primary-foreground" />
-            </span>
-          </div>
-        )}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-primary shadow-glow">
+            <Play className="h-5 w-5 fill-current text-primary-foreground" />
+          </span>
+        </div>
       </div>
-  );
-
-  if (locked) {
-    return (
-      <div className={`${cardClass} cursor-not-allowed`} aria-disabled="true">
-        {inner}
-      </div>
-    );
-  }
-
-  return (
-    <Link to="/modulo/$slug" params={{ slug: data.slug }} className={cardClass}>
-      {inner}
     </Link>
   );
 }

@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Play, Info, Search, Flame, BookOpen, LayoutGrid, Sparkles } from "lucide-react";
 import { ModuleCard, type ModuleCardData } from "@/components/ModuleCard";
-import { computePremiumLock, PREMIUM_SLUG } from "@/lib/premium-lock";
 import heroImg from "@/assets/hero-welcome.jpg";
 import m1Asset from "@/assets/cover-1.png.asset.json";
 const m1 = m1Asset.url;
@@ -17,11 +16,6 @@ import m5Asset from "@/assets/cover-5.png.asset.json";
 const m5 = m5Asset.url;
 import m6Asset from "@/assets/cover-6.png.asset.json";
 const m6 = m6Asset.url;
-import n7 from "@/assets/novo-7.png.asset.json";
-import n8 from "@/assets/novo-8.png.asset.json";
-import n9 from "@/assets/novo-9.png.asset.json";
-import n10 from "@/assets/novo-10.png.asset.json";
-
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
@@ -34,9 +28,6 @@ export const Route = createFileRoute("/_authenticated/home")({
 });
 
 const COVER_BY_ORDER: Record<number, string> = { 1: m1, 2: m2, 3: m3, 4: m4, 5: m5, 6: m6 };
-
-const NEW_COVERS = [n7.url, n8.url, n9.url, n10.url];
-
 
 const QUOTES = [
   "Pequenas mudanças diárias criam grandes transformações.",
@@ -66,14 +57,12 @@ function HomePage() {
   const [modules, setModules] = useState<ModuleCardData[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [signupAt, setSignupAt] = useState<string | null>(null);
 
   useEffect(() => {
     const load = async () => {
       const { data: userRes } = await supabase.auth.getUser();
       const uid = userRes.user?.id;
       if (!uid) return;
-      setSignupAt(userRes.user?.created_at ?? null);
 
       const [{ data: profile }, { data: mods }, { data: progress }] = await Promise.all([
         supabase.from("profiles").select("display_name, onboarded").eq("id", uid).maybeSingle(),
@@ -121,8 +110,6 @@ function HomePage() {
         m.short_description.toLowerCase().includes(search.toLowerCase()),
       )
     : modules;
-
-  const premiumLock = computePremiumLock(signupAt);
 
   const firstName = displayName?.split(" ")[0] ?? "";
 
@@ -225,15 +212,10 @@ function HomePage() {
         </div>
       </section>
 
-      {/* NEURO CONSCIÊNCIA */}
-      <SectionRow title="Neuro consciência" icon={<Sparkles className="h-4 w-4 text-gold" />}>
-        {filtered.map((m, i) => (
-          <ModuleCard
-            key={`novo-${m.slug}`}
-            data={{ ...m, cover_url: NEW_COVERS[i] ?? m.cover_url }}
-            locked={m.slug === PREMIUM_SLUG && premiumLock.locked}
-            lockLabel={premiumLock.label}
-          />
+      {/* NOVOS CONTEÚDOS */}
+      <SectionRow title="Novos Conteúdos" icon={<Sparkles className="h-4 w-4 text-gold" />}>
+        {modules.slice(0, 6).map((m) => (
+          <ModuleCard key={`novo-${m.slug}`} data={m} />
         ))}
       </SectionRow>
 
@@ -241,29 +223,25 @@ function HomePage() {
       {inProgress.length > 0 && (
         <SectionRow title="Continuar assistindo" icon={<Play className="h-4 w-4 text-gold" />}>
           {inProgress.map((m) => (
-            <ModuleCard
-            key={m.slug}
-            data={m}
-            locked={m.slug === PREMIUM_SLUG && premiumLock.locked}
-            lockLabel={premiumLock.label}
-          />
+            <ModuleCard key={m.slug} data={m} />
           ))}
         </SectionRow>
       )}
 
 
-      {/* CAMINHO EVOLUTIVO */}
-      <SectionRow title="Caminho evolutivo" icon={<BookOpen className="h-4 w-4 text-gold" />}>
+      {/* MY JOURNEY */}
+      <SectionRow title="Minha Jornada" icon={<BookOpen className="h-4 w-4 text-gold" />}>
         {(inProgress.length ? inProgress : modules.slice(0, 4)).map((m) => (
-          <ModuleCard
-            key={m.slug}
-            data={m}
-            locked={m.slug === PREMIUM_SLUG && premiumLock.locked}
-            lockLabel={premiumLock.label}
-          />
+          <ModuleCard key={m.slug} data={m} />
         ))}
       </SectionRow>
 
+      {/* MAIN MODULES */}
+      <SectionRow title="Módulos Principais" icon={<LayoutGrid className="h-4 w-4 text-gold" />}>
+        {filtered.map((m) => (
+          <ModuleCard key={m.slug} data={m} />
+        ))}
+      </SectionRow>
 
       <p className="mt-10 px-5 pb-4 text-center text-[10px] uppercase tracking-widest text-muted-foreground">
         Instituto Neuroconsciência
