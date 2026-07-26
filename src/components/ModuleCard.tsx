@@ -69,12 +69,26 @@ export function ModuleCard({ data }: { data: ModuleCardData }) {
           </div>
         </div>
 
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-primary shadow-glow">
-            <Play className="h-5 w-5 fill-current text-primary-foreground" />
-          </span>
-        </div>
+        {data.locked ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/65 backdrop-blur-[3px]">
+            <span className="flex h-12 w-12 items-center justify-center rounded-full glass-strong">
+              <Lock className="h-5 w-5 text-gold" />
+            </span>
+            {data.lockLabel && (
+              <span className="rounded-full glass px-3 py-1 text-[10px] uppercase tracking-widest text-foreground/85">
+                {data.lockLabel}
+              </span>
+            )}
+          </div>
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-primary shadow-glow">
+              <Play className="h-5 w-5 fill-current text-primary-foreground" />
+            </span>
+          </div>
+        )}
       </div>
-    </Link>
+    </Wrapper>
+
   );
 }
