@@ -16,6 +16,11 @@ import m5Asset from "@/assets/cover-5.png.asset.json";
 const m5 = m5Asset.url;
 import m6Asset from "@/assets/cover-6.png.asset.json";
 const m6 = m6Asset.url;
+import n7 from "@/assets/novo-7.png.asset.json";
+import n8 from "@/assets/novo-8.png.asset.json";
+import n9 from "@/assets/novo-9.png.asset.json";
+import n10 from "@/assets/novo-10.png.asset.json";
+
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
@@ -28,6 +33,9 @@ export const Route = createFileRoute("/_authenticated/home")({
 });
 
 const COVER_BY_ORDER: Record<number, string> = { 1: m1, 2: m2, 3: m3, 4: m4, 5: m5, 6: m6 };
+
+const NEW_COVERS = [n7.url, n8.url, n9.url, n10.url];
+
 
 const QUOTES = [
   "Pequenas mudanças diárias criam grandes transformações.",
@@ -212,10 +220,10 @@ function HomePage() {
         </div>
       </section>
 
-      {/* NOVOS CONTEÚDOS */}
-      <SectionRow title="Novos Conteúdos" icon={<Sparkles className="h-4 w-4 text-gold" />}>
-        {modules.slice(0, 6).map((m) => (
-          <ModuleCard key={`novo-${m.slug}`} data={m} />
+      {/* NEURO CONSCIÊNCIA */}
+      <SectionRow title="Neuro consciência" icon={<Sparkles className="h-4 w-4 text-gold" />}>
+        {modules.slice(0, 4).map((m, i) => (
+          <ModuleCard key={`novo-${m.slug}`} data={{ ...m, cover_url: NEW_COVERS[i] ?? m.cover_url }} />
         ))}
       </SectionRow>
 
@@ -229,19 +237,13 @@ function HomePage() {
       )}
 
 
-      {/* MY JOURNEY */}
-      <SectionRow title="Minha Jornada" icon={<BookOpen className="h-4 w-4 text-gold" />}>
+      {/* CAMINHO EVOLUTIVO */}
+      <SectionRow title="Caminho evolutivo" icon={<BookOpen className="h-4 w-4 text-gold" />}>
         {(inProgress.length ? inProgress : modules.slice(0, 4)).map((m) => (
           <ModuleCard key={m.slug} data={m} />
         ))}
       </SectionRow>
 
-      {/* MAIN MODULES */}
-      <SectionRow title="Módulos Principais" icon={<LayoutGrid className="h-4 w-4 text-gold" />}>
-        {filtered.map((m) => (
-          <ModuleCard key={m.slug} data={m} />
-        ))}
-      </SectionRow>
 
       <p className="mt-10 px-5 pb-4 text-center text-[10px] uppercase tracking-widest text-muted-foreground">
         Instituto Neuroconsciência
