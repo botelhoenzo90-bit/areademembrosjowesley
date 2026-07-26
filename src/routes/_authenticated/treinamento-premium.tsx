@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Play, Sparkles, Lock, CheckCircle2, Loader2, ChevronRight, Trophy, Clock, Layers } from "lucide-react";
 import heroImg from "@/assets/premium-hero.jpg";
+import { computePremiumLock, PREMIUM_LOCK_DAYS } from "@/lib/premium-lock";
 import l1 from "@/assets/level-1.jpg";
 import l2 from "@/assets/level-2.jpg";
 import l3 from "@/assets/level-3.jpg";
@@ -43,6 +44,7 @@ function PremiumPage() {
   const [lvlProgress, setLvlProgress] = useState<Record<string, LevelProg>>({});
   const [loading, setLoading] = useState(true);
   const [scrollY, setScrollY] = useState(0);
+  const [signupAt, setSignupAt] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY);
@@ -54,6 +56,7 @@ function PremiumPage() {
     (async () => {
       const { data: u } = await supabase.auth.getUser();
       const uid = u.user?.id;
+      setSignupAt(u.user?.created_at ?? null);
       const [{ data: lvls }, { data: wks }] = await Promise.all([
         supabase.from("premium_levels").select("*").order("order_index"),
         supabase.from("premium_workshops").select("*").order("order_index"),
@@ -105,6 +108,40 @@ function PremiumPage() {
 
   if (loading) {
     return <div className="flex min-h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-gold" /></div>;
+  }
+
+  const premiumLock = computePremiumLock(signupAt);
+  if (premiumLock.locked) {
+    return (
+      <main className="relative min-h-screen">
+        <div className="absolute inset-0">
+          <img src={heroImg} alt="Treinamento Premium" className="h-full w-full object-cover opacity-30" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/90 to-background/70" aria-hidden />
+        </div>
+        <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-6 text-center">
+          <span className="flex h-20 w-20 items-center justify-center rounded-full glass-strong border border-gold/40 shadow-glow">
+            <Lock className="h-8 w-8 text-gold" />
+          </span>
+          <h1 className="mt-6 font-display text-3xl text-foreground sm:text-4xl">Treinamento Premium bloqueado</h1>
+          <p className="mt-3 max-w-md text-sm text-muted-foreground">
+            Este módulo é liberado {PREMIUM_LOCK_DAYS} dias após a sua inscrição, para que você construa a base antes da jornada profunda.
+          </p>
+          <p className="mt-6 rounded-full glass px-5 py-2 text-sm text-gold">{premiumLock.label}</p>
+          {premiumLock.unlockAt && (
+            <p className="mt-2 text-xs uppercase tracking-widest text-muted-foreground">
+              Liberação em {premiumLock.unlockAt.toLocaleDateString("pt-BR")} às{" "}
+              {premiumLock.unlockAt.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+            </p>
+          )}
+          <button
+            onClick={() => navigate({ to: "/home" })}
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition hover:brightness-110"
+          >
+            <ArrowLeft className="h-4 w-4" /> Voltar para a Home
+          </button>
+        </div>
+      </main>
+    );
   }
 
   return (
