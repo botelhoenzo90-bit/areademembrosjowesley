@@ -243,8 +243,8 @@ function HomePage() {
 
       {/* MY JOURNEY */}
       <SectionRow title="Caminho Evolutivo" icon={<BookOpen className="h-4 w-4 text-gold" />}>
-        {modules.slice(0, 4).map((m, i) => (
-          <ModuleCard key={m.slug} data={{ ...m, cover_url: JORNADA_COVERS[i] ?? m.cover_url }} />
+        {modules.filter((m) => !m.locked).slice(0, 4).map((m, i) => (
+          <ModuleCard key={m.slug} data={{ ...m, cover_url: JORNADA_COVERS[i] ?? m.cover_url, locked: false, lockLabel: undefined }} />
         ))}
       </SectionRow>
 
