@@ -37,6 +37,14 @@ type Lesson = {
 };
 type Progress = { lesson_id: string; status: string };
 
+function youtubeThumb(url: string | null): string | null {
+  if (!url) return null;
+  const m = url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([A-Za-z0-9_-]{11})/);
+  return m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
+}
+
+
+
 function ModulePage() {
   const { slug } = Route.useParams();
   const navigate = useNavigate();
@@ -241,7 +249,7 @@ function ModulePage() {
             const status = progress[lesson.id] ?? "not_started";
             const isCompleted = status === "completed";
             const inProgress = status === "in_progress";
-            const cover = COVER_BY_ORDER[mod.order_index] ?? m1;
+            const cover = youtubeThumb(lesson.video_url) ?? COVER_BY_ORDER[mod.order_index] ?? m1;
 
             return (
               <article
