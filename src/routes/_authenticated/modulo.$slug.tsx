@@ -241,7 +241,7 @@ function ModulePage() {
             const status = progress[lesson.id] ?? "not_started";
             const isCompleted = status === "completed";
             const inProgress = status === "in_progress";
-            const cover = COVER_BY_ORDER[mod.order_index] ?? m1;
+            const cover = youtubeThumb(lesson.video_url) ?? COVER_BY_ORDER[mod.order_index] ?? m1;
 
             return (
               <article
