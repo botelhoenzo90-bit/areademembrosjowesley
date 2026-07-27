@@ -14,7 +14,7 @@ export type ModuleCardData = {
   lockLabel?: string;
 };
 
-export function ModuleCard({ data }: { data: ModuleCardData }) {
+export function ModuleCard({ data, bare }: { data: ModuleCardData; bare?: boolean }) {
   const status =
     data.locked ? "Bloqueado" :
     data.percent >= 100 ? "Concluído" : data.percent > 0 ? "Em andamento" : "Novo";
@@ -41,33 +41,37 @@ export function ModuleCard({ data }: { data: ModuleCardData }) {
           height={680}
           className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
-        <div className="absolute inset-0 bg-card-fade" aria-hidden />
-        <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
-          <span className="rounded-full glass px-2.5 py-1 text-[10px] uppercase tracking-wider text-foreground/80">
-            {status}
-          </span>
-          {data.percent >= 100 && (
-            <CheckCircle2 className="h-5 w-5 text-gold drop-shadow" />
-          )}
-        </div>
-        <div className="absolute inset-x-0 bottom-0 p-4">
-          <h3 className="font-display text-lg leading-tight text-foreground drop-shadow">
-            {data.name}
-          </h3>
-          <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
-            {data.short_description}
-          </p>
-          <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
-            <span>{data.lessons_count} aulas</span>
-            <span>{data.percent}%</span>
+        {!bare && <div className="absolute inset-0 bg-card-fade" aria-hidden />}
+        {!bare && (
+          <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
+            <span className="rounded-full glass px-2.5 py-1 text-[10px] uppercase tracking-wider text-foreground/80">
+              {status}
+            </span>
+            {data.percent >= 100 && (
+              <CheckCircle2 className="h-5 w-5 text-gold drop-shadow" />
+            )}
           </div>
-          <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-white/10">
-            <div
-              className="h-full bg-gradient-to-r from-[color:var(--primary)] to-[color:var(--gold)] transition-all"
-              style={{ width: `${data.percent}%` }}
-            />
+        )}
+        {!bare && (
+          <div className="absolute inset-x-0 bottom-0 p-4">
+            <h3 className="font-display text-lg leading-tight text-foreground drop-shadow">
+              {data.name}
+            </h3>
+            <p className="mt-1 line-clamp-2 text-xs text-muted-foreground">
+              {data.short_description}
+            </p>
+            <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
+              <span>{data.lessons_count} aulas</span>
+              <span>{data.percent}%</span>
+            </div>
+            <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-white/10">
+              <div
+                className="h-full bg-gradient-to-r from-[color:var(--primary)] to-[color:var(--gold)] transition-all"
+                style={{ width: `${data.percent}%` }}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         {data.locked ? (
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-background/65 backdrop-blur-[3px]">
