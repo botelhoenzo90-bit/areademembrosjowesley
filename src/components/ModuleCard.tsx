@@ -14,7 +14,7 @@ export type ModuleCardData = {
   lockLabel?: string;
 };
 
-export function ModuleCard({ data }: { data: ModuleCardData }) {
+export function ModuleCard({ data, bare }: { data: ModuleCardData; bare?: boolean }) {
   const status =
     data.locked ? "Bloqueado" :
     data.percent >= 100 ? "Concluído" : data.percent > 0 ? "Em andamento" : "Novo";
