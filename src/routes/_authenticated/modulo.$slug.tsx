@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Play, CheckCircle2, Clock, Sparkles, Loader2, ChevronRight, X, MessageCircle } from "lucide-react";
 
 const COMMUNITY_URL = "https://chat.whatsapp.com/HkeVK7E2sVPJiSyrUPV9MN?s=cl&p=a&ilr=0";
+import comunidadeBanner from "@/assets/comunidade-whatsapp.jpeg.asset.json";
 import m1Asset from "@/assets/cover-1.png.asset.json";
 const m1 = m1Asset.url;
 import m2Asset from "@/assets/cover-2.png.asset.json";
@@ -287,7 +288,28 @@ function ModulePage() {
                       {isCompleted && <CheckCircle2 className="h-5 w-5 shrink-0 text-gold" />}
                     </div>
                     <p className="mt-1.5 text-sm text-muted-foreground">{lesson.description}</p>
+                    {/\bcomunidade\b/i.test(lesson.title) && (
+                      <a
+                        href={COMMUNITY_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-4 block overflow-hidden rounded-2xl border border-gold/40 transition hover:brightness-110"
+                      >
+                        <img
+                          src={comunidadeBanner.url}
+                          alt="Comunidade Neuroconsciência no WhatsApp"
+                          className="w-full"
+                          loading="lazy"
+                        />
+                        <span className="flex items-center justify-center gap-2 bg-gold/15 px-4 py-3 text-center text-sm font-semibold uppercase tracking-wide text-gold">
+                          <MessageCircle className="h-4 w-4 shrink-0" />
+                          CLIQUE AQUI E ACESSE A COMUNIDADE NEUROCONSCIÊNCIA (RECEBA AULAS AO VIVO DE
+                          INTELIGÊNCIA EMOCIONAL, FERRAMENTAS E INDICAÇÃO DE LIVROS)
+                        </span>
+                      </a>
+                    )}
                   </div>
+
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span className="inline-flex items-center gap-1.5">
@@ -306,16 +328,7 @@ function ModulePage() {
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      {/\bcomunidade\b/i.test(lesson.title) && (
-                        <a
-                          href={COMMUNITY_URL}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-4 py-2 text-xs font-medium text-gold transition hover:bg-gold/20"
-                        >
-                          <MessageCircle className="h-3.5 w-3.5" /> Entrar na comunidade
-                        </a>
-                      )}
+
                       <button
                         onClick={() => toggleLesson(lesson)}
                         className="rounded-full glass px-3 py-2 text-xs text-foreground transition hover:bg-surface-elevated"
