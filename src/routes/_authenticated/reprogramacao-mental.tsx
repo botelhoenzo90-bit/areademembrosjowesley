@@ -22,13 +22,19 @@ export const Route = createFileRoute("/_authenticated/reprogramacao-mental")({
   component: Page,
 });
 
+function youtubeId(url?: string | null): string | null {
+  if (!url) return null;
+  const m = url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
 type Session = {
   slug: string; title: string; description: string; duration: number;
   cover: string; link?: string | null; status: "disponivel" | "em-breve";
 };
 
 const SESSIONS: Session[] = [
-  { slug: "heroi-interior", title: "HERÓI INTERIOR", description: "Experiência guiada de fortalecimento emocional, redução da procrastinação e nova mentalidade consciente.", duration: 45, cover: s1, link: null, status: "disponivel" },
+  { slug: "heroi-interior", title: "HERÓI INTERIOR", description: "Experiência guiada de fortalecimento emocional, redução da procrastinação e nova mentalidade consciente.", duration: 45, cover: s1, link: "https://youtu.be/Ql3H9jAvDrY", status: "disponivel" },
   { slug: "hipnose-guiada", title: "Hipnose Guiada", description: "Indução profunda para reprogramar padrões limitantes no subconsciente.", duration: 25, cover: s2, status: "em-breve" },
   { slug: "dominio-emocoes", title: "Domínio das Emoções", description: "Reconheça, nomeie e transmute emoções antes que elas conduzam suas decisões.", duration: 20, cover: s3, status: "em-breve" },
   { slug: "autocontrole-avancado", title: "Autocontrole Avançado", description: "Treine sua janela de escolha entre estímulo e resposta.", duration: 22, cover: s4, status: "em-breve" },
@@ -69,16 +75,24 @@ function Page() {
             ← Sair da sessão
           </button>
           <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
-            <div className="animate-pulse-glow flex h-24 w-24 items-center justify-center rounded-full bg-gradient-primary">
-              <Sparkles className="h-10 w-10 text-primary-foreground" />
-            </div>
+            {youtubeId(immersive.link) ? (
+              <div className="w-full overflow-hidden rounded-2xl border border-border bg-black">
+                <iframe
+                  className="aspect-video w-full"
+                  src={`https://www.youtube-nocookie.com/embed/${youtubeId(immersive.link)}?autoplay=1&rel=0&modestbranding=1`}
+                  title={immersive.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            ) : (
+              <div className="animate-pulse-glow flex h-24 w-24 items-center justify-center rounded-full bg-gradient-primary">
+                <Sparkles className="h-10 w-10 text-primary-foreground" />
+              </div>
+            )}
             <h2 className="font-display text-4xl text-foreground">{immersive.title}</h2>
             <p className="max-w-lg text-muted-foreground">{immersive.description}</p>
-            {immersive.link ? (
-              <a href={immersive.link} target="_blank" rel="noreferrer" className="rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background hover:brightness-110">
-                Abrir conteúdo
-              </a>
-            ) : (
+            {!immersive.link && (
               <p className="text-xs uppercase tracking-widest text-muted-foreground">Conteúdo em breve</p>
             )}
             <button onClick={() => { complete(immersive.slug); setImmersive(null); }} className="rounded-full glass-strong px-6 py-3 text-sm text-foreground">
