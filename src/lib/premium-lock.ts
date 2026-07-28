@@ -1,4 +1,4 @@
-export const PREMIUM_LOCK_DAYS = 7;
+export const PREMIUM_LOCK_DAYS = 0;
 
 export function unlockDateFrom(createdAt?: string | null): Date | null {
   if (!createdAt) return null;
@@ -7,9 +7,9 @@ export function unlockDateFrom(createdAt?: string | null): Date | null {
   return new Date(d.getTime() + PREMIUM_LOCK_DAYS * 24 * 60 * 60 * 1000);
 }
 
-export function isLocked(unlockAt: Date | null): boolean {
-  if (!unlockAt) return false;
-  return Date.now() < unlockAt.getTime();
+// Módulo liberado para todos — sem bloqueio por tempo.
+export function isLocked(_unlockAt: Date | null): boolean {
+  return false;
 }
 
 export function countdownLabel(unlockAt: Date | null): string {
