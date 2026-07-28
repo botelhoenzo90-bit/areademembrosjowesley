@@ -242,10 +242,12 @@ function HomePage() {
 
       {/* NOVOS CONTEÚDOS */}
       <SectionRow title="Neuro Consciência" icon={<Sparkles className="h-4 w-4 text-gold" />}>
+        <ModuleCard key="comunidade" data={COMUNIDADE_CARD} />
         {modules.slice(0, 6).map((m) => (
           <ModuleCard key={`novo-${m.slug}`} data={m} />
         ))}
       </SectionRow>
+
 
       {/* CONTINUE WATCHING */}
       {inProgress.length > 0 && (
