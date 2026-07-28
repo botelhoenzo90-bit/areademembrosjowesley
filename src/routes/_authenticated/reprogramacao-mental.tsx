@@ -150,11 +150,10 @@ function Page() {
           <Sparkles className="h-4 w-4 text-gold" />
           <h2 className="font-display text-xl text-foreground">Sua Evolução</h2>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Stat label="Sessões concluídas" value={String(done)} />
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <Stat label="Protocolo concluído" value={done ? "Sim" : "Não"} />
           <Stat label="Dias consecutivos" value="1" />
-          <Stat label="Tempo acumulado" value={`${done * 20}min`} />
-          <Stat label="Próxima sessão" value={SESSIONS.find(s => !completed[s.slug])?.title.slice(0, 12) ?? "—"} />
+          <Stat label="Tempo acumulado" value={`${done * 45}min`} />
         </div>
         <Link to="/home" className="mt-6 inline-flex items-center gap-1.5 text-sm text-gold hover:opacity-80">
           Continuar Jornada <ChevronRight className="h-4 w-4" />
