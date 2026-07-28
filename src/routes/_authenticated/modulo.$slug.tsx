@@ -1,7 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Play, CheckCircle2, Clock, Sparkles, Loader2, ChevronRight, X } from "lucide-react";
+import { ArrowLeft, Play, CheckCircle2, Clock, Sparkles, Loader2, ChevronRight, X, MessageCircle } from "lucide-react";
+
+const COMMUNITY_URL = "https://chat.whatsapp.com/HkeVK7E2sVPJiSyrUPV9MN?s=cl&p=a&ilr=0";
 import m1Asset from "@/assets/cover-1.png.asset.json";
 const m1 = m1Asset.url;
 import m2Asset from "@/assets/cover-2.png.asset.json";
