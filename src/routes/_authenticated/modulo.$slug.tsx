@@ -1,7 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Play, CheckCircle2, Clock, Sparkles, Loader2, ChevronRight, X } from "lucide-react";
+import { ArrowLeft, Play, CheckCircle2, Clock, Sparkles, Loader2, ChevronRight, X, MessageCircle } from "lucide-react";
+
+const COMMUNITY_URL = "https://chat.whatsapp.com/HkeVK7E2sVPJiSyrUPV9MN?s=cl&p=a&ilr=0";
 import m1Asset from "@/assets/cover-1.png.asset.json";
 const m1 = m1Asset.url;
 import m2Asset from "@/assets/cover-2.png.asset.json";
@@ -304,6 +306,16 @@ function ModulePage() {
                       </span>
                     </div>
                     <div className="flex items-center gap-2">
+                      {/\bcomunidade\b/i.test(lesson.title) && (
+                        <a
+                          href={COMMUNITY_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 rounded-full border border-gold/40 bg-gold/10 px-4 py-2 text-xs font-medium text-gold transition hover:bg-gold/20"
+                        >
+                          <MessageCircle className="h-3.5 w-3.5" /> Entrar na comunidade
+                        </a>
+                      )}
                       <button
                         onClick={() => toggleLesson(lesson)}
                         className="rounded-full glass px-3 py-2 text-xs text-foreground transition hover:bg-surface-elevated"
