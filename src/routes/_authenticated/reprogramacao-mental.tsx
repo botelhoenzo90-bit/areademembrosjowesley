@@ -1,14 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Play, Clock, CheckCircle2, Sparkles, Flame, ChevronRight, Plus } from "lucide-react";
+import { ArrowLeft, Play, Clock, Sparkles, Flame, ChevronRight } from "lucide-react";
 import heroAsset from "@/assets/cover-4.png.asset.json";
 const hero = heroAsset.url;
 import s1 from "@/assets/level-1.jpg";
-import s2 from "@/assets/level-2.jpg";
-import s3 from "@/assets/level-3.jpg";
-import s4 from "@/assets/level-4.jpg";
-import s5 from "@/assets/level-5.jpg";
-import s6 from "@/assets/level-6.jpg";
 
 export const Route = createFileRoute("/_authenticated/reprogramacao-mental")({
   head: () => ({
