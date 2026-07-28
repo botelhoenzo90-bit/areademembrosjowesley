@@ -367,6 +367,36 @@ function ModulePage() {
           </Link>
         </section>
       )}
+
+      {/* PLAYER INTERNO */}
+      {playing && youtubeId(playing.video_url) && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/90 p-4 backdrop-blur-md"
+          onClick={() => setPlaying(null)}
+        >
+          <div className="w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-3 flex items-center justify-between gap-4">
+              <h3 className="font-display text-lg text-foreground">{playing.title}</h3>
+              <button
+                onClick={() => setPlaying(null)}
+                aria-label="Fechar"
+                className="flex h-9 w-9 items-center justify-center rounded-full glass text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="aspect-video w-full overflow-hidden rounded-2xl border border-border bg-black shadow-elevated">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${youtubeId(playing.video_url)}?autoplay=1&rel=0&modestbranding=1`}
+                title={playing.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="h-full w-full"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
