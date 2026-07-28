@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowLeft, MessageCircle, Sparkles, BookOpen, Users } from "lucide-react";
+import { ArrowLeft, MessageCircle, Sparkles, BookOpen } from "lucide-react";
 import comunidadeAsset from "@/assets/comunidade-whatsapp.jpeg.asset.json";
 
 const COMMUNITY_URL = "https://chat.whatsapp.com/HkeVK7E2sVPJiSyrUPV9MN?s=cl&p=a&ilr=0";
@@ -80,11 +80,6 @@ function ComunidadePage() {
             icon={<BookOpen className="h-4 w-4 text-gold" />}
             title="Ferramentas e livros"
             text="Indicação de livros, exercícios práticos e materiais de apoio."
-          />
-          <Benefit
-            icon={<Users className="h-4 w-4 text-gold" />}
-            title="Rede de apoio"
-            text="Troca com pessoas que estão na mesma jornada de evolução."
           />
         </ul>
 
