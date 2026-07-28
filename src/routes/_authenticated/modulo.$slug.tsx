@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Play, CheckCircle2, Clock, Sparkles, Loader2, ChevronRight } from "lucide-react";
+import { ArrowLeft, Play, CheckCircle2, Clock, Sparkles, Loader2, ChevronRight, X } from "lucide-react";
 import m1Asset from "@/assets/cover-1.png.asset.json";
 const m1 = m1Asset.url;
 import m2Asset from "@/assets/cover-2.png.asset.json";
@@ -37,10 +37,15 @@ type Lesson = {
 };
 type Progress = { lesson_id: string; status: string };
 
-function youtubeThumb(url: string | null): string | null {
+function youtubeId(url: string | null): string | null {
   if (!url) return null;
   const m = url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([A-Za-z0-9_-]{11})/);
-  return m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : null;
+  return m ? m[1] : null;
+}
+
+function youtubeThumb(url: string | null): string | null {
+  const id = youtubeId(url);
+  return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
 }
 
 
@@ -55,6 +60,7 @@ function ModulePage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [scrollY, setScrollY] = useState(0);
+  const [playing, setPlaying] = useState<Lesson | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY);
@@ -148,6 +154,7 @@ function ModulePage() {
   };
 
   const startLesson = async (lesson: Lesson) => {
+    if (lesson.video_url) setPlaying(lesson);
     if (!userId) return;
     if (progress[lesson.id] !== "completed") {
       setProgress((p) => ({ ...p, [lesson.id]: "in_progress" }));
@@ -158,7 +165,6 @@ function ModulePage() {
       const newCompleted = lessons.filter((l) => progress[l.id] === "completed").length;
       await updateModuleProgress(userId, newCompleted);
     }
-    if (lesson.video_url) window.open(lesson.video_url, "_blank");
   };
 
   const nextModule = mod ? modules.find((m) => m.order_index === mod.order_index + 1) : null;
@@ -360,6 +366,36 @@ function ModulePage() {
             <ChevronRight className="h-4 w-4" />
           </Link>
         </section>
+      )}
+
+      {/* PLAYER INTERNO */}
+      {playing && youtubeId(playing.video_url) && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-background/90 p-4 backdrop-blur-md"
+          onClick={() => setPlaying(null)}
+        >
+          <div className="w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-3 flex items-center justify-between gap-4">
+              <h3 className="font-display text-lg text-foreground">{playing.title}</h3>
+              <button
+                onClick={() => setPlaying(null)}
+                aria-label="Fechar"
+                className="flex h-9 w-9 items-center justify-center rounded-full glass text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="aspect-video w-full overflow-hidden rounded-2xl border border-border bg-black shadow-elevated">
+              <iframe
+                src={`https://www.youtube-nocookie.com/embed/${youtubeId(playing.video_url)}?autoplay=1&rel=0&modestbranding=1`}
+                title={playing.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                className="h-full w-full"
+              />
+            </div>
+          </div>
+        </div>
       )}
     </main>
   );
