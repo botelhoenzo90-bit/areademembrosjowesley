@@ -153,6 +153,7 @@ function ModulePage() {
   };
 
   const startLesson = async (lesson: Lesson) => {
+    if (lesson.video_url) setPlaying(lesson);
     if (!userId) return;
     if (progress[lesson.id] !== "completed") {
       setProgress((p) => ({ ...p, [lesson.id]: "in_progress" }));
@@ -163,7 +164,6 @@ function ModulePage() {
       const newCompleted = lessons.filter((l) => progress[l.id] === "completed").length;
       await updateModuleProgress(userId, newCompleted);
     }
-    if (lesson.video_url) window.open(lesson.video_url, "_blank");
   };
 
   const nextModule = mod ? modules.find((m) => m.order_index === mod.order_index + 1) : null;
