@@ -1,14 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Play, Clock, CheckCircle2, Sparkles, Flame, ChevronRight, Plus } from "lucide-react";
+import { ArrowLeft, Play, Clock, Sparkles, Flame, ChevronRight } from "lucide-react";
 import heroAsset from "@/assets/cover-4.png.asset.json";
 const hero = heroAsset.url;
 import s1 from "@/assets/level-1.jpg";
-import s2 from "@/assets/level-2.jpg";
-import s3 from "@/assets/level-3.jpg";
-import s4 from "@/assets/level-4.jpg";
-import s5 from "@/assets/level-5.jpg";
-import s6 from "@/assets/level-6.jpg";
 
 export const Route = createFileRoute("/_authenticated/reprogramacao-mental")({
   head: () => ({
@@ -35,12 +30,6 @@ type Session = {
 
 const SESSIONS: Session[] = [
   { slug: "heroi-interior", title: "HERÓI INTERIOR", description: "Experiência guiada de fortalecimento emocional, redução da procrastinação e nova mentalidade consciente.", duration: 45, cover: s1, link: "https://youtu.be/Ql3H9jAvDrY", status: "disponivel" },
-  { slug: "hipnose-guiada", title: "Hipnose Guiada", description: "Indução profunda para reprogramar padrões limitantes no subconsciente.", duration: 25, cover: s2, status: "em-breve" },
-  { slug: "dominio-emocoes", title: "Domínio das Emoções", description: "Reconheça, nomeie e transmute emoções antes que elas conduzam suas decisões.", duration: 20, cover: s3, status: "em-breve" },
-  { slug: "autocontrole-avancado", title: "Autocontrole Avançado", description: "Treine sua janela de escolha entre estímulo e resposta.", duration: 22, cover: s4, status: "em-breve" },
-  { slug: "gestao-conflitos", title: "Gestão de Conflitos", description: "Resolva tensões com clareza mental e maturidade emocional.", duration: 18, cover: s5, status: "em-breve" },
-  { slug: "comunicacao-consciente", title: "Comunicação Consciente", description: "Fale com verdade, escute com presença.", duration: 20, cover: s6, status: "em-breve" },
-  { slug: "lideranca-exemplo", title: "Liderança pelo Exemplo", description: "Torne-se referência através de ações coerentes com sua nova identidade.", duration: 24, cover: s1, status: "em-breve" },
 ];
 
 function Page() {
@@ -125,7 +114,6 @@ function Page() {
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> {totalMin} min</span>
-            <span>{done}/{SESSIONS.length} sessões</span>
             <span>{percent}% concluído</span>
           </div>
           <div className="mt-3 h-1 w-full max-w-md rounded-full bg-surface-elevated">
@@ -153,47 +141,8 @@ function Page() {
         </div>
       </section>
 
-      {/* Sessões */}
-      <section className="mx-4 mt-10">
-        <h2 className="mb-4 font-display text-2xl text-foreground">Sessões</h2>
-        <div className="space-y-3">
-          {SESSIONS.slice(1).map((s, i) => (
-            <div key={s.slug} className="group flex gap-4 rounded-2xl border border-border glass p-3 transition-all hover:shadow-elevated">
-              <div className="relative h-24 w-40 flex-shrink-0 overflow-hidden rounded-xl">
-                <img src={s.cover} alt={s.title} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-                <span className="absolute left-2 top-2 rounded-full bg-background/70 px-2 py-0.5 text-[10px] font-medium text-foreground">
-                  Ep. {i + 2}
-                </span>
-              </div>
-              <div className="flex flex-1 flex-col justify-between py-1">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-display text-lg text-foreground">{s.title}</h3>
-                    {completed[s.slug] && <CheckCircle2 className="h-4 w-4 text-gold" />}
-                  </div>
-                  <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{s.description}</p>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="inline-flex items-center gap-1 text-muted-foreground">
-                    <Clock className="h-3 w-3" /> {s.duration} min
-                  </span>
-                  <div className="flex items-center gap-2">
-                    {!s.link && (
-                      <button className="inline-flex items-center gap-1 rounded-full glass px-2.5 py-1 text-[10px] text-muted-foreground">
-                        <Plus className="h-3 w-3" /> Adicionar Link
-                      </button>
-                    )}
-                    <button onClick={() => setImmersive(s)} className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1.5 text-[11px] font-medium text-background hover:brightness-110">
-                      <Play className="h-3 w-3 fill-current" /> Assistir
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+
+
 
       {/* Evolução */}
       <section className="mx-4 mt-10 rounded-3xl border border-border glass p-6">
@@ -201,11 +150,10 @@ function Page() {
           <Sparkles className="h-4 w-4 text-gold" />
           <h2 className="font-display text-xl text-foreground">Sua Evolução</h2>
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <Stat label="Sessões concluídas" value={String(done)} />
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <Stat label="Protocolo concluído" value={done ? "Sim" : "Não"} />
           <Stat label="Dias consecutivos" value="1" />
-          <Stat label="Tempo acumulado" value={`${done * 20}min`} />
-          <Stat label="Próxima sessão" value={SESSIONS.find(s => !completed[s.slug])?.title.slice(0, 12) ?? "—"} />
+          <Stat label="Tempo acumulado" value={`${done * 45}min`} />
         </div>
         <Link to="/home" className="mt-6 inline-flex items-center gap-1.5 text-sm text-gold hover:opacity-80">
           Continuar Jornada <ChevronRight className="h-4 w-4" />
