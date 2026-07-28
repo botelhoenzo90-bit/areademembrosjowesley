@@ -37,7 +37,7 @@ const COMUNIDADE_CARD: ModuleCardData = {
   percent: 0,
   accent_from: null,
   accent_to: null,
-  href: "https://chat.whatsapp.com/HkeVK7E2sVPJiSyrUPV9MN?s=cl&p=a&ilr=0",
+  to: "/comunidade",
 };
 
 

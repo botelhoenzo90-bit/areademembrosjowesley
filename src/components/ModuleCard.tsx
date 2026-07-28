@@ -13,6 +13,7 @@ export type ModuleCardData = {
   locked?: boolean;
   lockLabel?: string;
   href?: string;
+  to?: string;
 };
 
 export function ModuleCard({ data, bare }: { data: ModuleCardData; bare?: boolean }) {
@@ -26,6 +27,8 @@ export function ModuleCard({ data, bare }: { data: ModuleCardData; bare?: boolea
   const Wrapper = ({ children }: { children: React.ReactNode }) =>
     data.locked ? (
       <div className={`${cardClass} cursor-not-allowed`} aria-disabled>{children}</div>
+    ) : data.to ? (
+      <Link to={data.to} className={cardClass}>{children}</Link>
     ) : data.href ? (
       <a href={data.href} target="_blank" rel="noopener noreferrer" className={cardClass}>{children}</a>
     ) : (
