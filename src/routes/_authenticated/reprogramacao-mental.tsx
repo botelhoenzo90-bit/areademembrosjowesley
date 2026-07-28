@@ -69,16 +69,24 @@ function Page() {
             ← Sair da sessão
           </button>
           <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
-            <div className="animate-pulse-glow flex h-24 w-24 items-center justify-center rounded-full bg-gradient-primary">
-              <Sparkles className="h-10 w-10 text-primary-foreground" />
-            </div>
+            {youtubeId(immersive.link) ? (
+              <div className="w-full overflow-hidden rounded-2xl border border-border bg-black">
+                <iframe
+                  className="aspect-video w-full"
+                  src={`https://www.youtube-nocookie.com/embed/${youtubeId(immersive.link)}?autoplay=1&rel=0&modestbranding=1`}
+                  title={immersive.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            ) : (
+              <div className="animate-pulse-glow flex h-24 w-24 items-center justify-center rounded-full bg-gradient-primary">
+                <Sparkles className="h-10 w-10 text-primary-foreground" />
+              </div>
+            )}
             <h2 className="font-display text-4xl text-foreground">{immersive.title}</h2>
             <p className="max-w-lg text-muted-foreground">{immersive.description}</p>
-            {immersive.link ? (
-              <a href={immersive.link} target="_blank" rel="noreferrer" className="rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background hover:brightness-110">
-                Abrir conteúdo
-              </a>
-            ) : (
+            {!immersive.link && (
               <p className="text-xs uppercase tracking-widest text-muted-foreground">Conteúdo em breve</p>
             )}
             <button onClick={() => { complete(immersive.slug); setImmersive(null); }} className="rounded-full glass-strong px-6 py-3 text-sm text-foreground">
