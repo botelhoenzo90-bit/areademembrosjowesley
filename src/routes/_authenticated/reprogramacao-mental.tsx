@@ -30,12 +30,6 @@ type Session = {
 
 const SESSIONS: Session[] = [
   { slug: "heroi-interior", title: "HERÓI INTERIOR", description: "Experiência guiada de fortalecimento emocional, redução da procrastinação e nova mentalidade consciente.", duration: 45, cover: s1, link: "https://youtu.be/Ql3H9jAvDrY", status: "disponivel" },
-  { slug: "hipnose-guiada", title: "Hipnose Guiada", description: "Indução profunda para reprogramar padrões limitantes no subconsciente.", duration: 25, cover: s2, status: "em-breve" },
-  { slug: "dominio-emocoes", title: "Domínio das Emoções", description: "Reconheça, nomeie e transmute emoções antes que elas conduzam suas decisões.", duration: 20, cover: s3, status: "em-breve" },
-  { slug: "autocontrole-avancado", title: "Autocontrole Avançado", description: "Treine sua janela de escolha entre estímulo e resposta.", duration: 22, cover: s4, status: "em-breve" },
-  { slug: "gestao-conflitos", title: "Gestão de Conflitos", description: "Resolva tensões com clareza mental e maturidade emocional.", duration: 18, cover: s5, status: "em-breve" },
-  { slug: "comunicacao-consciente", title: "Comunicação Consciente", description: "Fale com verdade, escute com presença.", duration: 20, cover: s6, status: "em-breve" },
-  { slug: "lideranca-exemplo", title: "Liderança pelo Exemplo", description: "Torne-se referência através de ações coerentes com sua nova identidade.", duration: 24, cover: s1, status: "em-breve" },
 ];
 
 function Page() {
