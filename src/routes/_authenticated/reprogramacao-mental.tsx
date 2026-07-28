@@ -148,47 +148,8 @@ function Page() {
         </div>
       </section>
 
-      {/* Sessões */}
-      <section className="mx-4 mt-10">
-        <h2 className="mb-4 font-display text-2xl text-foreground">Sessões</h2>
-        <div className="space-y-3">
-          {SESSIONS.slice(1).map((s, i) => (
-            <div key={s.slug} className="group flex gap-4 rounded-2xl border border-border glass p-3 transition-all hover:shadow-elevated">
-              <div className="relative h-24 w-40 flex-shrink-0 overflow-hidden rounded-xl">
-                <img src={s.cover} alt={s.title} className="h-full w-full object-cover transition-transform group-hover:scale-105" />
-                <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
-                <span className="absolute left-2 top-2 rounded-full bg-background/70 px-2 py-0.5 text-[10px] font-medium text-foreground">
-                  Ep. {i + 2}
-                </span>
-              </div>
-              <div className="flex flex-1 flex-col justify-between py-1">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-display text-lg text-foreground">{s.title}</h3>
-                    {completed[s.slug] && <CheckCircle2 className="h-4 w-4 text-gold" />}
-                  </div>
-                  <p className="mt-0.5 line-clamp-2 text-xs text-muted-foreground">{s.description}</p>
-                </div>
-                <div className="flex items-center justify-between text-xs">
-                  <span className="inline-flex items-center gap-1 text-muted-foreground">
-                    <Clock className="h-3 w-3" /> {s.duration} min
-                  </span>
-                  <div className="flex items-center gap-2">
-                    {!s.link && (
-                      <button className="inline-flex items-center gap-1 rounded-full glass px-2.5 py-1 text-[10px] text-muted-foreground">
-                        <Plus className="h-3 w-3" /> Adicionar Link
-                      </button>
-                    )}
-                    <button onClick={() => setImmersive(s)} className="inline-flex items-center gap-1.5 rounded-full bg-foreground px-3 py-1.5 text-[11px] font-medium text-background hover:brightness-110">
-                      <Play className="h-3 w-3 fill-current" /> Assistir
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+
+
 
       {/* Evolução */}
       <section className="mx-4 mt-10 rounded-3xl border border-border glass p-6">
