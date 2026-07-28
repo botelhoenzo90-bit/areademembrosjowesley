@@ -60,6 +60,7 @@ function ModulePage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [scrollY, setScrollY] = useState(0);
+  const [playing, setPlaying] = useState<Lesson | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY);
