@@ -25,6 +25,22 @@ import j4Asset from "@/assets/jornada-4.png.asset.json";
 
 const JORNADA_COVERS = [j1Asset.url, j2Asset.url, j3Asset.url, j4Asset.url];
 
+import comunidadeAsset from "@/assets/comunidade-whatsapp.jpeg.asset.json";
+
+const COMUNIDADE_CARD: ModuleCardData = {
+  slug: "comunidade-neuroconsciencia",
+  name: "Comunidade Neuroconsciência",
+  short_description:
+    "Clique aqui e entre no grupo: aulas ao vivo de inteligência emocional, ferramentas e indicação de livros.",
+  cover_url: comunidadeAsset.url,
+  lessons_count: 0,
+  percent: 0,
+  accent_from: null,
+  accent_to: null,
+  href: "https://chat.whatsapp.com/HkeVK7E2sVPJiSyrUPV9MN?s=cl&p=a&ilr=0",
+};
+
+
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
