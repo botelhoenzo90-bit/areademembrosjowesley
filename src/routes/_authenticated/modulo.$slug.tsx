@@ -287,7 +287,28 @@ function ModulePage() {
                       {isCompleted && <CheckCircle2 className="h-5 w-5 shrink-0 text-gold" />}
                     </div>
                     <p className="mt-1.5 text-sm text-muted-foreground">{lesson.description}</p>
+                    {/\bcomunidade\b/i.test(lesson.title) && (
+                      <a
+                        href={COMMUNITY_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-4 block overflow-hidden rounded-2xl border border-gold/40 transition hover:brightness-110"
+                      >
+                        <img
+                          src={comunidadeBanner.url}
+                          alt="Comunidade Neuroconsciência no WhatsApp"
+                          className="w-full"
+                          loading="lazy"
+                        />
+                        <span className="flex items-center justify-center gap-2 bg-gold/15 px-4 py-3 text-center text-sm font-semibold uppercase tracking-wide text-gold">
+                          <MessageCircle className="h-4 w-4 shrink-0" />
+                          CLIQUE AQUI E ACESSE A COMUNIDADE NEUROCONSCIÊNCIA (RECEBA AULAS AO VIVO DE
+                          INTELIGÊNCIA EMOCIONAL, FERRAMENTAS E INDICAÇÃO DE LIVROS)
+                        </span>
+                      </a>
+                    )}
                   </div>
+
                   <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-4 text-xs text-muted-foreground">
                       <span className="inline-flex items-center gap-1.5">
