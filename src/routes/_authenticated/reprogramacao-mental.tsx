@@ -114,7 +114,7 @@ function Page() {
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
             <span className="inline-flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" /> {totalMin} min</span>
-            <span>{done}/{SESSIONS.length} sessões</span>
+            <span>{percent}% concluído</span>
             <span>{percent}% concluído</span>
           </div>
           <div className="mt-3 h-1 w-full max-w-md rounded-full bg-surface-elevated">
