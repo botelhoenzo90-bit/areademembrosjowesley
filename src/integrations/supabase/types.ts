@@ -374,6 +374,84 @@ export type Database = {
         }
         Relationships: []
       }
+      psalm_studies: {
+        Row: {
+          affirmation: string
+          application: string
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          cycle: number
+          decoding: string
+          exercises: Json
+          exercises_done: Json
+          favorite: boolean
+          id: string
+          mission: string
+          notes: string
+          prayer: string
+          psalm_number: number
+          psalm_text: string
+          reflection: Json
+          study_date: string
+          subtitle: string
+          theme: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          affirmation?: string
+          application?: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          cycle?: number
+          decoding?: string
+          exercises?: Json
+          exercises_done?: Json
+          favorite?: boolean
+          id?: string
+          mission?: string
+          notes?: string
+          prayer?: string
+          psalm_number: number
+          psalm_text?: string
+          reflection?: Json
+          study_date: string
+          subtitle?: string
+          theme?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          affirmation?: string
+          application?: string
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          cycle?: number
+          decoding?: string
+          exercises?: Json
+          exercises_done?: Json
+          favorite?: boolean
+          id?: string
+          mission?: string
+          notes?: string
+          prayer?: string
+          psalm_number?: number
+          psalm_text?: string
+          reflection?: Json
+          study_date?: string
+          subtitle?: string
+          theme?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_lesson_progress: {
         Row: {
           completed_at: string | null
