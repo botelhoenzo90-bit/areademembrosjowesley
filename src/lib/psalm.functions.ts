@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { createLovableAiGatewayProvider } from "@/lib/ai-gateway.server";
-import { generateText, Output, NoObjectGeneratedError } from "ai";
+import { generateObject, NoObjectGeneratedError } from "ai";
 import { z } from "zod";
 
 const StudySchema = z.object({
@@ -89,12 +89,12 @@ Somando decoding + application + reflection, o conteúdo deve ter aproximadament
 
     let study: Study;
     try {
-      const { output } = await generateText({
+      const { object } = await generateObject({
         model: gateway("google/gemini-3.6-flash"),
-        output: Output.object({ schema: StudySchema }),
+        schema: StudySchema,
         prompt,
       });
-      study = output as Study;
+      study = object as Study;
     } catch (error) {
       if (NoObjectGeneratedError.isInstance(error) && error.text) {
         const cleaned = error.text.replace(/```json|```/g, "").trim();
