@@ -5,9 +5,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  Send, Plus, MessageSquare, Target, Dumbbell, ClipboardList, Sparkles,
+  BookOpen, History, Send, Plus, MessageSquare, Target, Dumbbell, ClipboardList, Sparkles,
   Loader2, Trash2, CheckCircle2, Circle, Clock,
 } from "lucide-react";
+import { SalmoDoDiaPanel, MinhaJornadaPanel } from "@/components/SalmoDoDia";
 import heroImgAsset from "@/assets/cover-2.png.asset.json";
 const heroImg = heroImgAsset.url;
 
@@ -22,7 +23,7 @@ export const Route = createFileRoute("/_authenticated/centro-operacional")({
   component: CentroOperacional,
 });
 
-type Tab = "chat" | "missoes" | "exercicios" | "plano";
+type Tab = "salmo" | "jornada" | "chat" | "missoes" | "exercicios" | "plano";
 
 const QUICK_SUGGESTIONS = [
   "Tirar dúvidas sobre uma aula",
@@ -43,7 +44,7 @@ const EXERCISE_THEMES = [
 ];
 
 function CentroOperacional() {
-  const [tab, setTab] = useState<Tab>("chat");
+  const [tab, setTab] = useState<Tab>("salmo");
 
   return (
     <main className="relative min-h-screen">
@@ -71,6 +72,8 @@ function CentroOperacional() {
       {/* TABS */}
       <nav className="sticky top-0 z-30 mt-6 border-b border-border bg-background/85 backdrop-blur">
         <div className="mx-auto flex max-w-4xl gap-1 overflow-x-auto px-3 py-3 sm:gap-2">
+          <TabBtn active={tab === "salmo"} onClick={() => setTab("salmo")} icon={<BookOpen className="h-4 w-4" />}>Salmo do Dia</TabBtn>
+          <TabBtn active={tab === "jornada"} onClick={() => setTab("jornada")} icon={<History className="h-4 w-4" />}>Minha Jornada</TabBtn>
           <TabBtn active={tab === "chat"} onClick={() => setTab("chat")} icon={<MessageSquare className="h-4 w-4" />}>Mentor</TabBtn>
           <TabBtn active={tab === "missoes"} onClick={() => setTab("missoes")} icon={<Target className="h-4 w-4" />}>Missões</TabBtn>
           <TabBtn active={tab === "exercicios"} onClick={() => setTab("exercicios")} icon={<Dumbbell className="h-4 w-4" />}>Exercícios</TabBtn>
@@ -79,6 +82,8 @@ function CentroOperacional() {
       </nav>
 
       <div className="mx-auto max-w-4xl px-3 pb-8 sm:px-6">
+        {tab === "salmo" && <SalmoDoDiaPanel />}
+        {tab === "jornada" && <MinhaJornadaPanel />}
         {tab === "chat" && <ChatPanel />}
         {tab === "missoes" && <MissoesPanel />}
         {tab === "exercicios" && <ExerciciosPanel />}
