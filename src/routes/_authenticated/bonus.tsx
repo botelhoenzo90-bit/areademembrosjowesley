@@ -26,10 +26,6 @@ const BONUSES: Bonus[] = [
   { id: 1, title: "Aplicativo — Caminhos de Jesus", description: "Ferramenta complementar para expandir sua jornada espiritual.", image: b1, status: "Disponível", link: "https://caminhosdejesus.lovable.app/" },
   { id: 2, title: "Aplicativo — Mind Reforge Pro", description: "Recurso cinematográfico de suporte à sua transformação mental.", image: b2, status: "Disponível", link: "https://mind-reforge-pro.lovable.app/painel" },
   { id: 3, title: "Aplicativo — Inner Fortress", description: "Experiência premium de reforço e proteção mental.", image: b3, status: "Disponível", link: "https://inner-fortress-mind-forge.lovable.app/" },
-  { id: 4, title: "Bônus 4 — Aplicativo Exclusivo", description: "Conteúdo bônus reservado a membros.", image: b4, status: "Em breve", link: null },
-  { id: 5, title: "Bônus 5 — Aplicativo Exclusivo", description: "Ferramenta prática para o dia a dia.", image: b5, status: "Em breve", link: null },
-  { id: 6, title: "Bônus 6 — Aplicativo Exclusivo", description: "Acesso antecipado a novos recursos.", image: b6, status: "Bloqueado", link: null },
-  { id: 7, title: "Bônus 7 — Aplicativo Exclusivo", description: "Presente reservado para a próxima fase da jornada.", image: b7, status: "Bloqueado", link: null },
 ];
 
 const STATUS_STYLE: Record<Status, string> = {
