@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Play, Sparkles, Lock, CheckCircle2, Loader2, ChevronRight, Trophy, Clock, Layers } from "lucide-react";
+import { ArrowLeft, Play, Sparkles, Lock, CheckCircle2, Loader2, ChevronRight, Trophy, Clock, Layers, X } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { unlockDateFrom, isLocked, countdownLabel, PREMIUM_LOCK_DAYS } from "@/lib/premium-lock";
 
 import heroImg from "@/assets/premium-hero.jpg";
@@ -37,6 +38,12 @@ type Level = {
 type Workshop = { id: string; level_id: string; order_index: number; title: string; duration_minutes: number; video_url: string | null };
 type LevelProg = { level_id: string; percent: number; workshops_completed: number };
 
+function youtubeId(url: string | null): string | null {
+  if (!url) return null;
+  const m = url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
 function PremiumPage() {
   const navigate = useNavigate();
   const [levels, setLevels] = useState<Level[]>([]);
@@ -47,6 +54,7 @@ function PremiumPage() {
   const [scrollY, setScrollY] = useState(0);
   const [unlockAt, setUnlockAt] = useState<Date | null>(null);
   const [now, setNow] = useState(() => Date.now());
+  const [playing, setPlaying] = useState<Workshop | null>(null);
 
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 60000);
@@ -113,6 +121,21 @@ function PremiumPage() {
     if (!prev) return true;
     const p = lvlProgress[prev.id];
     return (p?.percent ?? 0) >= 100;
+  };
+
+  const startWorkshop = async (ws: Workshop) => {
+    if (ws.video_url) setPlaying(ws);
+    const { data: u } = await supabase.auth.getUser();
+    const uid = u.user?.id;
+    if (!uid) return;
+
+    if (wsProgress[ws.id] !== "completed") {
+      setWsProgress((p) => ({ ...p, [ws.id]: "in_progress" }));
+      await supabase.from("user_workshop_progress").upsert(
+        { user_id: uid, workshop_id: ws.id, status: "in_progress" },
+        { onConflict: "user_id,workshop_id" }
+      );
+    }
   };
 
   if (loading) {
@@ -196,11 +219,11 @@ function PremiumPage() {
         </div>
         {nextWorkshop && (
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link to="/treinamento-premium/nivel/$slug" params={{ slug: nextWorkshop.level.slug }}
-              className="inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition hover:brightness-110 active:scale-95">
+            <button onClick={() => nextWorkshop && startWorkshop(nextWorkshop.workshop)}
+              className="inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition hover:brightness-110 active:scale-95 cursor-pointer">
               <Play className="h-4 w-4 fill-current" />
-              {stats.completedWs === 0 ? "Continuar Jornada" : "Continuar Jornada"}
-            </Link>
+              {stats.completedWs === 0 ? "Começar Jornada" : "Continuar Jornada"}
+            </button>
             <Link to="/treinamento-premium/nivel/$slug" params={{ slug: nextWorkshop.level.slug }}
               className="inline-flex items-center gap-2 rounded-full glass px-6 py-3 text-sm font-medium text-foreground transition hover:bg-surface-elevated">
               Retomar último episódio
@@ -326,6 +349,32 @@ function PremiumPage() {
           </div>
         )}
       </section>
+
+      {/* VIDEO PLAYER MODAL */}
+      <Dialog open={!!playing} onOpenChange={(open) => !open && setPlaying(null)}>
+        <DialogContent className="max-w-5xl border-none bg-transparent p-0 shadow-none sm:rounded-none">
+          <DialogHeader className="sr-only">
+            <DialogTitle>{playing?.title}</DialogTitle>
+          </DialogHeader>
+          <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black shadow-2xl">
+            {playing && (
+              <iframe
+                src={`https://www.youtube.com/embed/${youtubeId(playing.video_url)}?autoplay=1&rel=0`}
+                title={playing.title}
+                className="h-full w-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            )}
+            <button
+              onClick={() => setPlaying(null)}
+              className="absolute right-4 top-4 z-50 rounded-full bg-black/50 p-2 text-white/70 backdrop-blur-md transition hover:bg-black/70 hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }

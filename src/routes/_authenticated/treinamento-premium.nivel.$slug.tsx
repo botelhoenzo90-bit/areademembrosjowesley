@@ -1,7 +1,8 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Play, CheckCircle2, Loader2, Clock, Sparkles, ChevronRight, Trophy, LinkIcon } from "lucide-react";
+import { ArrowLeft, Play, CheckCircle2, Loader2, Clock, Sparkles, ChevronRight, Trophy, LinkIcon, X } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import l1 from "@/assets/level-1.jpg";
 import l2 from "@/assets/level-2.jpg";
 import l3 from "@/assets/level-3.jpg";
@@ -44,6 +45,7 @@ function LevelPage() {
   const [celebrate, setCelebrate] = useState(false);
   const [linkModal, setLinkModal] = useState<Workshop | null>(null);
   const [linkValue, setLinkValue] = useState("");
+  const [playing, setPlaying] = useState<Workshop | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrollY(window.scrollY);
@@ -114,6 +116,7 @@ function LevelPage() {
   };
 
   const startWorkshop = async (ws: Workshop) => {
+    if (ws.video_url) setPlaying(ws);
     if (!userId) return;
     if (progress[ws.id] !== "completed") {
       setProgress((p) => ({ ...p, [ws.id]: "in_progress" }));
@@ -123,9 +126,18 @@ function LevelPage() {
       const done = workshops.filter((w) => progress[w.id] === "completed").length;
       await updateLevelProgress(userId, done);
     }
-    if (ws.video_url) window.open(ws.video_url, "_blank");
-    else setLinkModal(ws);
   };
+
+  function youtubeId(url: string | null): string | null {
+    if (!url) return null;
+    const m = url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([A-Za-z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+
+  function youtubeThumb(url: string | null): string | null {
+    const id = youtubeId(url);
+    return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
+  }
 
   const saveLink = async () => {
     if (!linkModal || !linkValue.trim()) return;
@@ -204,7 +216,7 @@ function LevelPage() {
               <article key={ws.id}
                 className="group flex flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-all hover:border-gold/40 hover:shadow-glow sm:flex-row">
                 <div className="relative aspect-video w-full shrink-0 overflow-hidden sm:w-60">
-                  <img src={cover} alt={ws.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <img src={youtubeThumb(ws.video_url) ?? cover} alt={ws.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                   <span className="absolute left-3 top-3 rounded-full glass px-2 py-0.5 text-[10px] font-medium tracking-widest text-gold">
                     EP {String(ws.order_index).padStart(2, "0")}
@@ -320,6 +332,32 @@ function LevelPage() {
           </Link>
         </section>
       )}
+
+      {/* VIDEO PLAYER MODAL */}
+      <Dialog open={!!playing} onOpenChange={(open) => !open && setPlaying(null)}>
+        <DialogContent className="max-w-5xl border-none bg-transparent p-0 shadow-none sm:rounded-none">
+          <DialogHeader className="sr-only">
+            <DialogTitle>{playing?.title}</DialogTitle>
+          </DialogHeader>
+          <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black shadow-2xl">
+            {playing && (
+              <iframe
+                src={`https://www.youtube.com/embed/${youtubeId(playing.video_url)}?autoplay=1&rel=0`}
+                title={playing.title}
+                className="h-full w-full border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            )}
+            <button
+              onClick={() => setPlaying(null)}
+              className="absolute right-4 top-4 z-50 rounded-full bg-black/50 p-2 text-white/70 backdrop-blur-md transition hover:bg-black/70 hover:text-white"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
   );
 }
