@@ -27,9 +27,9 @@ type Status = "Disponível" | "Em breve" | "Bloqueado" | "Novo" | "Atualizado";
 type Bonus = { id: number; title: string; description: string; image: string; status: Status; link: string | null };
 
 const BONUSES: Bonus[] = [
-  { id: 1, title: "Bônus 1 — Aplicativo Exclusivo", description: "Ferramenta complementar para expandir sua jornada.", image: b1, status: "Novo", link: null },
-  { id: 2, title: "Bônus 2 — Aplicativo Exclusivo", description: "Recurso cinematográfico de suporte à sua transformação.", image: b2, status: "Disponível", link: null },
-  { id: 3, title: "Bônus 3 — Aplicativo Exclusivo", description: "Experiência premium de reforço mental.", image: b3, status: "Atualizado", link: null },
+  { id: 1, title: "Aplicativo — Caminhos de Jesus", description: "Ferramenta complementar para expandir sua jornada espiritual.", image: b1, status: "Disponível", link: "https://caminhosdejesus.lovable.app/" },
+  { id: 2, title: "Aplicativo — Mind Reforge Pro", description: "Recurso cinematográfico de suporte à sua transformação mental.", image: b2, status: "Disponível", link: "https://mind-reforge-pro.lovable.app/painel" },
+  { id: 3, title: "Aplicativo — Inner Fortress", description: "Experiência premium de reforço e proteção mental.", image: b3, status: "Disponível", link: "https://inner-fortress-mind-forge.lovable.app/" },
   { id: 4, title: "Bônus 4 — Aplicativo Exclusivo", description: "Conteúdo bônus reservado a membros.", image: b4, status: "Em breve", link: null },
   { id: 5, title: "Bônus 5 — Aplicativo Exclusivo", description: "Ferramenta prática para o dia a dia.", image: b5, status: "Em breve", link: null },
   { id: 6, title: "Bônus 6 — Aplicativo Exclusivo", description: "Acesso antecipado a novos recursos.", image: b6, status: "Bloqueado", link: null },
