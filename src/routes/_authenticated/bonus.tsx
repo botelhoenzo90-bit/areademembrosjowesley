@@ -6,10 +6,6 @@ const hero = heroAsset.url;
 import b1 from "@/assets/level-1.jpg";
 import b2 from "@/assets/level-2.jpg";
 import b3 from "@/assets/level-3.jpg";
-import b4 from "@/assets/level-4.jpg";
-import b5 from "@/assets/level-5.jpg";
-import b6 from "@/assets/level-6.jpg";
-import b7 from "@/assets/level-7.jpg";
 
 export const Route = createFileRoute("/_authenticated/bonus")({
   head: () => ({
