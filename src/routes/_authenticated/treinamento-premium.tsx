@@ -178,22 +178,11 @@ function PremiumPage() {
 
   return (
     <main className="relative">
-      {/* HERO / OPENING VIDEO */}
+      {/* HERO SECTION */}
       <header className="relative h-[85vh] min-h-[600px] overflow-hidden">
-        {nextWorkshop?.workshop.order_index === 0 ? (
-          <div className="absolute inset-0 z-0">
-            <iframe
-              src={`https://www.youtube.com/embed/${youtubeId(nextWorkshop.workshop.video_url)}?autoplay=1&mute=1&loop=1&playlist=${youtubeId(nextWorkshop.workshop.video_url)}&controls=0&rel=0&modestbranding=1`}
-              className="h-full w-full object-cover scale-150 pointer-events-none opacity-60"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-          </div>
-        ) : (
-          <div className="absolute inset-0 will-change-transform" style={{ transform: `translateY(${scrollY * 0.4}px) scale(1.15)` }}>
-            <img src={heroImg} alt="Treinamento Premium" className="h-full w-full object-cover" />
-          </div>
-        )}
+        <div className="absolute inset-0 will-change-transform" style={{ transform: `translateY(${scrollY * 0.4}px) scale(1.15)` }}>
+          <img src={heroImg} alt="Treinamento Premium" className="h-full w-full object-cover" />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/85 to-background/30" aria-hidden />
         <div className="absolute inset-0 bg-vignette" aria-hidden />
 
@@ -203,19 +192,11 @@ function PremiumPage() {
         </button>
 
         <div className="absolute inset-x-0 bottom-0 z-10 p-6 sm:p-12">
-          {nextWorkshop?.workshop.order_index === 0 && (
-            <button 
-              onClick={() => startWorkshop(nextWorkshop.workshop)}
-              className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-gold shadow-glow transition-transform hover:scale-110 active:scale-95 cursor-pointer"
-            >
-              <Play className="h-8 w-8 fill-background text-background" />
-            </button>
-          )}
           <span className="mb-4 inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-[10px] uppercase tracking-[0.25em] text-gold">
             <Sparkles className="h-3 w-3" /> Módulo Principal · 7 Temporadas
           </span>
           <h1 className="font-display text-4xl leading-[1.05] text-foreground sm:text-6xl md:text-7xl animate-fade-in max-w-4xl">
-            {nextWorkshop?.workshop.order_index === 0 ? nextWorkshop.workshop.title : "Jornada da Transformação"}
+            Jornada da Transformação
           </h1>
           <p className="mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg">
             Uma jornada progressiva para desenvolver inteligência emocional, reprogramar padrões mentais,
