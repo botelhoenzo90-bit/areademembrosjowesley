@@ -252,8 +252,44 @@ function PremiumPage() {
         )}
       </section>
 
+      {/* OPENING VIDEO MODULE */}
+      {workshops.find(w => w.order_index === 0) && (
+        <section className="mx-4 mt-12">
+          <h2 className="font-display text-3xl text-foreground">Comece por aqui</h2>
+          <p className="mt-1 text-xs uppercase tracking-[0.25em] text-muted-foreground">Vídeo de Introdução</p>
+          
+          <article 
+            onClick={() => {
+              const ws = workshops.find(w => w.order_index === 0);
+              if (ws) startWorkshop(ws);
+            }}
+            className="group mt-8 relative aspect-video w-full overflow-hidden rounded-3xl border border-border glass-strong shadow-glow transition-all duration-500 hover:-translate-y-1 cursor-pointer"
+          >
+            <img 
+              src={`https://img.youtube.com/vi/${youtubeId(workshops.find(w => w.order_index === 0)?.video_url || null)}/maxresdefault.jpg`} 
+              alt="CÓDIGO DA MENTE EXTRAORDINÁRIA"
+              className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-105"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+            
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gold shadow-glow transition-transform group-hover:scale-110">
+                <Play className="h-8 w-8 fill-background text-background" />
+              </div>
+            </div>
+
+            <div className="absolute bottom-0 inset-x-0 p-6 sm:p-8">
+              <h3 className="font-display text-2xl text-foreground sm:text-3xl">
+                {workshops.find(w => w.order_index === 0)?.title}
+              </h3>
+              <p className="mt-2 text-sm text-gold/90 uppercase tracking-widest">Aula de Abertura</p>
+            </div>
+          </article>
+        </section>
+      )}
+
       {/* LEVELS */}
-      <section className="mx-4 mt-12">
+      <section className="mx-4 mt-16">
         <div className="flex items-end justify-between">
           <div>
             <h2 className="font-display text-3xl text-foreground">Temporadas</h2>
