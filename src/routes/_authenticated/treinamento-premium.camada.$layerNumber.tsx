@@ -53,8 +53,10 @@ function LayerPage() {
     setSaving(true);
     try {
       await updateProgress({
-        layerId: currentLayer.id,
-        updates: { lesson_completed: true, status: 'in_progress', points_earned: 10 }
+        data: {
+          layerId: currentLayer.id,
+          updates: { lesson_completed: true, status: 'in_progress', points_earned: 10 }
+        }
       });
       toast.success("Aula concluída! +10 XP");
       setData(await getPassport());
