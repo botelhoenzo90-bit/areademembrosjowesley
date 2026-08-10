@@ -94,18 +94,20 @@ function LayerPage() {
     try {
       const isLastLayer = currentLayer.layer_number === 9;
       await updateProgress({
-        layerId: currentLayer.id,
-        updates: { 
-          protocol_completed: true, 
-          reflection_content: reflection,
-          status: 'completed',
-          points_earned: (prog.points_earned || 0) + 30, // 10 protocol + 20 bonus for completing layer
-          completed_at: new Date().toISOString()
+        data: {
+          layerId: currentLayer.id,
+          updates: { 
+            protocol_completed: true, 
+            reflection_content: reflection,
+            status: 'completed',
+            points_earned: (prog.points_earned || 0) + 30, // 10 protocol + 20 bonus for completing layer
+            completed_at: new Date().toISOString()
+          }
         }
       });
       
       if (!isLastLayer) {
-        await unlockNext({ currentLayerNumber: currentLayer.layer_number });
+        await unlockNext({ data: { currentLayerNumber: currentLayer.layer_number } });
       }
 
       toast.success("Protocolo e Camada Concluídos! +30 XP");
