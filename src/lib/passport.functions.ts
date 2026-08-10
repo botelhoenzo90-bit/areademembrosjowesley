@@ -15,6 +15,7 @@ export const getPassportData = createServerFn({ method: "GET" })
     ]);
 
     return {
+      user,
       layers: layersRes.data || [],
       progress: progressRes.data || [],
       badges: badgesRes.data || [],
