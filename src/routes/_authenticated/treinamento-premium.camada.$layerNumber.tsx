@@ -110,6 +110,23 @@ function LayerPage() {
         await unlockNext({ data: { currentLayerNumber: currentLayer.layer_number } });
       }
 
+      // Check for badges
+      const newProgress = await getPassport();
+      const completedCount = newProgress.progress.filter((p: any) => p.status === 'completed' && p.layer_id !== newProgress.layers.find((l:any) => l.layer_number === 0)?.id).length;
+      
+      let badgeToUnlock = null;
+      if (currentLayer.layer_number === 0) badgeToUnlock = newProgress.badges.find((b: any) => b.requirement_type === 'presentation');
+      else if (currentLayer.layer_number === 1) badgeToUnlock = newProgress.badges.find((b: any) => b.requirement_type === 'layer_1');
+      else if (completedCount === 3) badgeToUnlock = newProgress.badges.find((b: any) => b.requirement_type === 'layers_3');
+      else if (completedCount === 5) badgeToUnlock = newProgress.badges.find((b: any) => b.requirement_type === 'layers_5');
+      else if (completedCount === 7) badgeToUnlock = newProgress.badges.find((b: any) => b.requirement_type === 'layers_7');
+      else if (completedCount === 9) badgeToUnlock = newProgress.badges.find((b: any) => b.requirement_type === 'layers_9');
+
+      if (badgeToUnlock && !newProgress.userBadges.some((ub: any) => ub.badge_id === badgeToUnlock.id)) {
+        await supabase.from('user_passport_badges').insert({ user_id: data.user.id, badge_id: badgeToUnlock.id });
+        toast.success(`Nova Conquista: ${badgeToUnlock.name}!`);
+      }
+
       toast.success("Protocolo e Camada Concluídos! +30 XP");
       navigate({ to: "/_authenticated/treinamento-premium" });
     } catch (e) {
@@ -267,6 +284,24 @@ function LayerPage() {
                         )}
                     </CardContent>
                 </Card>
+            </section>
+        )}
+        {/* TELA DE CONCLUSÃO FINAL (CAMADA 9) */}
+        {prog.status === 'completed' && currentLayer.layer_number === 9 && (
+            <section className="mt-16 text-center animate-bounce-in py-12 border-t border-gold/20">
+                <h2 className="text-4xl font-display text-gold mb-4">VOCÊ ATRAVESSOU AS 9 CAMADAS</h2>
+                <p className="text-xl text-muted-foreground mb-8 italic">Você não terminou uma jornada. Você começou a enxergar sua vida de outra maneira.</p>
+                
+                <div className="glass-strong p-8 rounded-3xl border border-gold/30 inline-block mb-8">
+                    <p className="text-gold font-bold text-lg mb-2">PRÓXIMO PASSO: MAPA DA VIDA</p>
+                    <p className="text-sm text-muted-foreground mb-6">Acesse a mentoria gratuita mapa da vida e descubra o caminho para remover os obstáculos que ainda te bloqueiam.</p>
+                    <Button 
+                        className="bg-gold text-black hover:bg-gold/90 px-8 py-6 rounded-2xl font-bold"
+                        onClick={() => window.open("https://wa.me/message/YNNTLWLFBDWOP1", "_blank")}
+                    >
+                        ACESSE A MENTORIA GRATUITA
+                    </Button>
+                </div>
             </section>
         )}
       </div>
