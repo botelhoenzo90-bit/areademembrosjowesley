@@ -71,8 +71,10 @@ function LayerPage() {
     setSaving(true);
     try {
       await updateProgress({
-        layerId: currentLayer.id,
-        updates: { mission_completed: true, points_earned: (prog.points_earned || 0) + 10 }
+        data: {
+          layerId: currentLayer.id,
+          updates: { mission_completed: true, points_earned: (prog.points_earned || 0) + 10 }
+        }
       });
       toast.success("Missão concluída! +10 XP");
       setData(await getPassport());
