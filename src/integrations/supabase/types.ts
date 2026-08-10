@@ -264,6 +264,75 @@ export type Database = {
         }
         Relationships: []
       }
+      passport_badges: {
+        Row: {
+          created_at: string
+          description: string
+          icon_name: string
+          id: string
+          name: string
+          requirement_type: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          icon_name: string
+          id?: string
+          name: string
+          requirement_type: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          icon_name?: string
+          id?: string
+          name?: string
+          requirement_type?: string
+        }
+        Relationships: []
+      }
+      passport_layers: {
+        Row: {
+          created_at: string
+          description: string
+          essence: string
+          id: string
+          image_url: string | null
+          layer_number: number
+          name: string
+          order_index: number
+          subtitle: string
+          updated_at: string
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          essence: string
+          id?: string
+          image_url?: string | null
+          layer_number: number
+          name: string
+          order_index?: number
+          subtitle: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          essence?: string
+          id?: string
+          image_url?: string | null
+          layer_number?: number
+          name?: string
+          order_index?: number
+          subtitle?: string
+          updated_at?: string
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       premium_levels: {
         Row: {
           cover_key: string
@@ -452,6 +521,62 @@ export type Database = {
         }
         Relationships: []
       }
+      user_layer_progress: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          gamification_viewed: boolean
+          id: string
+          layer_id: string
+          lesson_completed: boolean
+          mission_completed: boolean
+          points_earned: number
+          protocol_completed: boolean
+          reflection_content: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          gamification_viewed?: boolean
+          id?: string
+          layer_id: string
+          lesson_completed?: boolean
+          mission_completed?: boolean
+          points_earned?: number
+          protocol_completed?: boolean
+          reflection_content?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          gamification_viewed?: boolean
+          id?: string
+          layer_id?: string
+          lesson_completed?: boolean
+          mission_completed?: boolean
+          points_earned?: number
+          protocol_completed?: boolean
+          reflection_content?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_layer_progress_layer_id_fkey"
+            columns: ["layer_id"]
+            isOneToOne: false
+            referencedRelation: "passport_layers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_lesson_progress: {
         Row: {
           completed_at: string | null
@@ -559,6 +684,35 @@ export type Database = {
             columns: ["module_id"]
             isOneToOne: false
             referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_passport_badges: {
+        Row: {
+          badge_id: string
+          id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          badge_id: string
+          id?: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          badge_id?: string
+          id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_passport_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "passport_badges"
             referencedColumns: ["id"]
           },
         ]

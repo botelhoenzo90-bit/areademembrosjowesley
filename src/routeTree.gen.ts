@@ -26,6 +26,7 @@ import { Route as AuthenticatedCentroOperacionalRouteImport } from './routes/_au
 import { Route as AuthenticatedBonusRouteImport } from './routes/_authenticated/bonus'
 import { Route as AuthenticatedModuloSlugRouteImport } from './routes/_authenticated/modulo.$slug'
 import { Route as AuthenticatedTreinamentoPremiumNivelSlugRouteImport } from './routes/_authenticated/treinamento-premium.nivel.$slug'
+import { Route as AuthenticatedTreinamentoPremiumCamadaLayerNumberRouteImport } from './routes/_authenticated/treinamento-premium.camada.$layerNumber'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
@@ -116,6 +117,12 @@ const AuthenticatedTreinamentoPremiumNivelSlugRoute =
     path: '/nivel/$slug',
     getParentRoute: () => AuthenticatedTreinamentoPremiumRoute,
   } as any)
+const AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute =
+  AuthenticatedTreinamentoPremiumCamadaLayerNumberRouteImport.update({
+    id: '/camada/$layerNumber',
+    path: '/camada/$layerNumber',
+    getParentRoute: () => AuthenticatedTreinamentoPremiumRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByFullPath {
   '/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/modulo/$slug': typeof AuthenticatedModuloSlugRoute
+  '/treinamento-premium/camada/$layerNumber': typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute
   '/treinamento-premium/nivel/$slug': typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
 }
 export interface FileRoutesByTo {
@@ -151,6 +159,7 @@ export interface FileRoutesByTo {
   '/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/modulo/$slug': typeof AuthenticatedModuloSlugRoute
+  '/treinamento-premium/camada/$layerNumber': typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute
   '/treinamento-premium/nivel/$slug': typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
 }
 export interface FileRoutesById {
@@ -171,6 +180,7 @@ export interface FileRoutesById {
   '/_authenticated/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/modulo/$slug': typeof AuthenticatedModuloSlugRoute
+  '/_authenticated/treinamento-premium/camada/$layerNumber': typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute
   '/_authenticated/treinamento-premium/nivel/$slug': typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
 }
 export interface FileRouteTypes {
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
     | '/treinamento-premium'
     | '/api/chat'
     | '/modulo/$slug'
+    | '/treinamento-premium/camada/$layerNumber'
     | '/treinamento-premium/nivel/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -209,6 +220,7 @@ export interface FileRouteTypes {
     | '/treinamento-premium'
     | '/api/chat'
     | '/modulo/$slug'
+    | '/treinamento-premium/camada/$layerNumber'
     | '/treinamento-premium/nivel/$slug'
   id:
     | '__root__'
@@ -228,6 +240,7 @@ export interface FileRouteTypes {
     | '/_authenticated/treinamento-premium'
     | '/api/chat'
     | '/_authenticated/modulo/$slug'
+    | '/_authenticated/treinamento-premium/camada/$layerNumber'
     | '/_authenticated/treinamento-premium/nivel/$slug'
   fileRoutesById: FileRoutesById
 }
@@ -361,15 +374,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTreinamentoPremiumNivelSlugRouteImport
       parentRoute: typeof AuthenticatedTreinamentoPremiumRoute
     }
+    '/_authenticated/treinamento-premium/camada/$layerNumber': {
+      id: '/_authenticated/treinamento-premium/camada/$layerNumber'
+      path: '/camada/$layerNumber'
+      fullPath: '/treinamento-premium/camada/$layerNumber'
+      preLoaderRoute: typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRouteImport
+      parentRoute: typeof AuthenticatedTreinamentoPremiumRoute
+    }
   }
 }
 
 interface AuthenticatedTreinamentoPremiumRouteChildren {
+  AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute: typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute
   AuthenticatedTreinamentoPremiumNivelSlugRoute: typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
 }
 
 const AuthenticatedTreinamentoPremiumRouteChildren: AuthenticatedTreinamentoPremiumRouteChildren =
   {
+    AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute:
+      AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute,
     AuthenticatedTreinamentoPremiumNivelSlugRoute:
       AuthenticatedTreinamentoPremiumNivelSlugRoute,
   }
@@ -420,13 +443,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

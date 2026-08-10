@@ -1,427 +1,200 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Play, Sparkles, Lock, CheckCircle2, Loader2, ChevronRight, Trophy, Clock, Layers, X } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { unlockDateFrom, isLocked, countdownLabel, PREMIUM_LOCK_DAYS } from "@/lib/premium-lock";
-
-import heroImg from "@/assets/premium-hero.jpg";
-import l1 from "@/assets/level-1.jpg";
-import l2 from "@/assets/level-2.jpg";
-import l3 from "@/assets/level-3.jpg";
-import l4 from "@/assets/level-4.jpg";
-import l5 from "@/assets/level-5.jpg";
-import l6 from "@/assets/level-6.jpg";
-import l7 from "@/assets/level-7.jpg";
-
-const COVER: Record<string, string> = {
-  "level-1": l1, "level-2": l2, "level-3": l3, "level-4": l4,
-  "level-5": l5, "level-6": l6, "level-7": l7,
-};
+import { ArrowLeft, Lock, CheckCircle2, Play, ChevronRight, Trophy, RefreshCw, Sparkles, MapPin } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { getPassportData, updateLayerProgress, unlockNextLayer, restartPassportJornada } from "@/lib/passport.functions";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 
 export const Route = createFileRoute("/_authenticated/treinamento-premium")({
-  head: () => ({
-    meta: [
-      { title: "Treinamento Premium — Jornada da Transformação" },
-      { name: "description", content: "Sua jornada progressiva em 7 temporadas para transformar mente, emoções e propósito." },
-      { property: "og:title", content: "Treinamento Premium — Instituto Neuroconsciência" },
-      { property: "og:description", content: "Experiência cinematográfica de desenvolvimento humano." },
-    ],
-  }),
-  component: PremiumPage,
+  component: PassaportePage,
 });
 
-type Level = {
-  id: string; slug: string; order_index: number; name: string;
-  theme: string; objective: string; final_message: string | null; cover_key: string;
-};
-type Workshop = { id: string; level_id: string; order_index: number; title: string; duration_minutes: number; video_url: string | null };
-type LevelProg = { level_id: string; percent: number; workshops_completed: number };
-
-function youtubeId(url: string | null): string | null {
-  if (!url) return null;
-  const m = url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([A-Za-z0-9_-]{11})/);
-  return m ? m[1] : null;
-}
-
-function PremiumPage() {
+function PassaportePage() {
   const navigate = useNavigate();
-  const [levels, setLevels] = useState<Level[]>([]);
-  const [workshops, setWorkshops] = useState<Workshop[]>([]);
-  const [wsProgress, setWsProgress] = useState<Record<string, string>>({});
-  const [lvlProgress, setLvlProgress] = useState<Record<string, LevelProg>>({});
+  const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [scrollY, setScrollY] = useState(0);
-  const [unlockAt, setUnlockAt] = useState<Date | null>(null);
-  const [now, setNow] = useState(() => Date.now());
-  const [playing, setPlaying] = useState<Workshop | null>(null);
+  const getPassport = useServerFn(getPassportData);
 
   useEffect(() => {
-    const t = setInterval(() => setNow(Date.now()), 60000);
-    return () => clearInterval(t);
-  }, []);
+    getPassport().then(setData).finally(() => setLoading(false));
+  }, [getPassport]);
 
-  useEffect(() => {
-    const onScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  if (loading || !data) return <div>Carregando Passaporte...</div>;
 
+  const { layers, progress, userBadges, badges } = data;
+  const completedLayers = progress.filter((p: any) => p.status === 'completed' && p.layer_id !== layers.find((l:any) => l.layer_number === 0)?.id).length;
+  const totalLayersCount = layers.filter((l: any) => l.layer_number > 0).length;
+  const progressPercent = Math.round((completedLayers / totalLayersCount) * 100);
+  const totalPoints = progress.reduce((acc: number, p: any) => acc + (p.points_earned || 0), 0);
 
-  useEffect(() => {
-    (async () => {
-      const { data: u } = await supabase.auth.getUser();
-      const uid = u.user?.id;
-      setUnlockAt(unlockDateFrom(u.user?.created_at));
-
-      const [{ data: lvls }, { data: wks }] = await Promise.all([
-        supabase.from("premium_levels").select("*").order("order_index"),
-        supabase.from("premium_workshops").select("*").order("order_index"),
-      ]);
-      setLevels((lvls ?? []) as Level[]);
-      setWorkshops((wks ?? []) as Workshop[]);
-
-      if (uid) {
-        const [{ data: wp }, { data: lp }] = await Promise.all([
-          supabase.from("user_workshop_progress").select("workshop_id, status").eq("user_id", uid),
-          supabase.from("user_level_progress").select("level_id, percent, workshops_completed").eq("user_id", uid),
-        ]);
-        const wsMap: Record<string, string> = {};
-        for (const p of wp ?? []) wsMap[(p as any).workshop_id] = (p as any).status;
-        setWsProgress(wsMap);
-        const lvlMap: Record<string, LevelProg> = {};
-        for (const p of lp ?? []) lvlMap[(p as any).level_id] = p as any;
-        setLvlProgress(lvlMap);
-      }
-      setLoading(false);
-    })();
-  }, []);
-
-  const stats = useMemo(() => {
-    const totalLevels = levels.length;
-    const totalWorkshops = workshops.length;
-    const totalMin = workshops.reduce((a, w) => a + w.duration_minutes, 0);
-    const completedWs = workshops.filter((w) => wsProgress[w.id] === "completed").length;
-    const percent = totalWorkshops ? Math.round((completedWs / totalWorkshops) * 100) : 0;
-    return { totalLevels, totalWorkshops, totalMin, completedWs, percent };
-  }, [levels, workshops, wsProgress]);
-
-  const nextWorkshop = useMemo(() => {
-    for (const l of levels) {
-      const ws = workshops.filter((w) => w.level_id === l.id).sort((a, b) => a.order_index - b.order_index);
-      const next = ws.find((w) => wsProgress[w.id] !== "completed");
-      if (next) return { level: l, workshop: next };
-    }
-    return null;
-  }, [levels, workshops, wsProgress]);
-
-  const isLevelUnlocked = (idx: number) => {
-    if (idx === 0) return true;
-    const prev = levels[idx - 1];
-    if (!prev) return true;
-    const p = lvlProgress[prev.id];
-    return (p?.percent ?? 0) >= 100;
+  const getLevelName = (points: number) => {
+    if (points >= 350) return "TRANSFORMAÇÃO";
+    if (points >= 150) return "DESCOBERTA";
+    return "DESPERTAR";
   };
-
-  const startWorkshop = async (ws: Workshop) => {
-    if (ws.video_url) setPlaying(ws);
-    const { data: u } = await supabase.auth.getUser();
-    const uid = u.user?.id;
-    if (!uid) return;
-
-    if (wsProgress[ws.id] !== "completed") {
-      setWsProgress((p) => ({ ...p, [ws.id]: "in_progress" }));
-      await supabase.from("user_workshop_progress").upsert(
-        { user_id: uid, workshop_id: ws.id, status: "in_progress" },
-        { onConflict: "user_id,workshop_id" }
-      );
-    }
-  };
-
-  if (loading) {
-    return <div className="flex min-h-screen items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-gold" /></div>;
-  }
-
-  void now;
-  if (isLocked(unlockAt)) {
-    return (
-      <main className="relative min-h-screen">
-        <div className="absolute inset-0">
-          <img src={heroImg} alt="" className="h-full w-full object-cover opacity-25" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/90 to-background/70" aria-hidden />
-        </div>
-        <div className="relative z-10 mx-auto flex min-h-screen max-w-lg flex-col items-center justify-center px-6 text-center">
-          <span className="flex h-20 w-20 items-center justify-center rounded-full glass-strong shadow-glow">
-            <Lock className="h-8 w-8 text-gold" />
-          </span>
-          <h1 className="mt-6 font-display text-4xl text-foreground">Treinamento Premium</h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            Este módulo é liberado {PREMIUM_LOCK_DAYS} dias após a criação da sua conta.
-            Use esse tempo para concluir os módulos iniciais e preparar sua mente para a jornada.
-          </p>
-          <div className="mt-8 rounded-2xl border border-border glass px-8 py-6">
-            <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground">Libera em</p>
-            <p className="mt-2 font-display text-3xl text-gold">{countdownLabel(unlockAt)}</p>
-            <p className="mt-2 text-xs text-muted-foreground">
-              {unlockAt?.toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}
-            </p>
-          </div>
-          <button onClick={() => navigate({ to: "/home" })}
-            className="mt-8 inline-flex items-center gap-2 rounded-full glass px-6 py-3 text-sm text-foreground transition hover:bg-surface-elevated">
-            <ArrowLeft className="h-4 w-4" /> Voltar para a Home
-          </button>
-        </div>
-      </main>
-    );
-  }
-
 
   return (
-    <main className="relative">
-      {/* HERO SECTION */}
-      <header className="relative h-[85vh] min-h-[600px] overflow-hidden">
-        <div className="absolute inset-0 will-change-transform" style={{ transform: `translateY(${scrollY * 0.4}px) scale(1.15)` }}>
-          <img src={heroImg} alt="Treinamento Premium" className="h-full w-full object-cover" />
-        </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/85 to-background/30" aria-hidden />
-        <div className="absolute inset-0 bg-vignette" aria-hidden />
+    <main className="min-h-screen bg-black pb-20 text-foreground">
+      <header className="relative min-h-[400px] overflow-hidden flex flex-col justify-end">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072')] bg-cover bg-center opacity-40" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+        
+        <div className="relative z-10 p-6 md:p-12 max-w-6xl mx-auto w-full">
+          <Button variant="ghost" className="mb-8 hover:bg-white/10 text-white" onClick={() => navigate({ to: "/home" })}>
+            <ArrowLeft className="mr-2 h-4 w-4" /> Voltar ao Início
+          </Button>
+          
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+            <div className="space-y-4">
+                <span className="inline-block px-3 py-1 rounded-full border border-gold/30 bg-gold/10 text-gold text-[10px] tracking-[0.3em] font-bold">PASSAPORTE DAS 9 CAMADAS</span>
+                <h1 className="font-display text-5xl md:text-7xl leading-tight">Sua Jornada pelas<br /><span className="text-gold">9 Camadas</span></h1>
+                <p className="text-xl text-muted-foreground max-w-xl">Uma camada por vez. Uma descoberta por vez. A travessia da sua própria consciência.</p>
+            </div>
 
-        <button onClick={() => navigate({ to: "/home" })}
-          className="absolute left-4 top-6 z-20 flex items-center gap-2 rounded-full glass px-4 py-2 text-sm text-foreground">
-          <ArrowLeft className="h-4 w-4" /> Voltar
-        </button>
-
-        <div className="absolute inset-x-0 bottom-0 z-10 p-6 sm:p-12">
-          <span className="mb-4 inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-[10px] uppercase tracking-[0.25em] text-gold">
-            <Sparkles className="h-3 w-3" /> Módulo Principal · 7 Temporadas
-          </span>
-          <h1 className="font-display text-4xl leading-[1.05] text-foreground sm:text-6xl md:text-7xl animate-fade-in max-w-4xl">
-            Jornada da Transformação
-          </h1>
-          <p className="mt-5 max-w-2xl text-base text-muted-foreground sm:text-lg">
-            Uma jornada progressiva para desenvolver inteligência emocional, reprogramar padrões mentais,
-            fortalecer sua identidade e construir uma vida com propósito.
-          </p>
+            <div className="glass-strong p-6 rounded-3xl border border-white/10 min-w-[300px] space-y-4">
+                <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                        <Trophy className="h-4 w-4 text-gold" />
+                        <span className="text-sm font-medium">{totalPoints} XP</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 text-gold" />
+                        <span className="text-sm font-medium">{getLevelName(totalPoints)}</span>
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <div className="flex justify-between text-[10px] tracking-widest text-muted-foreground">
+                        <span>PROGRESSO DA JORNADA</span>
+                        <span>{completedLayers}/{totalLayersCount} CAMADAS</span>
+                    </div>
+                    <Progress value={progressPercent} className="h-1.5 bg-white/10" />
+                </div>
+            </div>
+          </div>
         </div>
       </header>
 
-      {/* STATS CARD */}
-      <section className="mx-4 -mt-20 relative z-10 rounded-3xl border border-border glass-strong p-6 sm:p-8 shadow-elevated">
-        <div className="grid grid-cols-2 gap-5 sm:grid-cols-4">
-          <Stat icon={<Layers className="h-4 w-4" />} label="Temporadas" value={String(stats.totalLevels)} />
-          <Stat icon={<Play className="h-4 w-4" />} label="Episódios" value={String(stats.totalWorkshops)} />
-          <Stat icon={<Clock className="h-4 w-4" />} label="Tempo total" value={`${Math.round(stats.totalMin / 60)}h`} />
-          <Stat icon={<Trophy className="h-4 w-4" />} label="Concluído" value={`${stats.percent}%`} highlight />
-        </div>
-        <div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-white/5">
-          <div className="h-full bg-gradient-to-r from-[color:var(--primary)] to-[color:var(--gold)] transition-all duration-700"
-            style={{ width: `${stats.percent}%` }} />
-        </div>
-        {nextWorkshop && (
-          <div className="mt-6 flex flex-wrap gap-3">
-            <button onClick={() => nextWorkshop && startWorkshop(nextWorkshop.workshop)}
-              className="inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition hover:brightness-110 active:scale-95 cursor-pointer">
-              <Play className="h-4 w-4 fill-current" />
-              {stats.completedWs === 0 ? "Começar Jornada" : "Continuar Jornada"}
-            </button>
-            <Link to="/treinamento-premium/nivel/$slug" params={{ slug: nextWorkshop.level.slug }}
-              className="inline-flex items-center gap-2 rounded-full glass px-6 py-3 text-sm font-medium text-foreground transition hover:bg-surface-elevated">
-              Retomar último episódio
-              <ChevronRight className="h-4 w-4" />
-            </Link>
-          </div>
-        )}
-      </section>
-
-      {/* OPENING VIDEO MODULE */}
-      {workshops.find(w => w.order_index === 0) && (
-        <section className="mx-4 mt-12">
-          <h2 className="font-display text-3xl text-foreground">Comece por aqui</h2>
-          <p className="mt-1 text-xs uppercase tracking-[0.25em] text-muted-foreground">Vídeo de Introdução</p>
-          
-          <article 
-            onClick={() => {
-              const ws = workshops.find(w => w.order_index === 0);
-              if (ws) startWorkshop(ws);
-            }}
-            className="group mt-8 relative aspect-video w-full overflow-hidden rounded-3xl border border-border glass-strong shadow-glow transition-all duration-500 hover:-translate-y-1 cursor-pointer"
-          >
-            <img 
-              src={`https://img.youtube.com/vi/${youtubeId(workshops.find(w => w.order_index === 0)?.video_url || null)}/maxresdefault.jpg`} 
-              alt="CÓDIGO DA MENTE EXTRAORDINÁRIA"
-              className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
-            
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="flex h-20 w-20 items-center justify-center rounded-full bg-gold shadow-glow transition-transform group-hover:scale-110">
-                <Play className="h-8 w-8 fill-background text-background" />
-              </div>
-            </div>
-
-            <div className="absolute bottom-0 inset-x-0 p-6 sm:p-8">
-              <h3 className="font-display text-2xl text-foreground sm:text-3xl">
-                {workshops.find(w => w.order_index === 0)?.title}
-              </h3>
-              <p className="mt-2 text-sm text-gold/90 uppercase tracking-widest">Aula de Abertura</p>
-            </div>
-          </article>
-        </section>
-      )}
-
-      {/* LEVELS */}
-      <section className="mx-4 mt-16">
-        <div className="flex items-end justify-between">
-          <div>
-            <h2 className="font-display text-3xl text-foreground">Temporadas</h2>
-            <p className="mt-1 text-xs uppercase tracking-[0.25em] text-muted-foreground">7 níveis · progressão desbloqueável</p>
-          </div>
+      <section className="max-w-7xl mx-auto px-6 py-16">
+        <div className="flex items-center gap-4 mb-12">
+            <div className="h-px flex-1 bg-white/10" />
+            <h2 className="text-2xl font-display tracking-widest text-muted-foreground uppercase">O Caminho Evolutivo</h2>
+            <div className="h-px flex-1 bg-white/10" />
         </div>
 
-        <div className="mt-8 space-y-6">
-          {levels.map((lvl, idx) => {
-            const cover = COVER[lvl.cover_key] ?? l1;
-            const lvlWs = workshops.filter((w) => w.level_id === lvl.id);
-            const prog = lvlProgress[lvl.id];
-            const percent = prog?.percent ?? 0;
-            const unlocked = isLevelUnlocked(idx);
-            const completed = percent >= 100;
-            const status = !unlocked ? "Bloqueado" : completed ? "Concluído" : percent > 0 ? "Em andamento" : "Disponível";
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {layers.map((layer: any) => {
+                const prog = progress.find((p: any) => p.layer_id === layer.id) || { status: 'locked' };
+                const isLocked = prog.status === 'locked';
+                const isCompleted = prog.status === 'completed';
+                const isIntro = layer.layer_number === 0;
 
-            return (
-              <article key={lvl.id}
-                className={`group relative overflow-hidden rounded-3xl border border-border glass-strong shadow-elevated transition-all duration-500 hover:-translate-y-1 hover:shadow-glow ${!unlocked ? "opacity-70" : ""}`}>
-                <div className="flex flex-col md:flex-row">
-                  <div className="relative h-64 w-full shrink-0 overflow-hidden md:h-auto md:w-[42%]">
-                    <img src={cover} alt={lvl.name} loading="lazy" width={1600} height={900}
-                      className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/60 md:bg-gradient-to-r md:from-transparent md:to-background/80" />
-                    <span className="absolute left-4 top-4 rounded-full bg-gradient-primary px-3 py-1 text-[10px] font-medium uppercase tracking-widest text-primary-foreground shadow-glow">
-                      Temporada {String(lvl.order_index).padStart(2, "0")}
-                    </span>
-                    {!unlocked && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
-                        <div className="flex flex-col items-center gap-2 text-muted-foreground">
-                          <Lock className="h-8 w-8" />
-                          <span className="text-xs uppercase tracking-widest">Complete a anterior</span>
+                return (
+                    <div 
+                        key={layer.id} 
+                        className={`group relative rounded-[2.5rem] overflow-hidden border transition-all duration-500 ${
+                            isLocked ? 'border-white/5 bg-white/[0.02] grayscale opacity-60' : 
+                            isCompleted ? 'border-green-500/30 bg-green-500/[0.02]' : 
+                            'border-gold/30 bg-gold/[0.02] shadow-[0_0_30px_rgba(212,175,55,0.05)] scale-[1.02] z-10'
+                        }`}
+                    >
+                        {/* Status Badge */}
+                        <div className="absolute top-6 right-6 z-20">
+                            {isLocked ? (
+                                <div className="bg-black/60 backdrop-blur-md p-2 rounded-full border border-white/10">
+                                    <Lock className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                            ) : isCompleted ? (
+                                <div className="bg-green-500/20 backdrop-blur-md p-2 rounded-full border border-green-500/40">
+                                    <CheckCircle2 className="h-4 w-4 text-green-400" />
+                                </div>
+                            ) : (
+                                <div className="bg-gold/20 backdrop-blur-md px-3 py-1 rounded-full border border-gold/40 flex items-center gap-2">
+                                    <div className="h-1.5 w-1.5 rounded-full bg-gold animate-pulse" />
+                                    <span className="text-[10px] font-bold text-gold uppercase tracking-tighter">Disponível</span>
+                                </div>
+                            )}
                         </div>
-                      </div>
-                    )}
-                  </div>
 
-                  <div className="flex flex-1 flex-col justify-between p-6 sm:p-8">
-                    <div>
-                      <div className="flex items-start justify-between gap-3">
-                        <h3 className="font-display text-2xl text-foreground sm:text-3xl">{lvl.name}</h3>
-                        {completed && <CheckCircle2 className="h-6 w-6 shrink-0 text-gold" />}
-                      </div>
-                      <p className="mt-2 text-sm text-gold/90">{lvl.theme}</p>
-                      <p className="mt-3 text-sm text-muted-foreground line-clamp-3">{lvl.objective}</p>
+                        {/* Content Area */}
+                        <div className="p-8 flex flex-col h-full min-h-[320px]">
+                            <div className="mb-6">
+                                <span className={`font-display text-4xl ${isLocked ? 'text-muted-foreground' : 'text-gold'}`}>
+                                    {isIntro ? '★' : `0${layer.layer_number}`}
+                                </span>
+                            </div>
+                            
+                            <div className="flex-1">
+                                <h3 className="font-display text-2xl text-foreground mb-2 group-hover:text-gold transition-colors">{layer.name}</h3>
+                                <p className="text-sm text-muted-foreground line-clamp-2 mb-4 italic">"{layer.essence}"</p>
+                                <p className="text-xs text-muted-foreground/60 leading-relaxed">{layer.description}</p>
+                            </div>
+
+                            <div className="mt-8 pt-6 border-t border-white/5">
+                                <Button 
+                                    className={`w-full py-6 rounded-2xl text-sm font-bold tracking-widest transition-all duration-300 ${
+                                        isLocked ? 'bg-white/5 text-muted-foreground border border-white/10 cursor-not-allowed' :
+                                        isCompleted ? 'bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500/20' :
+                                        'bg-gold text-black hover:bg-gold/90 hover:shadow-[0_0_20px_rgba(212,175,55,0.3)]'
+                                    }`}
+                                    disabled={isLocked}
+                                    onClick={() => navigate({ to: `/treinamento-premium/camada/${layer.layer_number}` })}
+                                >
+                                    {isLocked ? 'CONTEÚDO BLOQUEADO' : isCompleted ? 'REVER CONTEÚDO' : 'INICIAR TRAVESSIA'}
+                                </Button>
+                            </div>
+                        </div>
                     </div>
+                );
+            })}
+        </div>
+      </section>
 
-                    <div className="mt-6 space-y-4">
-                      <div className="flex flex-wrap items-center gap-4 text-xs">
-                        <span className="inline-flex items-center gap-1.5 text-muted-foreground">
-                          <Play className="h-3.5 w-3.5" /> {lvlWs.length} episódios
-                        </span>
-                        <span className={`rounded-full px-2.5 py-1 text-[10px] uppercase tracking-widest ${
-                          completed ? "bg-gold/15 text-gold" : !unlocked ? "glass text-muted-foreground" :
-                          percent > 0 ? "bg-primary/20 text-primary-foreground" : "glass"
-                        }`}>{status}</span>
-                      </div>
-
-                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/5">
-                        <div className="h-full bg-gradient-to-r from-[color:var(--primary)] to-[color:var(--gold)] transition-all duration-700"
-                          style={{ width: `${percent}%` }} />
-                      </div>
-
-                      {unlocked ? (
-                        <Link to="/treinamento-premium/nivel/$slug" params={{ slug: lvl.slug }}
-                          className="inline-flex items-center gap-2 rounded-full bg-gradient-primary px-5 py-2.5 text-sm font-medium text-primary-foreground shadow-glow transition hover:brightness-110 active:scale-95">
-                          Explorar Nível <ChevronRight className="h-4 w-4" />
-                        </Link>
-                      ) : (
-                        <button disabled className="inline-flex items-center gap-2 rounded-full glass px-5 py-2.5 text-sm text-muted-foreground">
-                          <Lock className="h-4 w-4" /> Bloqueado
-                        </button>
-                      )}
-                    </div>
-                  </div>
+      {/* FOOTER GAMIFICATION */}
+      <section className="max-w-7xl mx-auto px-6 py-20 border-t border-white/5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+                <h2 className="text-3xl font-display mb-6">Suas Conquistas</h2>
+                <div className="flex flex-wrap gap-4">
+                    {badges.map((badge: any) => {
+                        const isUnlocked = userBadges.some((ub: any) => ub.badge_id === badge.id);
+                        return (
+                            <div 
+                                key={badge.id}
+                                className={`group relative p-4 rounded-2xl border transition-all ${
+                                    isUnlocked ? 'bg-gold/10 border-gold/30 text-gold' : 'bg-white/5 border-white/10 text-muted-foreground opacity-40'
+                                }`}
+                                title={badge.description}
+                            >
+                                <MapPin className={`h-6 w-6 mb-2 ${isUnlocked ? 'animate-bounce' : ''}`} />
+                                <p className="text-[10px] font-bold uppercase tracking-widest">{badge.name}</p>
+                            </div>
+                        );
+                    })}
                 </div>
-              </article>
-            );
-          })}
+            </div>
+
+            <div className="glass-strong p-8 rounded-[2.5rem] border border-white/10">
+                <h3 className="text-xl font-display mb-4 flex items-center gap-2">
+                    <RefreshCw className="h-5 w-5 text-gold" /> Recomeçar Jornada
+                </h3>
+                <p className="text-sm text-muted-foreground mb-6">Deseja reiniciar sua travessia pelas 9 camadas? Isso apagará todo o seu progresso, pontos e registros atuais.</p>
+                <Button 
+                    variant="outline" 
+                    className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                    onClick={async () => {
+                        if (confirm("Tem certeza de que deseja reiniciar sua jornada? Seu progresso atual será apagado.")) {
+                            await restartPassportJornada();
+                            window.location.reload();
+                        }
+                    }}
+                >
+                    Zerar Progresso Atual
+                </Button>
+            </div>
         </div>
       </section>
-
-      {/* MINHA EVOLUÇÃO */}
-      <section className="mx-4 mt-14 mb-6 overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-surface-elevated to-surface p-6 sm:p-10 shadow-elevated">
-        <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-gold">
-            <Trophy className="h-5 w-5 text-background" />
-          </span>
-          <div>
-            <h2 className="font-display text-2xl text-foreground sm:text-3xl">Minha Evolução</h2>
-            <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">Resumo da sua jornada</p>
-          </div>
-        </div>
-
-        <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <Stat label="Temporadas concluídas" value={String(levels.filter((l) => (lvlProgress[l.id]?.percent ?? 0) >= 100).length)} />
-          <Stat label="Episódios finalizados" value={String(stats.completedWs)} />
-          <Stat label="Progresso geral" value={`${stats.percent}%`} highlight />
-          <Stat label="Próximo passo" value={nextWorkshop ? `Temp. ${nextWorkshop.level.order_index}` : "—"} />
-        </div>
-
-        {nextWorkshop && (
-          <div className="mt-6 rounded-2xl border border-border glass p-5">
-            <p className="text-xs uppercase tracking-widest text-muted-foreground">Recomendação</p>
-            <p className="mt-1 font-display text-lg text-foreground">{nextWorkshop.workshop.title}</p>
-            <p className="text-sm text-muted-foreground">Temporada {nextWorkshop.level.order_index} — {nextWorkshop.level.name}</p>
-            <Link to="/treinamento-premium/nivel/$slug" params={{ slug: nextWorkshop.level.slug }}
-              className="mt-4 inline-flex items-center gap-2 rounded-full bg-foreground px-5 py-2.5 text-sm font-medium text-background transition hover:brightness-110">
-              <Play className="h-4 w-4 fill-current" /> Continuar de onde parou
-            </Link>
-          </div>
-        )}
-      </section>
-
-      {/* VIDEO PLAYER MODAL */}
-      <Dialog open={!!playing} onOpenChange={(open) => !open && setPlaying(null)}>
-        <DialogContent className="max-w-5xl border-none bg-transparent p-0 shadow-none sm:rounded-none">
-          <DialogHeader className="sr-only">
-            <DialogTitle>{playing?.title}</DialogTitle>
-          </DialogHeader>
-          <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-black shadow-2xl">
-            {playing && (
-              <iframe
-                src={`https://www.youtube.com/embed/${youtubeId(playing.video_url)}?autoplay=1&rel=0`}
-                title={playing.title}
-                className="h-full w-full border-0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-              />
-            )}
-            <button
-              onClick={() => setPlaying(null)}
-              className="absolute right-4 top-4 z-50 rounded-full bg-black/50 p-2 text-white/70 backdrop-blur-md transition hover:bg-black/70 hover:text-white"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </main>
-  );
-}
-
-function Stat({ icon, label, value, highlight }: { icon?: React.ReactNode; label: string; value: string; highlight?: boolean }) {
-  return (
-    <div className={`rounded-2xl border border-border p-4 ${highlight ? "bg-gradient-primary shadow-glow" : "glass"}`}>
-      <div className={`flex items-center gap-1.5 text-[10px] uppercase tracking-widest ${highlight ? "text-primary-foreground/80" : "text-muted-foreground"}`}>
-        {icon} {label}
-      </div>
-      <p className={`mt-1.5 font-display text-2xl ${highlight ? "text-primary-foreground" : "text-foreground"}`}>{value}</p>
-    </div>
   );
 }
