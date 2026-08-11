@@ -1,30 +1,36 @@
-# Plano de Implementação: Módulo Carta para o Eu do Futuro
+# Plano de Implementação Completa: Módulo Carta para o Eu do Futuro
 
-Este plano detalha a implementação completa da jornada interativa "Carta para o Eu do Futuro", expandindo a estrutura base já criada com a nova identidade visual.
+Este plano detalha a implementação de todas as etapas e funcionalidades solicitadas para o módulo "Carta para o Eu do Futuro", transformando a página inicial estática em uma jornada psicológica e emocional completa.
 
-## Objetivos
-- Transformar a página estática em uma jornada imersiva de 4 etapas.
-- Implementar a "Cápsula do Tempo" com sistema de bloqueio temporal e senha.
-- Garantir a persistência correta dos dados no backend.
+## Objetivo
+Criar uma experiência imersiva de 4 etapas conduzindo o usuário à escrita de uma carta temporal, com bloqueio inteligente, reflexão pós-abertura e segurança por senha.
 
 ## Etapas de Desenvolvimento
 
-### 1. Componentes de Interface (UI)
-- Criar `LetterStage.tsx`: Componente base para cada etapa da jornada.
-- Criar `RealityToday.tsx`: Etapa 1 - Reflexão profunda sobre o presente.
-- Criar `FutureIdentity.tsx`: Etapa 2 - Visualização da identidade futura.
-- Criar `TimeCapsule.tsx`: Etapa 3 - Configuração de data de desbloqueio e senha opcional.
-- Criar `EvolutionComparison.tsx`: Etapa 4 - Reflexão e comparação de evolução pós-abertura.
+### 1. Reestruturação da Interface e Estado
+- Refatorar `src/routes/_authenticated/carta-futuro.tsx` para gerenciar o fluxo da jornada (Etapas 1 a 4).
+- Implementar animações de transição suave entre etapas.
 
-### 2. Fluxo de Navegação e Estado
-- Refatorar `src/routes/_authenticated/carta-futuro.tsx` para gerenciar o estado da jornada (etapa atual, dados da carta).
-- Implementar animações suaves de transição entre as etapas.
+### 2. Implementação da Jornada Guiada
+- **Etapa 1 (Onde você está hoje?):** Interface de reflexão honesta com campo de texto e salvamento automático.
+- **Etapa 2 (Quem você deseja se tornar?):** Interface de visualização de identidade futura (família, dinheiro, saúde, espiritualidade).
+- **Etapa 3 (Linha do Tempo):** Experiência visual de viagem no tempo com seleção de data de abertura (6 meses a 5 anos).
+- **Etapa 4 (Escrevendo sua Carta):** Editor de texto confortável (mobile/desktop) com sugestões inspiradoras que desaparecem ao digitar.
 
-### 3. Integração com Backend
-- Vincular os inputs das etapas às funções de servidor em `src/lib/future-letter.functions.ts`.
-- Implementar verificação de `unlock_date` no servidor para garantir a integridade da "Cápsula do Tempo".
+### 3. Sistema de Cápsula do Tempo e Bloqueio
+- Criar a visualização "Minha Cápsula do Tempo".
+- Implementar o **Bloqueio Inteligente**: a carta permanece ilegível e criptografada até a data de desbloqueio.
+- Adicionar opção de **Proteção por Senha** para o módulo.
 
-## Detalhes Técnicos
-- **Banco de Dados:** Utiliza as tabelas `future_letters` e `future_letter_responses`.
-- **Identidade Visual:** Aplicada a nova capa oficial do módulo e estilo dark premium condizente com o Instituto Neuroconsciência.
-- **Segurança:** Cartas protegidas por RLS.
+### 4. Experiência de Abertura e Pós-Abertura
+- Animação especial de abertura na data programada.
+- **Reflexão Pós-Abertura:** "Minha Resposta ao Meu Eu do Passado".
+- **Comparação de Evolução:** Tela "Minha Transformação" comparando quem era vs. quem se tornou.
+
+### 5. Backend e Persistência
+- Atualizar `src/lib/future-letter.functions.ts` para suportar todos os novos campos e metadados (tempo gasto, contagem de palavras, etc.).
+- Garantir salvamento em tempo real (debounce) para evitar perda de conteúdo.
+
+## Detalhes Visuais
+- Tipografia elegante, cores dark premium e tons que transmitam serenidade e propósito.
+- Uso de componentes Shadcn/UI personalizados para a linha do tempo e editor.
