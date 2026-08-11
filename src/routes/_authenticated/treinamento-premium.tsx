@@ -22,9 +22,10 @@ function PassaportePage() {
     getPassport()
       .then((res) => {
         if (!res.layers || res.layers.length === 0) {
-          setError("As camadas do passaporte não foram encontradas.");
+          setError("As camadas do passaporte não foram encontradas no banco de dados.");
         } else {
           setData(res);
+          setError(null);
         }
       })
       .catch((err) => {

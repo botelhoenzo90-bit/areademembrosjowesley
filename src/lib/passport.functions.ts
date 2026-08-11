@@ -52,9 +52,9 @@ export const getPassportData = createServerFn({ method: "GET" })
     }
 
     return {
-      user,
-      layers,
-      progress,
+      user: { id: user.id, email: user.email },
+      layers: layersRes.data || [],
+      progress: progress || [],
       badges: badgesRes.data || [],
       userBadges: userBadgesRes.data || []
     };
