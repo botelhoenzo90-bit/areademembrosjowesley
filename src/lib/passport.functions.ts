@@ -5,13 +5,13 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 export const getPassportData = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { supabase, userId } = context;
+    const { supabase, userId, claims } = context;
 
     const [layersRes, progressRes, badgesRes, userBadgesRes] = await Promise.all([
       supabase.from("passport_layers").select("*").order("layer_number"),
-      supabase.from("user_layer_progress").select("*").eq("user_id", user.id),
+      supabase.from("user_layer_progress").select("*").eq("user_id", userId),
       supabase.from("passport_badges").select("*"),
-      supabase.from("user_passport_badges").select("*").eq("user_id", user.id)
+      supabase.from("user_passport_badges").select("*").eq("user_id", userId)
     ]);
 
     if (layersRes.error) {
@@ -34,7 +34,7 @@ export const getPassportData = createServerFn({ method: "GET" })
           const { data: newProgress, error: upsertError } = await supabase
             .from("user_layer_progress")
             .upsert({
-              user_id: user.id,
+              user_id: userId,
               layer_id: introLayer.id,
               status: 'available'
             }, { onConflict: "user_id,layer_id" })
@@ -52,7 +52,7 @@ export const getPassportData = createServerFn({ method: "GET" })
     }
 
     return {
-      user: { id: user.id, email: user.email },
+      user: { id: userId, email: claims.email },
       layers: layersRes.data || [],
       progress: progress || [],
       badges: badgesRes.data || [],
@@ -61,6 +61,7 @@ export const getPassportData = createServerFn({ method: "GET" })
   });
 
 export const updateLayerProgress = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data) => z.object({
     layerId: z.string(),
     updates: z.object({
@@ -74,14 +75,13 @@ export const updateLayerProgress = createServerFn({ method: "POST" })
         completed_at: z.string().optional()
     })
   }).parse(data))
-  .handler(async ({ data }) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Unauthorized");
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
 
     const { data: result, error } = await supabase
       .from("user_layer_progress")
       .upsert({
-        user_id: user.id,
+        user_id: userId,
         layer_id: data.layerId,
         ...data.updates,
         updated_at: new Date().toISOString()
@@ -94,12 +94,12 @@ export const updateLayerProgress = createServerFn({ method: "POST" })
   });
 
 export const unlockNextLayer = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
   .inputValidator((data) => z.object({
     currentLayerNumber: z.number()
   }).parse(data))
-  .handler(async ({ data }) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Unauthorized");
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
 
     const nextLayerNumber = data.currentLayerNumber + 1;
     const { data: nextLayer } = await supabase
@@ -112,7 +112,7 @@ export const unlockNextLayer = createServerFn({ method: "POST" })
         await supabase
           .from("user_layer_progress")
           .upsert({
-            user_id: user.id,
+            user_id: userId,
             layer_id: nextLayer.id,
             status: 'available'
           }, { onConflict: "user_id,layer_id" });
@@ -122,13 +122,13 @@ export const unlockNextLayer = createServerFn({ method: "POST" })
   });
 
 export const restartPassportJornada = createServerFn({ method: "POST" })
-  .handler(async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error("Unauthorized");
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
 
     await Promise.all([
-        supabase.from("user_layer_progress").delete().eq("user_id", user.id),
-        supabase.from("user_passport_badges").delete().eq("user_id", user.id)
+        supabase.from("user_layer_progress").delete().eq("user_id", userId),
+        supabase.from("user_passport_badges").delete().eq("user_id", userId)
     ]);
 
     return { success: true };
