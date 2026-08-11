@@ -29,7 +29,7 @@ function PassaportePage() {
       })
       .catch((err) => {
         console.error("Error loading passport:", err);
-        setError(`Erro ao carregar os dados do passaporte: ${err.message || 'Erro desconhecido'}`);
+        setError(`Erro ao carregar os dados do passaporte: ${err.message || 'Verifique sua conexão'}`);
       })
       .finally(() => setLoading(false));
   }, [getPassport]);
