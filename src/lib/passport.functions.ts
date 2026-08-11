@@ -21,16 +21,24 @@ export const getPassportData = createServerFn({ method: "GET" })
     if (layers.length > 0 && progress.length === 0) {
       const introLayer = layers.find(l => l.layer_number === 0);
       if (introLayer) {
-        const { data: newProgress } = await supabase
-          .from("user_layer_progress")
-          .upsert({
-            user_id: user.id,
-            layer_id: introLayer.id,
-            status: 'available'
-          }, { onConflict: "user_id,layer_id" })
-          .select();
-        
-        if (newProgress) progress = newProgress;
+        try {
+          const { data: newProgress, error: upsertError } = await supabase
+            .from("user_layer_progress")
+            .upsert({
+              user_id: user.id,
+              layer_id: introLayer.id,
+              status: 'available'
+            }, { onConflict: "user_id,layer_id" })
+            .select();
+          
+          if (upsertError) {
+            console.error("Upsert error seeding layer 0:", upsertError);
+          } else if (newProgress && newProgress.length > 0) {
+            progress = newProgress;
+          }
+        } catch (e) {
+          console.error("Exception seeding layer 0:", e);
+        }
       }
     }
 
