@@ -23,6 +23,7 @@ import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/h
 import { Route as AuthenticatedFerramentasRouteImport } from './routes/_authenticated/ferramentas'
 import { Route as AuthenticatedComunidadeRouteImport } from './routes/_authenticated/comunidade'
 import { Route as AuthenticatedCentroOperacionalRouteImport } from './routes/_authenticated/centro-operacional'
+import { Route as AuthenticatedCartaFuturoRouteImport } from './routes/_authenticated/carta-futuro'
 import { Route as AuthenticatedBonusRouteImport } from './routes/_authenticated/bonus'
 import { Route as AuthenticatedModuloSlugRouteImport } from './routes/_authenticated/modulo.$slug'
 import { Route as AuthenticatedTreinamentoPremiumNivelSlugRouteImport } from './routes/_authenticated/treinamento-premium.nivel.$slug'
@@ -101,6 +102,12 @@ const AuthenticatedCentroOperacionalRoute =
     path: '/centro-operacional',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedCartaFuturoRoute =
+  AuthenticatedCartaFuturoRouteImport.update({
+    id: '/carta-futuro',
+    path: '/carta-futuro',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedBonusRoute = AuthenticatedBonusRouteImport.update({
   id: '/bonus',
   path: '/bonus',
@@ -130,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/bonus': typeof AuthenticatedBonusRoute
+  '/carta-futuro': typeof AuthenticatedCartaFuturoRoute
   '/centro-operacional': typeof AuthenticatedCentroOperacionalRoute
   '/comunidade': typeof AuthenticatedComunidadeRoute
   '/ferramentas': typeof AuthenticatedFerramentasRoute
@@ -149,6 +157,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/bonus': typeof AuthenticatedBonusRoute
+  '/carta-futuro': typeof AuthenticatedCartaFuturoRoute
   '/centro-operacional': typeof AuthenticatedCentroOperacionalRoute
   '/comunidade': typeof AuthenticatedComunidadeRoute
   '/ferramentas': typeof AuthenticatedFerramentasRoute
@@ -170,6 +179,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/_authenticated/bonus': typeof AuthenticatedBonusRoute
+  '/_authenticated/carta-futuro': typeof AuthenticatedCartaFuturoRoute
   '/_authenticated/centro-operacional': typeof AuthenticatedCentroOperacionalRoute
   '/_authenticated/comunidade': typeof AuthenticatedComunidadeRoute
   '/_authenticated/ferramentas': typeof AuthenticatedFerramentasRoute
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/reset-password'
     | '/bonus'
+    | '/carta-futuro'
     | '/centro-operacional'
     | '/comunidade'
     | '/ferramentas'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/reset-password'
     | '/bonus'
+    | '/carta-futuro'
     | '/centro-operacional'
     | '/comunidade'
     | '/ferramentas'
@@ -230,6 +242,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/reset-password'
     | '/_authenticated/bonus'
+    | '/_authenticated/carta-futuro'
     | '/_authenticated/centro-operacional'
     | '/_authenticated/comunidade'
     | '/_authenticated/ferramentas'
@@ -353,6 +366,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCentroOperacionalRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/carta-futuro': {
+      id: '/_authenticated/carta-futuro'
+      path: '/carta-futuro'
+      fullPath: '/carta-futuro'
+      preLoaderRoute: typeof AuthenticatedCartaFuturoRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/bonus': {
       id: '/_authenticated/bonus'
       path: '/bonus'
@@ -404,6 +424,7 @@ const AuthenticatedTreinamentoPremiumRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedBonusRoute: typeof AuthenticatedBonusRoute
+  AuthenticatedCartaFuturoRoute: typeof AuthenticatedCartaFuturoRoute
   AuthenticatedCentroOperacionalRoute: typeof AuthenticatedCentroOperacionalRoute
   AuthenticatedComunidadeRoute: typeof AuthenticatedComunidadeRoute
   AuthenticatedFerramentasRoute: typeof AuthenticatedFerramentasRoute
@@ -417,6 +438,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedBonusRoute: AuthenticatedBonusRoute,
+  AuthenticatedCartaFuturoRoute: AuthenticatedCartaFuturoRoute,
   AuthenticatedCentroOperacionalRoute: AuthenticatedCentroOperacionalRoute,
   AuthenticatedComunidadeRoute: AuthenticatedComunidadeRoute,
   AuthenticatedFerramentasRoute: AuthenticatedFerramentasRoute,
@@ -443,13 +465,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

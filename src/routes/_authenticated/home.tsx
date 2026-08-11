@@ -26,6 +26,19 @@ import j4Asset from "@/assets/jornada-4.png.asset.json";
 const JORNADA_COVERS = [j1Asset.url, j2Asset.url, j3Asset.url, j4Asset.url];
 
 import comunidadeAsset from "@/assets/comunidade-whatsapp.jpeg.asset.json";
+import cartaFuturoCover from "@/assets/cover-6.png.asset.json"; // Temporarily using m6 as a place holder if a specific cover isn't provided
+
+const CARTA_FUTURO_CARD: ModuleCardData = {
+  slug: "carta-futuro",
+  name: "Carta para o Eu do Futuro",
+  short_description: "Toda transformação começa quando você decide conversar com a pessoa que deseja se tornar.",
+  cover_url: "https://images.unsplash.com/photo-1516962080544-eac695c93791?q=80&w=1974",
+  lessons_count: 0,
+  percent: 0,
+  accent_from: null,
+  accent_to: null,
+  to: "/carta-futuro",
+};
 
 const COMUNIDADE_CARD: ModuleCardData = {
   slug: "comunidade-neuroconsciencia",
@@ -243,6 +256,7 @@ function HomePage() {
       {/* NOVOS CONTEÚDOS */}
       <SectionRow title="Neuro Consciência" icon={<Sparkles className="h-4 w-4 text-gold" />}>
         <ModuleCard key="comunidade" data={COMUNIDADE_CARD} />
+        <ModuleCard key="carta-futuro" data={CARTA_FUTURO_CARD} />
         {modules.slice(0, 6).filter(m => m.slug !== "centro-operacional").map((m) => (
           <ModuleCard key={`novo-${m.slug}`} data={m} />
         ))}
