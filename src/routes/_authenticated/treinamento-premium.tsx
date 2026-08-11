@@ -15,16 +15,67 @@ function PassaportePage() {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const getPassport = useServerFn(getPassportData);
 
   useEffect(() => {
-    getPassport().then(setData).finally(() => setLoading(false));
+    getPassport()
+      .then((res) => {
+        if (!res.layers || res.layers.length === 0) {
+          setError("As camadas do passaporte não foram encontradas.");
+        } else {
+          setData(res);
+        }
+      })
+      .catch((err) => {
+        console.error("Error loading passport:", err);
+        setError("Erro ao carregar os dados do passaporte.");
+      })
+      .finally(() => setLoading(false));
   }, [getPassport]);
 
-  if (loading || !data) return <div>Carregando Passaporte...</div>;
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <div className="text-center space-y-4">
+          <div className="h-12 w-12 animate-spin rounded-full border-4 border-gold border-t-transparent mx-auto" />
+          <p className="text-gold font-display tracking-widest animate-pulse">Carregando Passaporte...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black p-6 text-center">
+        <div className="max-w-md space-y-6">
+          <h2 className="text-2xl font-display text-white">{error || "Algo deu errado"}</h2>
+          <p className="text-muted-foreground">Não foi possível carregar sua jornada no momento.</p>
+          <Button variant="outline" className="border-gold/50 text-gold" onClick={() => window.location.reload()}>
+            Tentar Novamente
+          </Button>
+          <Button variant="ghost" className="block w-full text-muted-foreground" onClick={() => navigate({ to: "/home" })}>
+            Voltar ao Início
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   const { layers, progress, userBadges, badges } = data;
-  const completedLayers = progress.filter((p: any) => p.status === 'completed' && p.layer_id !== layers.find((l:any) => l.layer_number === 0)?.id).length;
+  
+  // Ensure we have layer 0 as the starting point if no progress exists
+  const introLayer = layers.find((l: any) => l.layer_number === 0);
+  const hasProgress = progress && progress.length > 0;
+  
+  // Create a display list where layer 0 is always unlocked if no progress
+  const processedProgress = hasProgress ? progress : (introLayer ? [{
+    layer_id: introLayer.id,
+    status: 'available',
+    points_earned: 0
+  }] : []);
+
+  const completedLayers = progress.filter((p: any) => p.status === 'completed' && p.layer_id !== introLayer?.id).length;
   const totalLayersCount = layers.filter((l: any) => l.layer_number > 0).length;
   const progressPercent = Math.round((completedLayers / totalLayersCount) * 100);
   const totalPoints = progress.reduce((acc: number, p: any) => acc + (p.points_earned || 0), 0);
@@ -85,7 +136,7 @@ function PassaportePage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {layers.map((layer: any) => {
-                const prog = progress.find((p: any) => p.layer_id === layer.id) || { status: 'locked' };
+                const prog = (processedProgress as any[]).find((p: any) => p.layer_id === layer.id) || { status: 'locked' };
                 const isLocked = prog.status === 'locked';
                 const isCompleted = prog.status === 'completed';
                 const isIntro = layer.layer_number === 0;
@@ -112,7 +163,9 @@ function PassaportePage() {
                             ) : (
                                 <div className="bg-gold/20 backdrop-blur-md px-3 py-1 rounded-full border border-gold/40 flex items-center gap-2">
                                     <div className="h-1.5 w-1.5 rounded-full bg-gold animate-pulse" />
-                                    <span className="text-[10px] font-bold text-gold uppercase tracking-tighter">Disponível</span>
+                                    <span className="text-[10px] font-bold text-gold uppercase tracking-tighter">
+                                        {isIntro ? 'Iniciar' : 'Disponível'}
+                                    </span>
                                 </div>
                             )}
                         </div>
