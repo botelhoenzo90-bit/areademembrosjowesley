@@ -128,7 +128,7 @@ function LayerPage() {
       }
 
       toast.success("Protocolo e Camada Concluídos! +30 XP");
-      navigate({ to: "/_authenticated/treinamento-premium" });
+      navigate({ to: "/treinamento-premium" });
     } catch (e) {
       toast.error("Erro ao concluir camada.");
     } finally {
@@ -141,7 +141,7 @@ function LayerPage() {
   return (
     <main className="min-h-screen bg-black text-foreground pb-20">
       <nav className="p-6 flex items-center justify-between border-b border-white/10 sticky top-0 bg-black/80 backdrop-blur-md z-30">
-        <Button variant="ghost" onClick={() => navigate({ to: "/_authenticated/treinamento-premium" })}>
+        <Button variant="ghost" onClick={() => navigate({ to: "/treinamento-premium" })}>
           <ArrowLeft className="mr-2 h-4 w-4" /> Voltar ao Passaporte
         </Button>
         <div className="flex items-center gap-4">
