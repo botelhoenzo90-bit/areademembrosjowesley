@@ -19,7 +19,7 @@ export type ModuleCardData = {
 export function ModuleCard({ data, bare }: { data: ModuleCardData; bare?: boolean }) {
   const status =
     data.locked ? "Bloqueado" :
-    data.percent >= 100 ? "Concluído" : data.percent > 0 ? "Em andamento" : "Novo";
+    data.percent >= 100 ? "Concluído" : data.percent > 0 ? "Em andamento" : "";
 
   const cardClass =
     "group relative w-64 shrink-0 overflow-hidden rounded-2xl border border-border bg-surface text-left shadow-elevated transition-all duration-300 hover:-translate-y-1 hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-primary/50";
@@ -51,9 +51,11 @@ export function ModuleCard({ data, bare }: { data: ModuleCardData; bare?: boolea
         {!bare && <div className="absolute inset-0 bg-card-fade" aria-hidden />}
         {!bare && (
           <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3">
-            <span className="rounded-full glass px-2.5 py-1 text-[10px] uppercase tracking-wider text-foreground/80">
-              {status}
-            </span>
+            {status && (
+              <span className="rounded-full glass px-2.5 py-1 text-[10px] uppercase tracking-wider text-foreground/80">
+                {status}
+              </span>
+            )}
             {data.percent >= 100 && (
               <CheckCircle2 className="h-5 w-5 text-gold drop-shadow" />
             )}
