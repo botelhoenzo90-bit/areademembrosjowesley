@@ -34,18 +34,36 @@ function LayerPage() {
   const unlockNext = useServerFn(unlockNextLayer);
 
   useEffect(() => {
-    getPassport().then(d => {
-      setData(d);
-      const layer = d.layers.find((l: any) => l.layer_number === parseInt(layerNumber));
-      const prog = d.progress.find((p: any) => p.layer_id === layer?.id);
-      if (prog?.reflection_content) setReflection(prog.reflection_content);
-    }).finally(() => setLoading(false));
+    getPassport()
+      .then(d => {
+        setData(d);
+        const layer = d.layers?.find((l: any) => l.layer_number === parseInt(layerNumber));
+        const prog = d.progress?.find((p: any) => p.layer_id === layer?.id);
+        if (prog?.reflection_content) setReflection(prog.reflection_content);
+      })
+      .catch(err => {
+        console.error("Error in LayerPage:", err);
+        toast.error("Erro ao carregar dados da camada.");
+      })
+      .finally(() => setLoading(false));
   }, [getPassport, layerNumber]);
 
-  if (loading || !data) return <div className="flex h-screen items-center justify-center bg-black"><Loader2 className="animate-spin text-gold" /></div>;
+  if (loading) return <div className="flex h-screen items-center justify-center bg-black"><Loader2 className="animate-spin text-gold" /></div>;
+
+  if (!data || !data.layers) return (
+    <div className="flex flex-col h-screen items-center justify-center bg-black p-6 text-center">
+      <h2 className="text-xl text-white mb-4">Erro ao carregar os dados do passaporte.</h2>
+      <Button onClick={() => navigate({ to: "/treinamento-premium" })}>Voltar ao Passaporte</Button>
+    </div>
+  );
 
   const currentLayer = data.layers.find((l: any) => l.layer_number === parseInt(layerNumber));
-  if (!currentLayer) return <div>Camada não encontrada.</div>;
+  if (!currentLayer) return (
+    <div className="flex flex-col h-screen items-center justify-center bg-black p-6 text-center">
+      <h2 className="text-xl text-white mb-4">Camada {layerNumber} não encontrada.</h2>
+      <Button onClick={() => navigate({ to: "/treinamento-premium" })}>Voltar ao Passaporte</Button>
+    </div>
+  );
 
   const prog = data.progress.find((p: any) => p.layer_id === currentLayer.id) || { status: 'locked' };
   
