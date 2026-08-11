@@ -9,10 +9,19 @@ export const getPassportData = createServerFn({ method: "GET" })
 
     const [layersRes, progressRes, badgesRes, userBadgesRes] = await Promise.all([
       supabase.from("passport_layers").select("*").order("layer_number"),
-      supabase.from("user_layer_progress").select("*").eq("user_id", user.id).throwOnError(),
+      supabase.from("user_layer_progress").select("*").eq("user_id", user.id),
       supabase.from("passport_badges").select("*"),
-      supabase.from("user_passport_badges").select("*").eq("user_id", user.id).throwOnError()
+      supabase.from("user_passport_badges").select("*").eq("user_id", user.id)
     ]);
+
+    if (layersRes.error) {
+      console.error("Error fetching passport_layers:", layersRes.error);
+      throw new Error(`Erro ao buscar camadas: ${layersRes.error.message}`);
+    }
+    if (progressRes.error) {
+      console.error("Error fetching user_layer_progress:", progressRes.error);
+      throw new Error(`Erro ao buscar progresso: ${progressRes.error.message}`);
+    }
 
     let layers = layersRes.data || [];
     let progress = progressRes.data || [];
