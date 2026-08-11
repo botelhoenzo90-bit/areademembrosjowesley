@@ -14,10 +14,30 @@ export const getPassportData = createServerFn({ method: "GET" })
       supabase.from("user_passport_badges").select("*").eq("user_id", user.id)
     ]);
 
+    let layers = layersRes.data || [];
+    let progress = progressRes.data || [];
+
+    // Auto-seed Layer 0 if user has no progress
+    if (layers.length > 0 && progress.length === 0) {
+      const introLayer = layers.find(l => l.layer_number === 0);
+      if (introLayer) {
+        const { data: newProgress } = await supabase
+          .from("user_layer_progress")
+          .upsert({
+            user_id: user.id,
+            layer_id: introLayer.id,
+            status: 'available'
+          }, { onConflict: "user_id,layer_id" })
+          .select();
+        
+        if (newProgress) progress = newProgress;
+      }
+    }
+
     return {
       user,
-      layers: layersRes.data || [],
-      progress: progressRes.data || [],
+      layers,
+      progress,
       badges: badgesRes.data || [],
       userBadges: userBadgesRes.data || []
     };
