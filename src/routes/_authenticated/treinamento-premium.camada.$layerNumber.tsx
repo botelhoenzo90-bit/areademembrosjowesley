@@ -34,12 +34,18 @@ function LayerPage() {
   const unlockNext = useServerFn(unlockNextLayer);
 
   useEffect(() => {
-    getPassport().then(d => {
-      setData(d);
-      const layer = d.layers.find((l: any) => l.layer_number === parseInt(layerNumber));
-      const prog = d.progress.find((p: any) => p.layer_id === layer?.id);
-      if (prog?.reflection_content) setReflection(prog.reflection_content);
-    }).finally(() => setLoading(false));
+    getPassport()
+      .then(d => {
+        setData(d);
+        const layer = d.layers?.find((l: any) => l.layer_number === parseInt(layerNumber));
+        const prog = d.progress?.find((p: any) => p.layer_id === layer?.id);
+        if (prog?.reflection_content) setReflection(prog.reflection_content);
+      })
+      .catch(err => {
+        console.error("Error in LayerPage:", err);
+        toast.error("Erro ao carregar dados da camada.");
+      })
+      .finally(() => setLoading(false));
   }, [getPassport, layerNumber]);
 
   if (loading || !data) return <div className="flex h-screen items-center justify-center bg-black"><Loader2 className="animate-spin text-gold" /></div>;
