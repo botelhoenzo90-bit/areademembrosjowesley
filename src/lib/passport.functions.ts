@@ -9,9 +9,9 @@ export const getPassportData = createServerFn({ method: "GET" })
 
     const [layersRes, progressRes, badgesRes, userBadgesRes] = await Promise.all([
       supabase.from("passport_layers").select("*").order("layer_number"),
-      supabase.from("user_layer_progress").select("*").eq("user_id", user.id),
+      supabase.from("user_layer_progress").select("*").eq("user_id", user.id).throwOnError(),
       supabase.from("passport_badges").select("*"),
-      supabase.from("user_passport_badges").select("*").eq("user_id", user.id)
+      supabase.from("user_passport_badges").select("*").eq("user_id", user.id).throwOnError()
     ]);
 
     let layers = layersRes.data || [];
