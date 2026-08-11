@@ -40,12 +40,16 @@ function PassaportePage() {
         <div className="text-center space-y-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-gold border-t-transparent mx-auto" />
           <p className="text-gold font-display tracking-widest animate-pulse">Carregando Passaporte...</p>
+          <div className="text-white/20 text-[10px] mt-4 max-w-xs mx-auto">
+            Garantindo que sua jornada de 9 camadas esteja pronta para começar.
+          </div>
         </div>
       </div>
     );
   }
 
   if (error || !data) {
+    console.error("Render error state:", error);
     return (
       <div className="flex min-h-screen items-center justify-center bg-black p-6 text-center">
         <div className="max-w-md space-y-6">
