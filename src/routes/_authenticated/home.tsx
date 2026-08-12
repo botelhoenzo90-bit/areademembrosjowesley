@@ -253,13 +253,22 @@ function HomePage() {
         </div>
       </section>
 
-      {/* NOVOS CONTEÚDOS */}
+      {/* NEURO CONSCIÊNCIA */}
       <SectionRow title="Neuro Consciência" icon={<Sparkles className="h-4 w-4 text-gold" />}>
-        <ModuleCard key="comunidade" data={COMUNIDADE_CARD} />
-        <ModuleCard key="carta-futuro" data={CARTA_FUTURO_CARD} />
-        {modules.slice(0, 6).filter(m => m.slug !== "centro-operacional").map((m) => (
+        {/* Ordem solicitada: Seja bem vindos (mod 1), Comunidade (fixo), Carta (fixo), Reprogramação (mod 4), Treinamento (mod 5), Bônus (mod 6) */}
+        {modules.filter(m => m.slug === "seja-bem-vindos").map((m) => (
           <ModuleCard key={`novo-${m.slug}`} data={m} />
         ))}
+        <ModuleCard key="comunidade" data={COMUNIDADE_CARD} />
+        <ModuleCard key="carta-futuro" data={CARTA_FUTURO_CARD} />
+        {modules.filter(m => ["reprogramacao-mental", "treinamento-premium", "bonus-exclusivos"].includes(m.slug))
+          .sort((a, b) => {
+            const order = { "reprogramacao-mental": 1, "treinamento-premium": 2, "bonus-exclusivos": 3 };
+            return (order[a.slug as keyof typeof order] || 0) - (order[b.slug as keyof typeof order] || 0);
+          })
+          .map((m) => (
+            <ModuleCard key={`novo-${m.slug}`} data={m} />
+          ))}
       </SectionRow>
 
 
