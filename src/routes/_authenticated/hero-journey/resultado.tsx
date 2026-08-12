@@ -14,16 +14,12 @@ export const Route = createFileRoute("/_authenticated/hero-journey/resultado")({
 });
 
 function ResultPage() {
-  const { data: userArchetypes = [] } = useQuery({
-    queryKey: ['hero_journey_archetypes'],
-    queryFn: () => getArchetypes(),
-  });
-
-  const { data: diagnosis } = useQuery({
+  const { data: diagnosisData } = useQuery({
     queryKey: ['hero_journey_diagnosis'],
     queryFn: () => getDiagnosis(),
   });
 
+  const diagnosis = diagnosisData as any;
   const predominant = diagnosis?.predominant_archetype;
   const archetype = predominant ? ARCHETYPES_CONTENT[predominant] : null;
 
