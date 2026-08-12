@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Play, Clock, Sparkles, Flame, ChevronRight, Activity, Target, Shield, Compass, Lock } from "lucide-react";
 import heroAsset from "@/assets/cover-4.png.asset.json";
@@ -36,6 +36,7 @@ export const Route = createFileRoute("/_authenticated/reprogramacao-mental")({
 });
 
 function Page() {
+  const navigate = useNavigate();
   const { data: statsData } = useSuspenseQuery({
     queryKey: ['hero_journey_stats'],
     queryFn: () => getJourneyStats(),
@@ -134,7 +135,9 @@ function Page() {
         <StatCard icon={<Activity className="h-4 w-4 text-gold" />} label="Progresso" value={`${stats?.total_progress ?? 0}%`} />
         <StatCard icon={<Compass className="h-4 w-4 text-gold" />} label="Arquétipos" value={`${stats?.archetypes_explored ?? 0}/6`} />
         <StatCard icon={<Target className="h-4 w-4 text-gold" />} label="Missões" value={stats?.missions_completed ?? 0} />
-        <StatCard icon={<Shield className="h-4 w-4 text-gold" />} label="Consciência" value={`Nível ${stats?.consciousness_level ?? 1}`} />
+        <Link to="/hero-journey/resultado">
+          <StatCard icon={<Shield className="h-4 w-4 text-gold" />} label="Consciência" value={`Nível ${stats?.consciousness_level ?? 1}`} />
+        </Link>
       </section>
 
       <section className="mx-4 mt-12 lg:mx-auto lg:max-w-6xl">
