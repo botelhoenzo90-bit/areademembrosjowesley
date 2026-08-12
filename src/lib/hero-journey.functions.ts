@@ -67,6 +67,42 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
     return { success: true };
   });
 
+export const getDiagnosis = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Unauthorized");
+
+    const { data, error } = await supabase
+      .from('hero_journey_diagnosis' as any)
+      .select('*')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  });
+
+export const saveDiagnosis = createServerFn({ method: "POST" })
+  .inputValidator((data) => z.object({
+    predominant_archetype: z.string(),
+    details: z.any(),
+  }).parse(data))
+  .handler(async ({ data }) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Unauthorized");
+
+    const { error } = await supabase
+      .from('hero_journey_diagnosis' as any)
+      .upsert({
+        user_id: user.id,
+        ...data,
+        created_at: new Date().toISOString(),
+      });
+
+    if (error) throw error;
+    return { success: true };
+  });
+
 export const resetJourney = createServerFn({ method: "POST" })
   .handler(async () => {
     const { data: { user } } = await supabase.auth.getUser();
