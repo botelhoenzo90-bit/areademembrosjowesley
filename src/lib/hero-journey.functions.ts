@@ -8,17 +8,16 @@ export const getJourneyStats = createServerFn({ method: "GET" })
     if (!user) throw new Error("Unauthorized");
 
     const { data, error } = await supabase
-      .from('hero_journey_stats')
+      .from('hero_journey_stats' as any)
       .select('*')
       .eq('user_id', user.id)
       .single();
 
     if (error && error.code !== 'PGRST116') throw error;
     
-    // If no stats, create default
     if (!data) {
       const { data: newStats, error: createError } = await supabase
-        .from('hero_journey_stats')
+        .from('hero_journey_stats' as any)
         .insert({ user_id: user.id })
         .select()
         .single();
@@ -35,7 +34,7 @@ export const getArchetypes = createServerFn({ method: "GET" })
     if (!user) throw new Error("Unauthorized");
 
     const { data, error } = await supabase
-      .from('hero_journey_archetypes')
+      .from('hero_journey_archetypes' as any)
       .select('*')
       .eq('user_id', user.id);
 
@@ -57,7 +56,7 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
     if (!user) throw new Error("Unauthorized");
 
     const { error } = await supabase
-      .from('hero_journey_archetypes')
+      .from('hero_journey_archetypes' as any)
       .upsert({
         user_id: user.id,
         ...data,
@@ -74,17 +73,17 @@ export const resetJourney = createServerFn({ method: "POST" })
     if (!user) throw new Error("Unauthorized");
 
     const { error: archError } = await supabase
-      .from('hero_journey_archetypes')
+      .from('hero_journey_archetypes' as any)
       .delete()
       .eq('user_id', user.id);
 
     const { error: statsError } = await supabase
-      .from('hero_journey_stats')
+      .from('hero_journey_stats' as any)
       .delete()
       .eq('user_id', user.id);
 
     const { error: diagError } = await supabase
-      .from('hero_journey_diagnosis')
+      .from('hero_journey_diagnosis' as any)
       .delete()
       .eq('user_id', user.id);
 
