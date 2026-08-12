@@ -152,7 +152,7 @@ function Page() {
               archetype={arch}
               status={getStatus(arch.id)}
               progress={getProgress(arch.id)}
-              onClick={() => console.log('Click arch', arch.id)}
+              onClick={() => navigate({ to: `/hero-journey/archetype/${arch.id}` })}
             />
           ))}
           {['altruista', 'nomade', 'mago'].filter(id => !ARCHETYPES_CONTENT[id]).map(id => (
