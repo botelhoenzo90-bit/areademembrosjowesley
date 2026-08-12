@@ -30,7 +30,7 @@ function ArchetypeJourneyPage() {
     queryFn: () => getArchetypes(),
   });
 
-  const currentArchData = userArchetypes.find((a: any) => a.archetype === id);
+  const currentArchData = (userArchetypes as any[]).find((a: any) => a.archetype === id);
   const initialStage: Stage = (currentArchData?.status === 'completed') ? 'conclude' : 'discover';
 
   const [stage, setStage] = useState<Stage>(initialStage);
@@ -53,9 +53,11 @@ function ArchetypeJourneyPage() {
       // Update intermediate progress
       const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
       await updateProgress({ 
-        archetype: id as any, 
-        progress, 
-        status: progress === 100 ? 'completed' : 'in_progress'
+        data: {
+          archetype: id as any, 
+          progress, 
+          status: (progress === 100 ? 'completed' : 'in_progress') as any
+        }
       });
       queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
       queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
@@ -193,7 +195,7 @@ function ArchetypeJourneyPage() {
                 />
                 <button 
                   onClick={async () => {
-                    await updateProgress({ archetype: id as any, reflection_text: reflectionText });
+                    await updateProgress({ data: { archetype: id as any, reflection_text: reflectionText } });
                     toast.success("Reflexão salva com sucesso.");
                   }}
                   className="w-full py-3 rounded-full border border-border glass text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
