@@ -57,6 +57,7 @@ function Page() {
 
   const [showSplash, setShowSplash] = useState(false);
   const [userName, setUserName] = useState("Herói");
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
     const checkUser = async () => {
@@ -78,6 +79,7 @@ function Page() {
     if (!visited) {
       setShowSplash(true);
     }
+    setIsLoaded(true);
   }, []);
 
   const handleStart = () => {
@@ -102,6 +104,17 @@ function Page() {
     const arch = userArchetypes.find(a => a.archetype === id);
     return arch?.progress ?? 0;
   };
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="space-y-4 text-center">
+          <Sparkles className="h-8 w-8 text-gold animate-pulse mx-auto" />
+          <p className="text-xs text-muted-foreground uppercase tracking-widest">Iniciando Jornada...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (showSplash) {
     return <Splash userName={userName} onStart={handleStart} />;
@@ -171,15 +184,6 @@ function Page() {
               progress={getProgress(arch.id)}
               onClick={() => navigate({ to: `/hero-journey/archetype/${arch.id}` })}
             />
-          ))}
-          {['altruista', 'nomade', 'mago'].filter(id => !ARCHETYPES_CONTENT[id]).map(id => (
-             <div key={id} className="relative overflow-hidden rounded-3xl border border-border/50 opacity-50 glass p-6 h-[280px] flex flex-col justify-center items-center text-center gap-4">
-                <Lock className="h-8 w-8 text-muted-foreground" />
-                <div>
-                   <h3 className="font-display text-xl text-foreground uppercase">{id}</h3>
-                   <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Em desenvolvimento</p>
-                </div>
-             </div>
           ))}
         </div>
       </section>
