@@ -34,8 +34,10 @@ export const Route = createFileRoute("/_authenticated/reprogramacao-mental")({
           queryFn: () => getArchetypes(),
         })
       ]);
-    } catch (e) {
+    } catch (e: any) {
       console.error("Hero Journey Loader Error:", e);
+      // Don't throw here, let the component handle it or show a more specific error
+      return { error: e.message || "Unknown error" };
     }
   },
   component: Page,
