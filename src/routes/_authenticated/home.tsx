@@ -27,6 +27,7 @@ const JORNADA_COVERS = [j1Asset.url, j2Asset.url, j3Asset.url, j4Asset.url];
 
 import comunidadeAsset from "@/assets/comunidade-whatsapp.jpeg.asset.json";
 import cartaFuturoCover from "@/assets/cover-future-letter.jpeg.asset.json";
+import camadasCover from "@/assets/cover-9-camadas.jpeg.asset.json";
 
 const CARTA_FUTURO_CARD: ModuleCardData = {
   slug: "carta-futuro",
@@ -126,7 +127,7 @@ function HomePage() {
           slug: m.slug,
           name: m.name,
           short_description: m.short_description,
-          cover_url: COVER_BY_ORDER[m.order_index] ?? m1,
+          cover_url: m.slug === "treinamento-premium" ? camadasCover.url : (COVER_BY_ORDER[m.order_index] ?? m1),
           lessons_count: m.lessons_count,
           percent: progressMap.get(m.id) ?? 0,
           accent_from: m.accent_from,
