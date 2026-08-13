@@ -20,7 +20,7 @@ function ResultPage() {
   });
 
   const diagnosis = diagnosisData as any;
-  const predominant = diagnosis?.predominant_archetype;
+  const predominant = diagnosis?.predominant || diagnosis?.predominant_archetype;
   const archetype = predominant ? ARCHETYPES_CONTENT[predominant] : null;
 
   if (!archetype) {

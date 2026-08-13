@@ -15,6 +15,12 @@ import { toast } from "sonner";
 type Stage = 'discover' | 'understand' | 'observe' | 'experiment' | 'implement' | 'conclude';
 
 export const Route = createFileRoute("/_authenticated/hero-journey/archetype/$id")({
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData({
+      queryKey: ['hero_journey_archetypes'],
+      queryFn: () => getArchetypes(),
+    });
+  },
   component: ArchetypeJourneyPage,
 });
 
