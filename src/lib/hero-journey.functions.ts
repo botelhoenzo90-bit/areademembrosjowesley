@@ -6,39 +6,26 @@ export const getJourneyStats = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
-    console.log("Fetching journey stats for user:", userId);
 
-    try {
-      const { data, error } = await supabase
+    const { data, error } = await supabase
+      .from('hero_journey_stats' as any)
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error) throw error;
+    
+    if (!data) {
+      const { data: newStats, error: createError } = await supabase
         .from('hero_journey_stats' as any)
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle();
-
-      if (error) {
-        console.error("Error fetching journey stats:", error);
-        throw error;
-      }
-      
-      if (!data) {
-        console.log("No stats found, creating new one for user:", userId);
-        const { data: newStats, error: createError } = await supabase
-          .from('hero_journey_stats' as any)
-          .insert({ user_id: userId })
-          .select()
-          .single();
-        if (createError) {
-          console.error("Error creating journey stats:", createError);
-          throw createError;
-        }
-        return newStats;
-      }
-
-      return data;
-    } catch (err) {
-      console.error("Critical error in getJourneyStats:", err);
-      throw err;
+        .insert({ user_id: userId })
+        .select()
+        .single();
+      if (createError) throw createError;
+      return newStats;
     }
+
+    return data;
   });
 
 export const getArchetypes = createServerFn({ method: "GET" })
@@ -57,7 +44,7 @@ export const getArchetypes = createServerFn({ method: "GET" })
 
 export const updateArchetypeProgress = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data) => z.object({
+  .validator((data) => z.object({
     archetype: z.enum(['inocente', 'orfao', 'guerreiro', 'altruista', 'nomade', 'mago']),
     status: z.enum(['locked', 'available', 'in_progress', 'completed']).optional(),
     progress: z.number().optional(),
@@ -97,7 +84,7 @@ export const getDiagnosis = createServerFn({ method: "GET" })
 
 export const saveDiagnosis = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((data) => z.object({
+  .validator((data) => z.object({
     predominant_archetype: z.string(),
     details: z.any(),
   }).parse(data))
