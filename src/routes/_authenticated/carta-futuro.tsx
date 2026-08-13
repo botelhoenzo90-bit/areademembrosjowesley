@@ -80,8 +80,28 @@ function CartaFuturoPage() {
         )}
 
         {stage === "intro" && (
-          <div className="text-center space-y-8 animate-fade-in py-12">
+          <div className="text-center space-y-8 animate-fade-in py-8">
             <h1 className="font-display text-4xl md:text-7xl text-gold">Carta para o Meu Eu do Futuro</h1>
+            
+            {/* Video Aula Section */}
+            <div className="max-w-3xl mx-auto overflow-hidden rounded-[32px] border border-white/10 bg-white/5 shadow-2xl">
+              <div className="aspect-video w-full">
+                <iframe
+                  src="https://www.youtube.com/embed/QxHaglQfv48"
+                  title="Aula: Carta para o Eu do Futuro"
+                  className="h-full w-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+              <div className="p-6 text-left">
+                <h3 className="text-xl font-bold text-foreground">Assista à aula antes de começar</h3>
+                <p className="mt-2 text-sm text-muted-foreground">
+                  Entenda a profundidade deste exercício e como ele pode reprogramar sua percepção de futuro.
+                </p>
+              </div>
+            </div>
+
             <p className="text-xl md:text-2xl text-muted-foreground italic max-w-2xl mx-auto leading-relaxed">
               "Toda transformação começa quando você decide conversar com a pessoa que deseja se tornar."
             </p>
