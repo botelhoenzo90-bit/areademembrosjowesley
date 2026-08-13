@@ -47,39 +47,49 @@ function Page() {
     queryKey: ['hero_journey_stats'],
     queryFn: () => getJourneyStats(),
   });
-  const stats = statsData as any;
+  const stats = statsData || { total_progress: 0, archetypes_explored: 0, missions_completed: 0, consciousness_level: 1 };
   
   const { data: userArchetypesData = [] } = useSuspenseQuery({
     queryKey: ['hero_journey_archetypes'],
     queryFn: () => getArchetypes(),
   });
-  const userArchetypes = userArchetypesData as any[];
+  const userArchetypes = (userArchetypesData || []) as any[];
 
   const [showSplash, setShowSplash] = useState(false);
   const [userName, setUserName] = useState("Herói");
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-        const p = profile as any;
-        const name = p?.display_name || p?.full_name || "Herói";
-        setUserName(name.split(' ')[0]);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user && isMounted) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('display_name, full_name')
+            .eq('id', user.id)
+            .maybeSingle();
+          
+          if (isMounted) {
+            const name = (profile as any)?.display_name || (profile as any)?.full_name || "Herói";
+            setUserName(name.split(' ')[0]);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking user:", error);
       }
     };
+    
     checkUser();
     
     const visited = localStorage.getItem('hero_journey_visited');
-    if (!visited) {
+    if (!visited && isMounted) {
       setShowSplash(true);
     }
-    setIsLoaded(true);
+    if (isMounted) setIsLoaded(true);
+
+    return () => { isMounted = false; };
   }, []);
 
   const handleStart = () => {
