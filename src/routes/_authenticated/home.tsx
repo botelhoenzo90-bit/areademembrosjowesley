@@ -255,12 +255,27 @@ function HomePage() {
 
       {/* NEURO CONSCIÊNCIA */}
       <SectionRow title="Neuro Consciência" icon={<Sparkles className="h-4 w-4 text-gold" />}>
-        {/* Ordem solicitada: Seja bem vindos (mod 1), Comunidade (fixo), Carta (fixo), Reprogramação (mod 4), Treinamento (mod 5), Bônus (mod 6) */}
+        {/* Ordem solicitada: 
+            1. Seja bem vindos (slug: seja-bem-vindos)
+            2. Comunidade (fixo: COMUNIDADE_CARD)
+            3. Carta para o futuro (fixo: CARTA_FUTURO_CARD)
+            4. Reprogramação Mental (slug: reprogramacao-mental)
+            5. Treinamento Premium (slug: treinamento-premium)
+            6. Bônus Exclusivo (slug: bonus-exclusivos)
+        */}
+        
+        {/* 1. Seja bem vindos */}
         {modules.filter(m => m.slug === "seja-bem-vindos").map((m) => (
           <ModuleCard key={`novo-${m.slug}`} data={m} />
         ))}
+        
+        {/* 2. Comunidade */}
         <ModuleCard key="comunidade" data={COMUNIDADE_CARD} />
+        
+        {/* 3. Carta para o futuro */}
         <ModuleCard key="carta-futuro" data={CARTA_FUTURO_CARD} />
+        
+        {/* 4, 5, 6. Reprogramação, Treinamento, Bônus */}
         {modules.filter(m => ["reprogramacao-mental", "treinamento-premium", "bonus-exclusivos"].includes(m.slug))
           .sort((a, b) => {
             const order = { "reprogramacao-mental": 1, "treinamento-premium": 2, "bonus-exclusivos": 3 };
