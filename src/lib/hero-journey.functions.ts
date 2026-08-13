@@ -8,7 +8,7 @@ export const getJourneyStats = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
 
     const { data, error } = await supabase
-      .from('hero_journey_stats')
+      .from('hero_journey_stats' as any)
       .select('*')
       .eq('user_id', userId)
       .maybeSingle();
@@ -17,7 +17,7 @@ export const getJourneyStats = createServerFn({ method: "GET" })
     
     if (!data) {
       const { data: newStats, error: createError } = await supabase
-        .from('hero_journey_stats')
+        .from('hero_journey_stats' as any)
         .insert({ user_id: userId })
         .select()
         .single();
@@ -34,7 +34,7 @@ export const getArchetypes = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
 
     const { data, error } = await supabase
-      .from('hero_journey_archetypes')
+      .from('hero_journey_archetypes' as any)
       .select('*')
       .eq('user_id', userId);
 
@@ -56,7 +56,7 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
 
     const { error } = await supabase
-      .from('hero_journey_archetypes')
+      .from('hero_journey_archetypes' as any)
       .upsert({
         user_id: userId,
         ...data,
@@ -73,7 +73,7 @@ export const getDiagnosis = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
 
     const { data, error } = await supabase
-      .from('hero_journey_diagnosis')
+      .from('hero_journey_diagnosis' as any)
       .select('*')
       .eq('user_id', userId)
       .maybeSingle();
@@ -92,7 +92,7 @@ export const saveDiagnosis = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
 
     const { error } = await supabase
-      .from('hero_journey_diagnosis')
+      .from('hero_journey_diagnosis' as any)
       .upsert({
         user_id: userId,
         predominant: data.predominant_archetype,
@@ -113,17 +113,17 @@ export const resetJourney = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
 
     const { error: archError } = await supabase
-      .from('hero_journey_archetypes')
+      .from('hero_journey_archetypes' as any)
       .delete()
       .eq('user_id', userId);
 
     const { error: statsError } = await supabase
-      .from('hero_journey_stats')
+      .from('hero_journey_stats' as any)
       .delete()
       .eq('user_id', userId);
 
     const { error: diagError } = await supabase
-      .from('hero_journey_diagnosis')
+      .from('hero_journey_diagnosis' as any)
       .delete()
       .eq('user_id', userId);
 
