@@ -261,9 +261,9 @@ function HomePage() {
         ))}
         <ModuleCard key="comunidade" data={COMUNIDADE_CARD} />
         <ModuleCard key="carta-futuro" data={CARTA_FUTURO_CARD} />
-        {modules.filter(m => ["reprogramacao-mental", "bonus-exclusivos"].includes(m.slug))
+        {modules.filter(m => ["reprogramacao-mental", "treinamento-premium", "bonus-exclusivos"].includes(m.slug))
           .sort((a, b) => {
-            const order = { "reprogramacao-mental": 1, "bonus-exclusivos": 2 };
+            const order = { "reprogramacao-mental": 1, "treinamento-premium": 2, "bonus-exclusivos": 3 };
             return (order[a.slug as keyof typeof order] || 0) - (order[b.slug as keyof typeof order] || 0);
           })
           .map((m) => (
