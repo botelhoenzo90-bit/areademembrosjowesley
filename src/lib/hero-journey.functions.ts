@@ -95,11 +95,15 @@ export const saveDiagnosis = createServerFn({ method: "POST" })
       .from('hero_journey_diagnosis' as any)
       .upsert({
         user_id: user.id,
-        ...data,
+        predominant: data.predominant_archetype,
+        results: data.details,
         created_at: new Date().toISOString(),
       });
 
-    if (error) throw error;
+    if (error) {
+      console.error("Diagnosis Save Error:", error);
+      throw error;
+    }
     return { success: true };
   });
 

@@ -23,14 +23,20 @@ export const Route = createFileRoute("/_authenticated/reprogramacao-mental")({
     ],
   }),
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData({
-      queryKey: ['hero_journey_stats'],
-      queryFn: () => getJourneyStats(),
-    });
-    await context.queryClient.ensureQueryData({
-      queryKey: ['hero_journey_archetypes'],
-      queryFn: () => getArchetypes(),
-    });
+    try {
+      await Promise.all([
+        context.queryClient.ensureQueryData({
+          queryKey: ['hero_journey_stats'],
+          queryFn: () => getJourneyStats(),
+        }),
+        context.queryClient.ensureQueryData({
+          queryKey: ['hero_journey_archetypes'],
+          queryFn: () => getArchetypes(),
+        })
+      ]);
+    } catch (e) {
+      console.error("Hero Journey Loader Error:", e);
+    }
   },
   component: Page,
 });
@@ -41,37 +47,49 @@ function Page() {
     queryKey: ['hero_journey_stats'],
     queryFn: () => getJourneyStats(),
   });
-  const stats = statsData as any;
+  const stats = (statsData as any) || { total_progress: 0, archetypes_explored: 0, missions_completed: 0, consciousness_level: 1 };
   
   const { data: userArchetypesData = [] } = useSuspenseQuery({
     queryKey: ['hero_journey_archetypes'],
     queryFn: () => getArchetypes(),
   });
-  const userArchetypes = userArchetypesData as any[];
+  const userArchetypes = (userArchetypesData || []) as any[];
 
   const [showSplash, setShowSplash] = useState(false);
   const [userName, setUserName] = useState("Herói");
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
+    let isMounted = true;
     const checkUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', user.id)
-          .single();
-        const p = profile as any;
-        const name = p?.display_name || p?.full_name || "Herói";
-        setUserName(name.split(' ')[0]);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user && isMounted) {
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('display_name, full_name')
+            .eq('id', user.id)
+            .maybeSingle();
+          
+          if (isMounted) {
+            const name = (profile as any)?.display_name || (profile as any)?.full_name || "Herói";
+            setUserName(name.split(' ')[0]);
+          }
+        }
+      } catch (error) {
+        console.error("Error checking user:", error);
       }
     };
+    
     checkUser();
     
     const visited = localStorage.getItem('hero_journey_visited');
-    if (!visited) {
+    if (!visited && isMounted) {
       setShowSplash(true);
     }
+    if (isMounted) setIsLoaded(true);
+
+    return () => { isMounted = false; };
   }, []);
 
   const handleStart = () => {
@@ -96,6 +114,17 @@ function Page() {
     const arch = userArchetypes.find(a => a.archetype === id);
     return arch?.progress ?? 0;
   };
+
+  if (!isLoaded) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="space-y-4 text-center">
+          <Sparkles className="h-8 w-8 text-gold animate-pulse mx-auto" />
+          <p className="text-xs text-muted-foreground uppercase tracking-widest">Iniciando Jornada...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (showSplash) {
     return <Splash userName={userName} onStart={handleStart} />;
@@ -132,11 +161,11 @@ function Page() {
       </section>
 
       <section className="mx-4 -mt-10 relative z-10 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:mx-auto lg:max-w-6xl">
-        <StatCard icon={<Activity className="h-4 w-4 text-gold" />} label="Progresso" value={`${stats?.total_progress ?? 0}%`} />
-        <StatCard icon={<Compass className="h-4 w-4 text-gold" />} label="Arquétipos" value={`${stats?.archetypes_explored ?? 0}/6`} />
-        <StatCard icon={<Target className="h-4 w-4 text-gold" />} label="Missões" value={stats?.missions_completed ?? 0} />
+        <StatCard icon={<Activity className="h-4 w-4 text-gold" />} label="Progresso" value={`${(stats as any)?.total_progress ?? 0}%`} />
+        <StatCard icon={<Compass className="h-4 w-4 text-gold" />} label="Arquétipos" value={`${(stats as any)?.archetypes_explored ?? 0}/6`} />
+        <StatCard icon={<Target className="h-4 w-4 text-gold" />} label="Missões" value={(stats as any)?.missions_completed ?? 0} />
         <Link to="/hero-journey/resultado">
-          <StatCard icon={<Shield className="h-4 w-4 text-gold" />} label="Consciência" value={`Nível ${stats?.consciousness_level ?? 1}`} />
+          <StatCard icon={<Shield className="h-4 w-4 text-gold" />} label="Consciência" value={`Nível ${(stats as any)?.consciousness_level ?? 1}`} />
         </Link>
       </section>
 
@@ -146,7 +175,7 @@ function Page() {
             <h2 className="font-display text-2xl text-foreground">MAPA DO HERÓI INTERIOR</h2>
             <p className="text-xs text-muted-foreground uppercase tracking-widest">Explore as estações da sua consciência</p>
           </div>
-          {stats?.archetypes_explored >= 6 && (
+          {(stats as any)?.archetypes_explored >= 6 && (
             <Link 
               to="/hero-journey/diagnostico"
               className="rounded-full bg-gold/10 border border-gold/30 px-4 py-2 text-[10px] uppercase tracking-widest text-gold hover:bg-gold/20 transition-colors"
@@ -165,15 +194,6 @@ function Page() {
               progress={getProgress(arch.id)}
               onClick={() => navigate({ to: `/hero-journey/archetype/${arch.id}` })}
             />
-          ))}
-          {['altruista', 'nomade', 'mago'].filter(id => !ARCHETYPES_CONTENT[id]).map(id => (
-             <div key={id} className="relative overflow-hidden rounded-3xl border border-border/50 opacity-50 glass p-6 h-[280px] flex flex-col justify-center items-center text-center gap-4">
-                <Lock className="h-8 w-8 text-muted-foreground" />
-                <div>
-                   <h3 className="font-display text-xl text-foreground uppercase">{id}</h3>
-                   <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Em desenvolvimento</p>
-                </div>
-             </div>
           ))}
         </div>
       </section>
