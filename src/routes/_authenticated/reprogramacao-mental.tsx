@@ -161,11 +161,11 @@ function Page() {
       </section>
 
       <section className="mx-4 -mt-10 relative z-10 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:mx-auto lg:max-w-6xl">
-        <StatCard icon={<Activity className="h-4 w-4 text-gold" />} label="Progresso" value={`${stats?.total_progress ?? 0}%`} />
-        <StatCard icon={<Compass className="h-4 w-4 text-gold" />} label="Arquétipos" value={`${stats?.archetypes_explored ?? 0}/6`} />
-        <StatCard icon={<Target className="h-4 w-4 text-gold" />} label="Missões" value={stats?.missions_completed ?? 0} />
+        <StatCard icon={<Activity className="h-4 w-4 text-gold" />} label="Progresso" value={`${(stats as any)?.total_progress ?? 0}%`} />
+        <StatCard icon={<Compass className="h-4 w-4 text-gold" />} label="Arquétipos" value={`${(stats as any)?.archetypes_explored ?? 0}/6`} />
+        <StatCard icon={<Target className="h-4 w-4 text-gold" />} label="Missões" value={(stats as any)?.missions_completed ?? 0} />
         <Link to="/hero-journey/resultado">
-          <StatCard icon={<Shield className="h-4 w-4 text-gold" />} label="Consciência" value={`Nível ${stats?.consciousness_level ?? 1}`} />
+          <StatCard icon={<Shield className="h-4 w-4 text-gold" />} label="Consciência" value={`Nível ${(stats as any)?.consciousness_level ?? 1}`} />
         </Link>
       </section>
 
