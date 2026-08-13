@@ -136,6 +136,126 @@ export type Database = {
         }
         Relationships: []
       }
+      hero_journey_archetypes: {
+        Row: {
+          archetype: Database["public"]["Enums"]["hero_archetype_name"]
+          completed_at: string | null
+          id: string
+          mission_completed: boolean | null
+          progress: number
+          protocol_steps_completed: Json | null
+          reflection_text: string | null
+          status: Database["public"]["Enums"]["hero_archetype_status"]
+          unlocked_at: string | null
+          user_id: string
+        }
+        Insert: {
+          archetype: Database["public"]["Enums"]["hero_archetype_name"]
+          completed_at?: string | null
+          id?: string
+          mission_completed?: boolean | null
+          progress?: number
+          protocol_steps_completed?: Json | null
+          reflection_text?: string | null
+          status?: Database["public"]["Enums"]["hero_archetype_status"]
+          unlocked_at?: string | null
+          user_id: string
+        }
+        Update: {
+          archetype?: Database["public"]["Enums"]["hero_archetype_name"]
+          completed_at?: string | null
+          id?: string
+          mission_completed?: boolean | null
+          progress?: number
+          protocol_steps_completed?: Json | null
+          reflection_text?: string | null
+          status?: Database["public"]["Enums"]["hero_archetype_status"]
+          unlocked_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hero_journey_diagnosis: {
+        Row: {
+          created_at: string | null
+          id: string
+          predominant: Database["public"]["Enums"]["hero_archetype_name"]
+          recommendation: string | null
+          results: Json
+          secondary: Database["public"]["Enums"]["hero_archetype_name"] | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          predominant: Database["public"]["Enums"]["hero_archetype_name"]
+          recommendation?: string | null
+          results: Json
+          secondary?: Database["public"]["Enums"]["hero_archetype_name"] | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          predominant?: Database["public"]["Enums"]["hero_archetype_name"]
+          recommendation?: string | null
+          results?: Json
+          secondary?: Database["public"]["Enums"]["hero_archetype_name"] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hero_journey_stats: {
+        Row: {
+          archetypes_explored: number | null
+          badges: Json | null
+          consciousness_level: number | null
+          current_archetype:
+            | Database["public"]["Enums"]["hero_archetype_name"]
+            | null
+          last_interaction: string | null
+          missions_completed: number | null
+          protocols_realized: number | null
+          secondary_archetype:
+            | Database["public"]["Enums"]["hero_archetype_name"]
+            | null
+          total_progress: number | null
+          user_id: string
+        }
+        Insert: {
+          archetypes_explored?: number | null
+          badges?: Json | null
+          consciousness_level?: number | null
+          current_archetype?:
+            | Database["public"]["Enums"]["hero_archetype_name"]
+            | null
+          last_interaction?: string | null
+          missions_completed?: number | null
+          protocols_realized?: number | null
+          secondary_archetype?:
+            | Database["public"]["Enums"]["hero_archetype_name"]
+            | null
+          total_progress?: number | null
+          user_id: string
+        }
+        Update: {
+          archetypes_explored?: number | null
+          badges?: Json | null
+          consciousness_level?: number | null
+          current_archetype?:
+            | Database["public"]["Enums"]["hero_archetype_name"]
+            | null
+          last_interaction?: string | null
+          missions_completed?: number | null
+          protocols_realized?: number | null
+          secondary_archetype?:
+            | Database["public"]["Enums"]["hero_archetype_name"]
+            | null
+          total_progress?: number | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       lessons: {
         Row: {
           created_at: string
@@ -763,7 +883,18 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      hero_archetype_name:
+        | "inocente"
+        | "orfao"
+        | "guerreiro"
+        | "altruista"
+        | "nomade"
+        | "mago"
+      hero_archetype_status:
+        | "locked"
+        | "available"
+        | "in_progress"
+        | "completed"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -890,6 +1021,21 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      hero_archetype_name: [
+        "inocente",
+        "orfao",
+        "guerreiro",
+        "altruista",
+        "nomade",
+        "mago",
+      ],
+      hero_archetype_status: [
+        "locked",
+        "available",
+        "in_progress",
+        "completed",
+      ],
+    },
   },
 } as const
