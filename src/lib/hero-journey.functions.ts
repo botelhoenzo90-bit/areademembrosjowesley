@@ -6,26 +6,39 @@ export const getJourneyStats = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
+    console.log("Fetching journey stats for user:", userId);
 
-    const { data, error } = await supabase
-      .from('hero_journey_stats' as any)
-      .select('*')
-      .eq('user_id', userId)
-      .maybeSingle();
-
-    if (error) throw error;
-    
-    if (!data) {
-      const { data: newStats, error: createError } = await supabase
+    try {
+      const { data, error } = await supabase
         .from('hero_journey_stats' as any)
-        .insert({ user_id: userId })
-        .select()
-        .single();
-      if (createError) throw createError;
-      return newStats;
-    }
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
 
-    return data;
+      if (error) {
+        console.error("Error fetching journey stats:", error);
+        throw error;
+      }
+      
+      if (!data) {
+        console.log("No stats found, creating new one for user:", userId);
+        const { data: newStats, error: createError } = await supabase
+          .from('hero_journey_stats' as any)
+          .insert({ user_id: userId })
+          .select()
+          .single();
+        if (createError) {
+          console.error("Error creating journey stats:", createError);
+          throw createError;
+        }
+        return newStats;
+      }
+
+      return data;
+    } catch (err) {
+      console.error("Critical error in getJourneyStats:", err);
+      throw err;
+    }
   });
 
 export const getArchetypes = createServerFn({ method: "GET" })
