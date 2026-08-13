@@ -47,7 +47,7 @@ function Page() {
     queryKey: ['hero_journey_stats'],
     queryFn: () => getJourneyStats(),
   });
-  const stats = statsData || { total_progress: 0, archetypes_explored: 0, missions_completed: 0, consciousness_level: 1 };
+  const stats = (statsData as any) || { total_progress: 0, archetypes_explored: 0, missions_completed: 0, consciousness_level: 1 };
   
   const { data: userArchetypesData = [] } = useSuspenseQuery({
     queryKey: ['hero_journey_archetypes'],
@@ -175,7 +175,7 @@ function Page() {
             <h2 className="font-display text-2xl text-foreground">MAPA DO HERÓI INTERIOR</h2>
             <p className="text-xs text-muted-foreground uppercase tracking-widest">Explore as estações da sua consciência</p>
           </div>
-          {stats?.archetypes_explored >= 6 && (
+          {(stats as any)?.archetypes_explored >= 6 && (
             <Link 
               to="/hero-journey/diagnostico"
               className="rounded-full bg-gold/10 border border-gold/30 px-4 py-2 text-[10px] uppercase tracking-widest text-gold hover:bg-gold/20 transition-colors"
