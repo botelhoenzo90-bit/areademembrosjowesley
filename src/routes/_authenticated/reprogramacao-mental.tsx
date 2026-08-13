@@ -23,14 +23,20 @@ export const Route = createFileRoute("/_authenticated/reprogramacao-mental")({
     ],
   }),
   loader: async ({ context }) => {
-    await context.queryClient.ensureQueryData({
-      queryKey: ['hero_journey_stats'],
-      queryFn: () => getJourneyStats(),
-    });
-    await context.queryClient.ensureQueryData({
-      queryKey: ['hero_journey_archetypes'],
-      queryFn: () => getArchetypes(),
-    });
+    try {
+      await Promise.all([
+        context.queryClient.ensureQueryData({
+          queryKey: ['hero_journey_stats'],
+          queryFn: () => getJourneyStats(),
+        }),
+        context.queryClient.ensureQueryData({
+          queryKey: ['hero_journey_archetypes'],
+          queryFn: () => getArchetypes(),
+        })
+      ]);
+    } catch (e) {
+      console.error("Hero Journey Loader Error:", e);
+    }
   },
   component: Page,
 });
