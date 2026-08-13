@@ -45,13 +45,15 @@ export const Route = createFileRoute("/_authenticated/reprogramacao-mental")({
 
 function Page() {
   const navigate = useNavigate();
-  const { data: statsData } = useSuspenseQuery({
+  const loaderData = Route.useLoaderData();
+  
+  const { data: statsData, error: statsError } = useSuspenseQuery({
     queryKey: ['hero_journey_stats'],
     queryFn: () => getJourneyStats(),
   });
   const stats = (statsData as any) || { total_progress: 0, archetypes_explored: 0, missions_completed: 0, consciousness_level: 1 };
   
-  const { data: userArchetypesData = [] } = useSuspenseQuery({
+  const { data: userArchetypesData = [], error: archetypesError } = useSuspenseQuery({
     queryKey: ['hero_journey_archetypes'],
     queryFn: () => getArchetypes(),
   });
@@ -60,6 +62,31 @@ function Page() {
   const [showSplash, setShowSplash] = useState(false);
   const [userName, setUserName] = useState("Herói");
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const error = (loaderData as any)?.error || statsError?.message || archetypesError?.message;
+
+  if (error) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background p-6 text-center">
+        <div className="max-w-md space-y-6">
+          <h2 className="text-2xl font-display text-foreground uppercase tracking-tight">Algo saiu do fluxo</h2>
+          <p className="text-sm text-muted-foreground">{error}</p>
+          <button 
+            className="w-full rounded-full bg-gradient-primary py-3 text-sm font-medium text-primary-foreground shadow-glow"
+            onClick={() => window.location.reload()}
+          >
+            Tentar Novamente
+          </button>
+          <button 
+            className="w-full text-xs text-muted-foreground uppercase tracking-widest mt-4"
+            onClick={() => navigate({ to: "/home" })}
+          >
+            Voltar ao Início
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   useEffect(() => {
     let isMounted = true;
