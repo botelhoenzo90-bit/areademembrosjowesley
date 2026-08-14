@@ -183,7 +183,7 @@ function Page() {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-background/80 to-transparent" />
         
-        <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
+        <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 pb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

@@ -38,6 +38,42 @@ const DIAGNOSIS_QUESTIONS = [
       { label: "A necessidade de liberdade e descoberta.", archetype: "nomade" },
       { label: "A capacidade de transformar minha realidade.", archetype: "mago" },
     ]
+  },
+  {
+    id: 3,
+    question: "Como você prefere ser visto pelos outros?",
+    options: [
+      { label: "Como alguém feliz e de bem com a vida.", archetype: "inocente" },
+      { label: "Como alguém real que entende a dor.", archetype: "orfao" },
+      { label: "Como alguém forte e competente.", archetype: "guerreiro" },
+      { label: "Como alguém generoso e prestativo.", archetype: "altruista" },
+      { label: "Como alguém independente e autêntico.", archetype: "nomade" },
+      { label: "Como alguém sábio e transformador.", archetype: "mago" },
+    ]
+  },
+  {
+    id: 4,
+    question: "Qual seu maior medo no momento?",
+    options: [
+      { label: "Ser abandonado ou perder a segurança.", archetype: "inocente" },
+      { label: "Ser explorado ou enganado novamente.", archetype: "orfao" },
+      { label: "Ser fraco ou falhar em um desafio.", archetype: "guerreiro" },
+      { label: "Ser egoísta ou ingrato com os outros.", archetype: "altruista" },
+      { label: "Ser enclausurado ou perder a liberdade.", archetype: "nomade" },
+      { label: "Ser superficial ou viver sem propósito.", archetype: "mago" },
+    ]
+  },
+  {
+    id: 5,
+    question: "Diante de um novo projeto, sua atitude é:",
+    options: [
+      { label: "Confiar que tudo dará certo no final.", archetype: "inocente" },
+      { label: "Antecipar os riscos e possíveis falhas.", archetype: "orfao" },
+      { label: "Planejar a estratégia para vencer.", archetype: "guerreiro" },
+      { label: "Pensar em como isso ajudará as pessoas.", archetype: "altruista" },
+      { label: "Explorar novas possibilidades e caminhos.", archetype: "nomade" },
+      { label: "Alinhar o projeto com minha visão interna.", archetype: "mago" },
+    ]
   }
 ];
 

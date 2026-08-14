@@ -288,13 +288,15 @@ function ArchetypeJourneyPage() {
               </div>
 
               <div className="rounded-3xl border border-border glass p-8 text-sm leading-relaxed text-muted-foreground text-left max-h-[400px] overflow-y-auto scrollbar-hidden">
-                {archetype.conclusionScript}
+                <p className="mb-6 text-foreground font-medium">{archetype.gamificationText}</p>
+                <div className="h-px w-full bg-border/50 mb-6" />
+                <p className="italic">{archetype.conclusionScript}</p>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        <footer className="fixed bottom-0 left-0 right-0 p-6 glass-strong z-30">
+        <footer className="fixed bottom-0 left-0 right-0 p-6 glass-strong z-40">
           <button
             onClick={handleNext}
             disabled={stage === 'observe' && selectedPerception === null}
