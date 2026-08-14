@@ -43,6 +43,12 @@ export const Route = createFileRoute("/_authenticated/reprogramacao-mental")({
   component: Page,
 });
 
+function youtubeId(url: string | null): string | null {
+  if (!url) return null;
+  const m = url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([A-Za-z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
 function Page() {
   const navigate = useNavigate();
   const loaderData = Route.useLoaderData();
@@ -166,7 +172,14 @@ function Page() {
       </Link>
 
       <section className="relative h-[60vh] overflow-hidden">
-        <img src={hero} alt="Jornada do Herói" className="absolute inset-0 h-full w-full object-cover" />
+        <div className="absolute inset-0">
+          <iframe 
+            src={`https://www.youtube.com/embed/${youtubeId("https://youtu.be/Ql3H9jAvDrY")}?autoplay=1&mute=1&loop=1&playlist=${youtubeId("https://youtu.be/Ql3H9jAvDrY")}&controls=0&showinfo=0&rel=0&modestbranding=1`}
+            className="absolute inset-0 h-full w-full object-cover scale-[1.5]"
+            allow="autoplay; encrypted-media"
+            style={{ pointerEvents: 'none' }}
+          />
+        </div>
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-r from-background/80 to-transparent" />
         
@@ -230,14 +243,17 @@ function Page() {
       <section className="mx-4 mt-20 lg:mx-auto lg:max-w-6xl">
         <p className="mb-4 text-[10px] uppercase tracking-widest text-gold">Recurso Adicional</p>
         <div className="relative overflow-hidden rounded-3xl border border-border shadow-elevated">
-          <img src={s1} alt="Herói Interior Video" className="h-64 w-full object-cover opacity-50" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-transparent" />
-          <div className="absolute bottom-0 p-8">
+          <div className="aspect-video w-full">
+            <iframe 
+              src={`https://www.youtube.com/embed/${youtubeId("https://youtu.be/Ql3H9jAvDrY")}?rel=0&modestbranding=1`}
+              className="h-full w-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+          <div className="p-8 bg-surface">
             <h3 className="font-display text-2xl text-foreground uppercase tracking-tight">Aula: Código da Mente Extraordinária</h3>
             <p className="mt-2 max-w-lg text-sm text-muted-foreground">Assista à aula fundamental que serve como base para toda a jornada de reprogramação.</p>
-            <a href="https://youtu.be/Ql3H9jAvDrY" target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-primary px-6 py-3 text-sm font-medium text-primary-foreground shadow-glow hover:scale-105 transition-transform">
-              <Play className="h-4 w-4 fill-current" /> Assistir Aula
-            </a>
           </div>
         </div>
       </section>

@@ -97,7 +97,7 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     ],
     reflectionQuestion: "Em quais áreas da vida você se sente desamparado ou injustiçado?",
     mission: "Identifique um momento hoje em que você se sentiu 'de fora' ou incompreendido. Observe se houve um exagero na percepção de isolamento.",
-    conclusionScript: `A exploração do Órfão revelou suas feridas de abandono e sua incrível resiliência. Este arquétipo nos ensina que a dor é parte da experiência humana, mas não define quem somos. Ao reconhecer sua vulnerabilidade, você abre espaço para uma empatia genuína consigo mesmo e com os outros. O realismo do Órfão é o que nos protege de expectativas irreais, permitindo-nos construir relacionamentos baseados na verdade, não em ilusões de perfeição.`
+    conclusionScript: `A exploração do Órfão revelou suas feridas de abandono e sua incrível resiliência. Este arquétipo nos ensina que a dor é parte da experiênca humana, mas não define quem somos. Ao reconhecer sua vulnerabilidade, você abre espaço para uma empatia genuína consigo mesmo e com os outros. O realismo do Órfão é o que nos protege de expectativas irreais, permitindo-nos construir relacionamentos baseados na verdade, não em ilusões de perfeição.`
   },
   guerreiro: {
     id: "guerreiro",
