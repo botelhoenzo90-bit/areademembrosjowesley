@@ -1,3 +1,8 @@
+export type ArchetypeQuiz = {
+  question: string;
+  options: { label: string; score: number }[];
+};
+
 export type ArchetypeData = {
   id: string;
   name: string;
@@ -11,6 +16,8 @@ export type ArchetypeData = {
   shadow: string;
   illusion: string;
   question: string;
+  mentorship: string;
+  quiz: ArchetypeQuiz[];
   categories: {
     thoughts: string[];
     emotions: string[];

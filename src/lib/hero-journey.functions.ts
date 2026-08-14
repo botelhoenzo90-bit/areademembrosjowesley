@@ -129,28 +129,83 @@ export const saveDiagnosis = createServerFn({ method: "POST" })
     }
   });
 
+export const saveQuizResponses = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: any) => z.object({
+    archetype: z.enum(['inocente', 'orfao', 'guerreiro', 'altruista', 'nomade', 'mago']),
+    responses: z.array(z.object({
+      question_index: z.number(),
+      answer_index: z.number(),
+      score: z.number()
+    }))
+  }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    try {
+      const { error } = await supabase
+        .from('hero_journey_quiz_responses' as any)
+        .upsert(
+          data.responses.map(r => ({
+            user_id: userId,
+            archetype: data.archetype,
+            ...r
+          })),
+          { onConflict: 'user_id,archetype,question_index' }
+        );
+      if (error) throw error;
+      return { success: true };
+    } catch (err) {
+      console.error("Server function error [saveQuizResponses]:", err);
+      throw err;
+    }
+  });
+
+export const generateCertificate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+    try {
+      const { data: diagnosis } = await supabase
+        .from('hero_journey_diagnosis' as any)
+        .select('*')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (!diagnosis) throw new Error("Diagnosis not found");
+
+      const { data, error } = await supabase
+        .from('hero_journey_certificates' as any)
+        .upsert({
+          user_id: userId,
+          predominant: diagnosis.predominant,
+          secondary: diagnosis.secondary,
+          issue_date: new Date().toISOString()
+        }, { onConflict: 'user_id' })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (err) {
+      console.error("Server function error [generateCertificate]:", err);
+      throw err;
+    }
+  });
+
 export const resetJourney = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
 
     try {
-      const { error: archError } = await supabase
-        .from('hero_journey_archetypes' as any)
-        .delete()
-        .eq('user_id', userId);
+      await Promise.all([
+        supabase.from('hero_journey_archetypes' as any).delete().eq('user_id', userId),
+        supabase.from('hero_journey_stats' as any).delete().eq('user_id', userId),
+        supabase.from('hero_journey_diagnosis' as any).delete().eq('user_id', userId),
+        supabase.from('hero_journey_quiz_responses' as any).delete().eq('user_id', userId),
+        supabase.from('hero_journey_certificates' as any).delete().eq('user_id', userId)
+      ]);
 
-      const { error: statsError } = await supabase
-        .from('hero_journey_stats' as any)
-        .delete()
-        .eq('user_id', userId);
-
-      const { error: diagError } = await supabase
-        .from('hero_journey_diagnosis' as any)
-        .delete()
-        .eq('user_id', userId);
-
-      if (archError || statsError || diagError) throw new Error("Reset failed");
       return { success: true };
     } catch (err) {
       console.error("Server function error [resetJourney]:", err);
