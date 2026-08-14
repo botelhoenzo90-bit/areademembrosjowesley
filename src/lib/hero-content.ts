@@ -19,6 +19,7 @@ export type ArchetypeData = {
     decisions: string[];
     identity: string[];
   };
+  gamificationText: string;
   selfPerceptionQuestions: {
     question: string;
     options: { label: string; score: number }[];
@@ -62,7 +63,8 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     ],
     reflectionQuestion: "Onde esse padrão de busca por segurança aparece atualmente na sua vida?",
     mission: "Observe durante as próximas horas uma situação em que você reage automaticamente esperando que tudo se resolva sozinho. Apenas perceba o padrão.",
-    conclusionScript: `Você concluiu a exploração do Inocente. Este arquétipo é a base da nossa capacidade de confiar e ter esperança. Quando integrado de forma saudável, ele nos permite enfrentar a vida com otimismo, sem cair na negação da realidade. Você agora possui uma maior percepção de onde sua fé está depositada e como sua busca por segurança influencia suas escolhas. Lembre-se: a verdadeira segurança não vem da ausência de problemas, mas da confiança interna de que você tem os recursos para lidar com eles.`
+    gamificationText: "Parabéns por concluir a exploração do Inocente! Você acaba de dar o primeiro passo para resgatar a clareza sobre suas bases de segurança. O Inocente não é sobre ingenuidade, mas sobre a capacidade humana de manter a esperança ativa mesmo em tempos de incerteza. Ao identificar onde você deposita sua fé, você começa a diferenciar o otimismo saudável da negação paralisante. Este é um marco fundamental: sem a confiança básica do Inocente, a jornada do herói sequer começaria. Continue avançando para entender como a quebra dessa inocência nos prepara para o realismo necessário da vida adulta.",
+    conclusionScript: `Você concluiu a exploração do Inocente...`
   },
   orfao: {
     id: "orfao",
@@ -97,7 +99,8 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     ],
     reflectionQuestion: "Em quais áreas da vida você se sente desamparado ou injustiçado?",
     mission: "Identifique um momento hoje em que você se sentiu 'de fora' ou incompreendido. Observe se houve um exagero na percepção de isolamento.",
-    conclusionScript: `A exploração do Órfão revelou suas feridas de abandono e sua incrível resiliência. Este arquétipo nos ensina que a dor é parte da experiênca humana, mas não define quem somos. Ao reconhecer sua vulnerabilidade, você abre espaço para uma empatia genuína consigo mesmo e com os outros. O realismo do Órfão é o que nos protege de expectativas irreais, permitindo-nos construir relacionamentos baseados na verdade, não em ilusões de perfeição.`
+    gamificationText: "A jornada pelo arquétipo do Órfão é, talvez, uma das mais desafiadoras e curativas. Ao encarar sua vulnerabilidade e as feridas de exclusão, você transmuta a dor em resiliência. O Órfão nos ensina o valor do realismo: o mundo não é perfeito, e as pessoas falham. Mas é justamente nessa imperfeição que encontramos a verdadeira conexão humana. Sua conclusão aqui indica que você está pronto para abandonar o papel de vítima e assumir a responsabilidade por sua própria proteção e pertencimento. O próximo passo exige força, e você acabou de forjar a armadura necessária.",
+    conclusionScript: `A exploração do Órfão revelou suas feridas de abandono...`
   },
   guerreiro: {
     id: "guerreiro",
@@ -132,7 +135,8 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     ],
     reflectionQuestion: "Onde você está gastando energia excessiva tentando 'lutar' contra a realidade?",
     mission: "Observe uma situação em que você reage agressivamente ou com extrema exigência. Apenas perceba o padrão de combate.",
-    conclusionScript: `O Guerreiro em você é a força que impulsiona a mudança e estabelece limites. Ao concluir esta etapa, você entende que a verdadeira coragem não é a ausência de medo, mas a ação disciplinada apesar dele. A força do Guerreiro, quando bem direcionada, protege o que é sagrado e constrói um legado. Cuidado apenas para não transformar toda a vida em um campo de batalha; saiba quando baixar a guarda e quando empunhar a espada.`
+    gamificationText: "O Guerreiro despertou em você! Esta etapa marca sua transição da sobrevivência para a ação deliberada. Disciplina e coragem são agora suas ferramentas aliadas. Você explorou como seus limites são fundamentais para proteger seus valores e alcançar seus objetivos. O Guerreiro integrado não luta contra moinhos de vento, mas protege o que é sagrado. Ao concluir esta fase, você ganha a clareza de que sua força não precisa ser destrutiva para ser eficaz. Prepare-se, pois o poder agora será temperado pela compaixão na próxima etapa da sua evolução.",
+    conclusionScript: `O Guerreiro em você é a força que impulsiona a mudança...`
   },
   altruista: {
     id: "altruista",
@@ -167,7 +171,8 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     ],
     reflectionQuestion: "Onde você está se anulando para atender às necessidades dos outros?",
     mission: "Identifique hoje um momento em que você sentiu o impulso de 'salvar' alguém de um desconforto. Tente apenas observar o impulso sem agir.",
-    conclusionScript: `O Altruísta nos ensina o valor da compaixão e do serviço. Ao integrar este arquétipo, você descobre que o cuidado genuíno começa com o auto-cuidado. Não é possível dar o que não se tem. Sua generosidade é um dom, mas ela deve ser sustentável. A verdadeira ajuda é aquela que empodera o outro a caminhar com as próprias pernas, não aquela que o torna dependente do seu sacrifício.`
+    gamificationText: "A exploração do Altruísta foi concluída, e com ela, o florescer da sua compaixão consciente. Servir aos outros é um ato nobre, mas você aprendeu o segredo vital: o auto-cuidado é o combustível do altruísmo sustentável. Se você se anula para salvar o mundo, logo não restará nada de você para oferecer. Integrar este arquétipo significa transitar do martírio para a generosidade empoderada. Você agora possui a sabedoria para saber quando cuidar e quando deixar que o outro trilhe seu próprio caminho de aprendizado. Sua jornada de desenvolvimento entra agora na fase de busca pela própria essência.",
+    conclusionScript: `O Altruísta nos ensina o valor da compaixão e do serviço...`
   },
   nomade: {
     id: "nomade",
@@ -202,7 +207,8 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     ],
     reflectionQuestion: "De quais 'prisões' mentais ou sociais você sente vontade de escapar?",
     mission: "Hoje, faça algo de uma forma completamente diferente do seu habitual. Observe o sentimento de liberdade ou estranhamento.",
-    conclusionScript: `O Nômade em você é o eterno buscador da verdade. Esta etapa da jornada mostrou sua necessidade de autonomia e autenticidade. O Nômade nos empurra para fora da zona de conforto, permitindo que descubramos quem somos longe das pressões externas. A busca nunca termina, mas agora você sabe que a jornada em si é o destino. Use sua liberdade para construir sua própria casa interna, não para fugir de si mesmo.`
+    gamificationText: "O Buscador em você encontrou um novo horizonte! Ao concluir o arquétipo do Nômade, você validou sua necessidade intrínseca de autonomia e autenticidade. Escapar das 'prisões' mentais e expectativas alheias não é um ato de rebeldia, mas de fidelidade à própria alma. O Nômade nos ensina que a jornada é constante e que a liberdade real começa dentro de nós. Você está agora mais próximo de quem realmente é, despido de máscaras sociais impostas. A busca externa se volta agora para dentro, onde a verdadeira transformação mágica está prestes a acontecer.",
+    conclusionScript: `O Nômade em você é o eterno buscador da verdade...`
   },
   mago: {
     id: "mago",
@@ -237,6 +243,7 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     ],
     reflectionQuestion: "Qual aspecto da sua vida você sente que está pronto para ser transmutado?",
     mission: "Pratique a 'observação do observador' hoje. Tente perceber quem é que está percebendo seus pensamentos.",
+    gamificationText: "O Mago concluiu sua obra! Você atingiu o ápice da integração arquétipica. Aprender que a realidade é cocriada por sua consciência é o maior poder que um herói pode deter. O Mago não manipula as circunstâncias, ele alinha seu estado interno para que a magia da vida flua sem obstruções. Ao transmutar dor em aprendizado e medo em amor, você se torna o alquimista do seu destino. Toda a sua jornada até aqui preparou você para este momento de plena consciência. Você não é mais apenas um passageiro da sua vida, mas o seu arquiteto consciente.",
     conclusionScript: `O Mago é o ápice da integração. Você aprendeu que a realidade externa é um reflexo do seu estado interno. O poder do Mago não é o controle, mas o alinhamento. Ao mudar sua percepção, você muda seu mundo. A magia acontece na intersecção entre a intenção clara e a entrega confiante. Você é o alquimista da sua própria vida; use sua sabedoria para transformar chumbo em ouro, dor em aprendizado e medo em amor.`
   }
 };
