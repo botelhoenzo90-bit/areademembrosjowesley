@@ -4,15 +4,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   ArrowLeft, ChevronRight, Info, Eye, Zap, 
   Target, Shield, CheckCircle2, Award, 
-  Sparkles, Heart, Compass, Sword, Wand2, Sun, Bandage
+  Sparkles, Heart, Compass, Sword, Wand2, Sun, Bandage,
+  BookOpen, HelpCircle
 } from "lucide-react";
 import { ARCHETYPES_CONTENT } from "@/lib/hero-content";
-import { updateArchetypeProgress, getArchetypes } from "@/lib/hero-journey.functions";
+import { updateArchetypeProgress, getArchetypes, saveQuizResponses } from "@/lib/hero-journey.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-type Stage = 'discover' | 'understand' | 'observe' | 'experiment' | 'implement' | 'conclude';
+type Stage = 'discover' | 'mentorship' | 'quiz' | 'understand' | 'observe' | 'experiment' | 'implement' | 'conclude';
 
 export const Route = createFileRoute("/_authenticated/hero-journey/archetype/$id")({
   loader: async ({ context }) => {
@@ -30,6 +31,7 @@ function ArchetypeJourneyPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const updateProgress = useServerFn(updateArchetypeProgress);
+  const submitQuiz = useServerFn(saveQuizResponses);
 
   const { data: userArchetypes = [] } = useQuery({
     queryKey: ['hero_journey_archetypes'],
@@ -44,20 +46,23 @@ function ArchetypeJourneyPage() {
   const [protocolSteps, setProtocolSteps] = useState<number[]>(currentArchData?.protocol_steps_completed || []);
   const [selectedPerception, setSelectedPerception] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  
+  // Quiz states
+  const [currentQuizStep, setCurrentQuizStep] = useState(0);
+  const [quizResponses, setQuizResponses] = useState<{question_index: number, answer_index: number, score: number}[]>([]);
 
   if (!archetype) {
     return <div>Arquétipo não encontrado.</div>;
   }
 
   const handleNext = async () => {
-    const stages: Stage[] = ['discover', 'understand', 'observe', 'experiment', 'implement', 'conclude'];
+    const stages: Stage[] = ['discover', 'mentorship', 'quiz', 'understand', 'observe', 'experiment', 'implement', 'conclude'];
     const currentIndex = stages.indexOf(stage);
     
     if (currentIndex < stages.length - 1) {
       const nextStage = stages[currentIndex + 1];
       setStage(nextStage);
       
-      // Update intermediate progress
       const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
       await updateProgress({ 
         data: {
@@ -145,6 +150,75 @@ function ArchetypeJourneyPage() {
               <div className="rounded-2xl border border-gold/30 bg-gold/5 p-6 text-center italic">
                 <p className="text-gold">Pergunta Central:</p>
                 <p className="mt-2 text-xl font-display text-foreground">"{archetype.question}"</p>
+              </div>
+            </motion.div>
+          )}
+
+          {stage === 'mentorship' && (
+            <motion.div
+              key="mentorship"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-8"
+            >
+              <div className="text-center space-y-4">
+                <BookOpen className="mx-auto h-12 w-12 text-gold" />
+                <h2 className="font-display text-2xl uppercase tracking-tight">Mini Mentoria</h2>
+              </div>
+              <div className="rounded-3xl border border-border glass p-8 text-sm leading-relaxed text-muted-foreground whitespace-pre-line">
+                {archetype.mentorship}
+              </div>
+            </motion.div>
+          )}
+
+          {stage === 'quiz' && (
+            <motion.div
+              key="quiz"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              className="space-y-8"
+            >
+              <div className="text-center space-y-2">
+                <HelpCircle className="mx-auto h-12 w-12 text-gold" />
+                <h2 className="font-display text-2xl uppercase tracking-tight">Quiz do Herói</h2>
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Pergunta {currentQuizStep + 1} de {archetype.quiz.length}</p>
+              </div>
+
+              <div className="space-y-6">
+                <p className="text-lg text-foreground text-center">{archetype.quiz[currentQuizStep].question}</p>
+                <div className="grid gap-3">
+                  {archetype.quiz[currentQuizStep].options.map((opt, idx) => (
+                    <button
+                      key={idx}
+                      onClick={async () => {
+                        const newResponses = [...quizResponses, { 
+                          question_index: currentQuizStep, 
+                          answer_index: idx, 
+                          score: opt.score 
+                        }];
+                        setQuizResponses(newResponses);
+                        
+                        if (currentQuizStep < archetype.quiz.length - 1) {
+                          setCurrentQuizStep(prev => prev + 1);
+                        } else {
+                          await submitQuiz({ 
+                            data: { 
+                              archetype: id as any, 
+                              responses: newResponses 
+                            } 
+                          });
+                          toast.success("Quiz concluído!");
+                          handleNext();
+                        }
+                      }}
+                      className="w-full text-left rounded-2xl border border-border glass p-4 text-sm text-muted-foreground hover:border-gold/50 hover:text-foreground transition-all"
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
               </div>
             </motion.div>
           )}

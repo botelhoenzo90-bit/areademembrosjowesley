@@ -1,3 +1,8 @@
+export type ArchetypeQuiz = {
+  question: string;
+  options: { label: string; score: number }[];
+};
+
 export type ArchetypeData = {
   id: string;
   name: string;
@@ -11,6 +16,8 @@ export type ArchetypeData = {
   shadow: string;
   illusion: string;
   question: string;
+  mentorship: string;
+  quiz: ArchetypeQuiz[];
   categories: {
     thoughts: string[];
     emotions: string[];
@@ -43,6 +50,14 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     shadow: "Negação e repressão de sentimentos negativos.",
     illusion: "A crença de que a vida deve ser sempre perfeita.",
     question: "Onde eu deposito minha fé?",
+    mentorship: "O Inocente é o primeiro arquétipo da jornada, representando o estado de pureza e confiança. Em sua essência, ele busca a felicidade e a segurança através do otimismo. Quando esse arquétipo domina, a pessoa tende a ver o mundo como um lugar bom e seguro. No entanto, o desafio do Inocente é aprender que a vida tem dores e imperfeições. A negação desses aspectos pode levar à imaturidade. Cultivar o Inocente significa manter a capacidade de se encantar, mesmo diante das adversidades. É sobre encontrar o equilíbrio entre a fé inabalável e a clareza sobre a realidade.",
+    quiz: [
+      { question: "Você se sente protegido quando está em ambientes familiares?", options: [{ label: "Sim, totalmente", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Nunca", score: 1 }] },
+      { question: "Você acredita que as pessoas são boas por natureza?", options: [{ label: "Sempre", score: 3 }, { label: "Depende", score: 2 }, { label: "Dificilmente", score: 1 }] },
+      { question: "Você evita conflitos a todo custo?", options: [{ label: "Sim", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Não", score: 1 }] },
+      { question: "Você gosta de seguir regras estabelecidas?", options: [{ label: "Sempre", score: 3 }, { label: "Quando necessário", score: 2 }, { label: "Quase nunca", score: 1 }] },
+      { question: "Você se sente feliz apenas sendo quem é?", options: [{ label: "Sim", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Nunca", score: 1 }] }
+    ],
     categories: {
       thoughts: ["Tudo vai dar certo no final.", "As pessoas são essencialmente boas.", "Existe um plano maior."],
       emotions: ["Paz", "Confiança", "Medo de ser abandonado"],
@@ -64,7 +79,7 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     reflectionQuestion: "Onde esse padrão de busca por segurança aparece atualmente na sua vida?",
     mission: "Observe durante as próximas horas uma situação em que você reage automaticamente esperando que tudo se resolva sozinho. Apenas perceba o padrão.",
     gamificationText: "Parabéns por concluir a exploração do Inocente! Você acaba de dar o primeiro passo para resgatar a clareza sobre suas bases de segurança. O Inocente não é sobre ingenuidade, mas sobre a capacidade humana de manter a esperança ativa mesmo em tempos de incerteza. Ao identificar onde você deposita sua fé, você começa a diferenciar o otimismo saudável da negação paralisante. Este é um marco fundamental: sem a confiança básica do Inocente, a jornada do herói sequer começaria. Continue avançando para entender como a quebra dessa inocência nos prepara para o realismo necessário da vida adulta.",
-    conclusionScript: `Você concluiu a exploração do Inocente...`
+    conclusionScript: `Você concluiu a exploração do Inocente. O Inocente em você é a base de onde brota a esperança e a capacidade de ver beleza no mundo. Honre essa parte de si, pois ela é o que lhe permite recomeçar sempre que necessário, com um coração aberto e fé no amanhã.`
   },
   orfao: {
     id: "orfao",
@@ -79,6 +94,14 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     shadow: "Vitimismo e cinismo.",
     illusion: "A crença de que estamos sozinhos contra o mundo.",
     question: "Onde eu me sinto excluído?",
+    mentorship: "O Órfão é o arquétipo que surge quando a inocência é perdida. Ele é o realista, aquele que reconhece que o mundo pode ser cruel e que nem tudo é perfeito. A jornada do Órfão é de aceitação da vulnerabilidade. É aprender a viver com as cicatrizes e encontrar conexão através da empatia. O risco do Órfão é o vitimismo, a crença de que o mundo lhe deve algo. Ao transmutar essa dor, o Órfão se torna extremamente empático e resiliente, sendo capaz de entender o sofrimento dos outros e oferecer um apoio autêntico.",
+    quiz: [
+      { question: "Você sente que a vida foi injusta com você?", options: [{ label: "Frequentemente", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Nunca", score: 1 }] },
+      { question: "Você prefere estar sozinho a ser decepcionado?", options: [{ label: "Sim", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Não", score: 1 }] },
+      { question: "Você compreende facilmente a dor alheia?", options: [{ label: "Sim", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Não", score: 1 }] },
+      { question: "Você se sente parte de algum grupo?", options: [{ label: "Sempre", score: 1 }, { label: "Às vezes", score: 2 }, { label: "Nunca", score: 3 }] },
+      { question: "Você protege seus sentimentos?", options: [{ label: "Sempre", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Não", score: 1 }] }
+    ],
     categories: {
       thoughts: ["Ninguém realmente me entende.", "A vida é dura e injusta.", "Preciso me proteger."],
       emotions: ["Solidão", "Desconfiança", "Anseio por pertencimento"],
@@ -100,7 +123,7 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     reflectionQuestion: "Em quais áreas da vida você se sente desamparado ou injustiçado?",
     mission: "Identifique um momento hoje em que você se sentiu 'de fora' ou incompreendido. Observe se houve um exagero na percepção de isolamento.",
     gamificationText: "A jornada pelo arquétipo do Órfão é, talvez, uma das mais desafiadoras e curativas. Ao encarar sua vulnerabilidade e as feridas de exclusão, você transmuta a dor em resiliência. O Órfão nos ensina o valor do realismo: o mundo não é perfeito, e as pessoas falham. Mas é justamente nessa imperfeição que encontramos a verdadeira conexão humana. Sua conclusão aqui indica que você está pronto para abandonar o papel de vítima e assumir a responsabilidade por sua própria proteção e pertencimento. O próximo passo exige força, e você acabou de forjar a armadura necessária.",
-    conclusionScript: `A exploração do Órfão revelou suas feridas de abandono...`
+    conclusionScript: `A exploração do Órfão revelou suas feridas de abandono. Você aprendeu que a vulnerabilidade é, na verdade, sua maior porta para a conexão real com os outros. Ao aceitar suas feridas, você deixa de ser refém do passado e se torna o guardião resiliente da sua própria história.`
   },
   guerreiro: {
     id: "guerreiro",
@@ -115,6 +138,14 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     shadow: "Agressividade e medo da fraqueza.",
     illusion: "A crença de que tudo é uma batalha a ser vencida.",
     question: "Pelo que vale a pena lutar?",
+    mentorship: "O Guerreiro é a energia da ação. É o arquétipo que estabelece limites, foca no objetivo e tem coragem para enfrentar desafios. O Guerreiro entende que para realizar qualquer coisa, é preciso disciplina e determinação. O perigo é tornar-se agressivo demais ou ver a vida como uma guerra constante. O Guerreiro maduro sabe que sua força serve para proteger o que é valioso, e não para dominar. Ele integra a força física com a clareza de propósito, tornando-se um defensor da justiça e um realizador de mudanças concretas.",
+    quiz: [
+      { question: "Você se sente motivado por desafios?", options: [{ label: "Sempre", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Não", score: 1 }] },
+      { question: "Você estabelece limites claros para os outros?", options: [{ label: "Sempre", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Nunca", score: 1 }] },
+      { question: "Você se sente desconfortável com a passividade?", options: [{ label: "Sim", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Não", score: 1 }] },
+      { question: "Você prioriza resultados sobre processos?", options: [{ label: "Sempre", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Nunca", score: 1 }] },
+      { question: "Você se sente capaz de enfrentar o que for?", options: [{ label: "Sim", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Dificilmente", score: 1 }] }
+    ],
     categories: {
       thoughts: ["Eu consigo resolver isso.", "Fraqueza é inaceitável.", "Preciso estar no controle."],
       emotions: ["Raiva motivadora", "Orgulho", "Ansiedade por desempenho"],
@@ -136,7 +167,7 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     reflectionQuestion: "Onde você está gastando energia excessiva tentando 'lutar' contra a realidade?",
     mission: "Observe uma situação em que você reage agressivamente ou com extrema exigência. Apenas perceba o padrão de combate.",
     gamificationText: "O Guerreiro despertou em você! Esta etapa marca sua transição da sobrevivência para a ação deliberada. Disciplina e coragem são agora suas ferramentas aliadas. Você explorou como seus limites são fundamentais para proteger seus valores e alcançar seus objetivos. O Guerreiro integrado não luta contra moinhos de vento, mas protege o que é sagrado. Ao concluir esta fase, você ganha a clareza de que sua força não precisa ser destrutiva para ser eficaz. Prepare-se, pois o poder agora será temperado pela compaixão na próxima etapa da sua evolução.",
-    conclusionScript: `O Guerreiro em você é a força que impulsiona a mudança...`
+    conclusionScript: `O Guerreiro em você é a força que impulsiona a mudança. Você descobriu que a verdadeira coragem não é a ausência de medo, mas a capacidade de agir com propósito a despeito dele. Use sua força para construir, proteger e realizar, tornando-se o herói das suas próprias conquistas.`
   },
   altruista: {
     id: "altruista",
@@ -151,6 +182,14 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     shadow: "Martírio e controle através da culpa.",
     illusion: "A crença de que posso e devo salvar a todos.",
     question: "Como posso servir melhor?",
+    mentorship: "O Altruísta é o arquétipo do cuidado e da compaixão. Ele encontra sentido em servir e ajudar os outros. O Altruísta tem uma enorme capacidade de empatia, mas seu grande desafio é aprender a equilibrar o dar com o cuidar de si mesmo. Sem esse equilíbrio, o Altruísta cai no martírio, onde se anula e espera que os outros reconheçam seu sacrifício, o que pode gerar culpa e ressentimento. Quando maduro, ele entende que o verdadeiro altruísmo começa com o amor próprio, permitindo que o cuidado flua naturalmente, sem cobranças ou dependência.",
+    quiz: [
+      { question: "Você prioriza as necessidades dos outros?", options: [{ label: "Sempre", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Nunca", score: 1 }] },
+      { question: "Você sente culpa ao tirar tempo para si mesmo?", options: [{ label: "Sim", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Nunca", score: 1 }] },
+      { question: "Você sente gratificação ao ajudar alguém?", options: [{ label: "Sempre", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Dificilmente", score: 1 }] },
+      { question: "Você sente responsabilidade pelo bem-estar alheio?", options: [{ label: "Sim", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Não", score: 1 }] },
+      { question: "Você tem dificuldade em dizer 'não'?", options: [{ label: "Sim", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Não", score: 1 }] }
+    ],
     categories: {
       thoughts: ["Os outros vêm primeiro.", "Eu sei o que é melhor para você.", "Se eu não fizer, ninguém fará."],
       emotions: ["Compaixão", "Culpa por descansar", "Medo do egoísmo"],
@@ -172,7 +211,7 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     reflectionQuestion: "Onde você está se anulando para atender às necessidades dos outros?",
     mission: "Identifique hoje um momento em que você sentiu o impulso de 'salvar' alguém de um desconforto. Tente apenas observar o impulso sem agir.",
     gamificationText: "A exploração do Altruísta foi concluída, e com ela, o florescer da sua compaixão consciente. Servir aos outros é um ato nobre, mas você aprendeu o segredo vital: o auto-cuidado é o combustível do altruísmo sustentável. Se você se anula para salvar o mundo, logo não restará nada de você para oferecer. Integrar este arquétipo significa transitar do martírio para a generosidade empoderada. Você agora possui a sabedoria para saber quando cuidar e quando deixar que o outro trilhe seu próprio caminho de aprendizado. Sua jornada de desenvolvimento entra agora na fase de busca pela própria essência.",
-    conclusionScript: `O Altruísta nos ensina o valor da compaixão e do serviço...`
+    conclusionScript: `O Altruísta nos ensina o valor da compaixão e do serviço. Você descobriu que a generosidade mais potente é aquela que transborda de uma alma preenchida. Ao cuidar de si mesmo com a mesma dedicação que cuida dos outros, você se torna uma fonte inesgotável de amor e apoio consciente.`
   },
   nomade: {
     id: "nomade",
@@ -187,6 +226,14 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     shadow: "Isolamento e incapacidade de compromisso.",
     illusion: "A crença de que a grama do vizinho é sempre mais verde.",
     question: "Quem sou eu além das expectativas?",
+    mentorship: "O Nômade é o arquétipo da busca. Ele deseja explorar o world e a si mesmo, em busca de liberdade e da sua própria verdade. É aquele que não aceita padrões prontos e busca encontrar seu próprio caminho. A inquietação do Nômade é o que o move para frente. O desafio é não se perder na busca infinita, fugindo de responsabilidades. O Nômade maduro entende que a liberdade real não é apenas geográfica, mas mental. Ele aprende a ser fiel a quem é, sem precisar de aprovação externa ou pertencer a estruturas limitantes.",
+    quiz: [
+      { question: "Você sente necessidade constante de mudar algo na sua vida?", options: [{ label: "Sim", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Nunca", score: 1 }] },
+      { question: "Você valoriza a sua independência acima de tudo?", options: [{ label: "Sim", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Não", score: 1 }] },
+      { question: "Você questiona as normas sociais?", options: [{ label: "Sempre", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Dificilmente", score: 1 }] },
+      { question: "Você se sente confortável na incerteza?", options: [{ label: "Sim", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Não", score: 1 }] },
+      { question: "Você busca experiências novas?", options: [{ label: "Sempre", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Nunca", score: 1 }] }
+    ],
     categories: {
       thoughts: ["Preciso sair daqui.", "Existe algo mais lá fora.", "Não pertenço a este lugar."],
       emotions: ["Inquietude", "Desejo de liberdade", "Medo de ser enclausurado"],
@@ -208,7 +255,7 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     reflectionQuestion: "De quais 'prisões' mentais ou sociais você sente vontade de escapar?",
     mission: "Hoje, faça algo de uma forma completamente diferente do seu habitual. Observe o sentimento de liberdade ou estranhamento.",
     gamificationText: "O Buscador em você encontrou um novo horizonte! Ao concluir o arquétipo do Nômade, você validou sua necessidade intrínseca de autonomia e autenticidade. Escapar das 'prisões' mentais e expectativas alheias não é um ato de rebeldia, mas de fidelidade à própria alma. O Nômade nos ensina que a jornada é constante e que a liberdade real começa dentro de nós. Você está agora mais próximo de quem realmente é, despido de máscaras sociais impostas. A busca externa se volta agora para dentro, onde a verdadeira transformação mágica está prestes a acontecer.",
-    conclusionScript: `O Nômade em você é o eterno buscador da verdade...`
+    conclusionScript: `O Nômade em você é o eterno buscador da verdade. Você aprendeu que a verdadeira liberdade não é fugir, mas ser capaz de permanecer fiel à sua essência em qualquer lugar. Ao abraçar sua autenticidade, você se torna o guia da sua própria expedição pela vida.`
   },
   mago: {
     id: "mago",
@@ -223,6 +270,14 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     shadow: "Manipulação e arrogância espiritual.",
     illusion: "A crença de que posso controlar tudo com a mente.",
     question: "Como posso cocriar minha realidade?",
+    mentorship: "O Mago é o arquétipo da transformação profunda. Ele compreende que o mundo externo é um reflexo do estado interno. Sua força não está na manipulação das coisas, mas na clareza da visão e no alinhamento com as leis da vida. O Mago sabe que a consciência muda a realidade. O risco do Mago é a arrogância, acreditar que é superior ou que pode controlar o destino. Quando maduro, ele é um catalisador de mudanças, alguém que traz sabedoria e transformação para sua vida e para o ambiente à sua volta, agindo em sintonia com o fluxo da existência.",
+    quiz: [
+      { question: "Você acredita que suas escolhas criam sua realidade?", options: [{ label: "Sim, plenamente", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Não acredito", score: 1 }] },
+      { question: "Você confia na sua intuição?", options: [{ label: "Sempre", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Nunca", score: 1 }] },
+      { question: "Você sente conexão com algo maior?", options: [{ label: "Sempre", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Nunca", score: 1 }] },
+      { question: "Você busca entender os padrões invisíveis da vida?", options: [{ label: "Sempre", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Nunca", score: 1 }] },
+      { question: "Você se sente capaz de transmutar seus desafios?", options: [{ label: "Sim", score: 3 }, { label: "Às vezes", score: 2 }, { label: "Não", score: 1 }] }
+    ],
     categories: {
       thoughts: ["Como em cima, assim embaixo.", "Eu crio minha própria experiência.", "Tudo é energia."],
       emotions: ["Empoderamento", "Serenidade", "Conexão com o Todo"],

@@ -3,11 +3,13 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { 
   ArrowLeft, CheckCircle2, Award, 
-  Target, Shield, Zap, Sparkles, Brain
+  Target, Shield, Zap, Sparkles, Brain, FileText
 } from "lucide-react";
-import { getArchetypes, getDiagnosis } from "@/lib/hero-journey.functions";
-import { useQuery } from "@tanstack/react-query";
+import { getArchetypes, getDiagnosis, generateCertificate } from "@/lib/hero-journey.functions";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { ARCHETYPES_CONTENT } from "@/lib/hero-content";
+import { useServerFn } from "@tanstack/react-start";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/hero-journey/resultado")({
   component: ResultPage,
@@ -19,9 +21,13 @@ function ResultPage() {
     queryFn: () => getDiagnosis(),
   });
 
+  const generateCert = useServerFn(generateCertificate);
+
   const diagnosis = diagnosisData as any;
   const predominant = diagnosis?.predominant || diagnosis?.predominant_archetype;
+  const secondary = diagnosis?.secondary;
   const archetype = predominant ? ARCHETYPES_CONTENT[predominant] : null;
+  const secondaryArchetype = secondary ? ARCHETYPES_CONTENT[secondary] : null;
 
   if (!archetype) {
     return (
@@ -62,6 +68,31 @@ function ResultPage() {
           <p className="text-sm text-muted-foreground leading-relaxed italic px-4">
             "Suas respostas indicam uma predominância do arquétipo {archetype.name} neste momento da sua jornada."
           </p>
+
+          {secondaryArchetype && (
+            <div className="pt-4 border-t border-border/50">
+              <span className="text-[9px] uppercase tracking-widest text-muted-foreground">Arquétipo Secundário</span>
+              <p className="text-sm font-display text-foreground uppercase">{secondaryArchetype.name}</p>
+            </div>
+          )}
+        </section>
+
+        <section className="flex justify-center">
+          <button
+            onClick={async () => {
+              try {
+                await generateCert();
+                toast.success("Certificado gerado com sucesso!");
+                // Future: navigate to cert view
+              } catch (e) {
+                toast.error("Erro ao gerar certificado.");
+              }
+            }}
+            className="flex items-center gap-2 px-8 py-4 rounded-full bg-gold text-black font-display uppercase tracking-widest text-xs hover:scale-105 transition-transform shadow-glow"
+          >
+            <FileText className="h-4 w-4" />
+            Emitir Certificado
+          </button>
         </section>
 
         <section className="grid gap-4 sm:grid-cols-2">
