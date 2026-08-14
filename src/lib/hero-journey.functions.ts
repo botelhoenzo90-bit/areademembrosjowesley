@@ -165,20 +165,21 @@ export const generateCertificate = createServerFn({ method: "POST" })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
     try {
-      const { data: diagnosis } = await supabase
+      const { data: diagnosisData } = await supabase
         .from('hero_journey_diagnosis' as any)
         .select('*')
         .eq('user_id', userId)
         .maybeSingle();
 
+      const diagnosis = diagnosisData as any;
       if (!diagnosis) throw new Error("Diagnosis not found");
 
       const { data, error } = await supabase
         .from('hero_journey_certificates' as any)
         .upsert({
           user_id: userId,
-          predominant: diagnosis.predominant || (diagnosis as any).predominant_archetype,
-          secondary: (diagnosis as any).secondary,
+          predominant: diagnosis.predominant || diagnosis.predominant_archetype,
+          secondary: diagnosis.secondary,
           issue_date: new Date().toISOString()
         }, { onConflict: 'user_id' })
         .select()
