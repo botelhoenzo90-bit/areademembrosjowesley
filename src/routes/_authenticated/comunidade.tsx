@@ -45,6 +45,27 @@ function ComunidadePage() {
       </header>
 
       <section className="mx-4 mt-6">
+        <div className="overflow-hidden rounded-3xl border border-gold/40 shadow-elevated">
+          <div className="relative aspect-video w-full">
+            <iframe
+              src="https://www.youtube.com/embed/7-vkidI_n_4"
+              title="Aula de Apresentação"
+              className="absolute inset-0 h-full w-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+          <div className="bg-gold/15 px-5 py-4">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gold/60">Conteúdo Exclusivo</p>
+            <h3 className="mt-1 font-display text-lg text-foreground">Aula de Apresentação</h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Assista à aula de boas-vindas para entender como nossa comunidade funciona.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-4 mt-8">
         <a
           href={COMMUNITY_URL}
           target="_blank"
@@ -64,11 +85,11 @@ function ComunidadePage() {
         </a>
       </section>
 
-      <section className="mx-4 mt-6 rounded-3xl border border-border glass p-5">
+      <section className="mx-4 mt-8 rounded-3xl border border-border glass p-5">
         <h2 className="font-display text-xl text-foreground">O que você recebe lá dentro</h2>
         <p className="mt-2 text-sm text-muted-foreground">
           A Comunidade Neuroconsciência é o ponto de encontro dos alunos. É gratuito e o acesso é
-          direto pelo WhatsApp — basta tocar na imagem acima.
+          direto pelo WhatsApp — basta tocar na imagem acima ou no botão abaixo.
         </p>
         <ul className="mt-5 space-y-4">
           <Benefit
