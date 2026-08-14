@@ -227,16 +227,66 @@ function Page() {
           )}
         </div>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {Object.values(ARCHETYPES_CONTENT).map((arch) => (
-            <ArchetypeCard 
-              key={arch.id}
-              archetype={arch}
-              status={getStatus(arch.id)}
-              progress={getProgress(arch.id)}
-              onClick={() => navigate({ to: `/hero-journey/archetype/${arch.id}` })}
-            />
-          ))}
+        <div className="space-y-16">
+          {/* FASE 1: SEGURANÇA */}
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="h-px flex-1 bg-border/50" />
+              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium bg-background px-4">Fase 1: Segurança</span>
+              <div className="h-px flex-1 bg-border/50" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {Object.values(ARCHETYPES_CONTENT).slice(0, 2).map((arch) => (
+                <ArchetypeCard 
+                  key={arch.id}
+                  archetype={arch}
+                  status={getStatus(arch.id)}
+                  progress={getProgress(arch.id)}
+                  onClick={() => navigate({ to: `/hero-journey/archetype/${arch.id}` })}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* FASE 2: DESENVOLVIMENTO */}
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="h-px flex-1 bg-border/50" />
+              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium bg-background px-4">Fase 2: Desenvolvimento</span>
+              <div className="h-px flex-1 bg-border/50" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {Object.values(ARCHETYPES_CONTENT).slice(2, 4).map((arch) => (
+                <ArchetypeCard 
+                  key={arch.id}
+                  archetype={arch}
+                  status={getStatus(arch.id)}
+                  progress={getProgress(arch.id)}
+                  onClick={() => navigate({ to: `/hero-journey/archetype/${arch.id}` })}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* FASE 3: INTEGRAÇÃO */}
+          <div className="space-y-6">
+            <div className="flex items-center gap-4">
+              <div className="h-px flex-1 bg-border/50" />
+              <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-medium bg-background px-4">Fase 3: Integração</span>
+              <div className="h-px flex-1 bg-border/50" />
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {Object.values(ARCHETYPES_CONTENT).slice(4, 6).map((arch) => (
+                <ArchetypeCard 
+                  key={arch.id}
+                  archetype={arch}
+                  status={getStatus(arch.id)}
+                  progress={getProgress(arch.id)}
+                  onClick={() => navigate({ to: `/hero-journey/archetype/${arch.id}` })}
+                />
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
