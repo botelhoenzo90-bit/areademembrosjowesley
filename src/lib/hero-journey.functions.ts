@@ -177,8 +177,8 @@ export const generateCertificate = createServerFn({ method: "POST" })
         .from('hero_journey_certificates' as any)
         .upsert({
           user_id: userId,
-          predominant: diagnosis.predominant,
-          secondary: diagnosis.secondary,
+          predominant: diagnosis.predominant || (diagnosis as any).predominant_archetype,
+          secondary: (diagnosis as any).secondary,
           issue_date: new Date().toISOString()
         }, { onConflict: 'user_id' })
         .select()
