@@ -1,32 +1,4 @@
-export type ArchetypeData = {
-  id: string;
-  name: string;
-  subtitle: string;
-  symbol: string;
-  phase: string;
-  essence: string;
-  objective: string;
-  strength: string;
-  need: string;
-  shadow: string;
-  illusion: string;
-  question: string;
-  categories: {
-    thoughts: string[];
-    emotions: string[];
-    behaviors: string[];
-    relationships: string[];
-    decisions: string[];
-    identity: string[];
-  };
-  selfPerceptionQuestions: {
-    question: string;
-    options: { label: string; score: number }[];
-  }[];
-  reflectionQuestion: string;
-  mission: string;
-  conclusionScript: string;
-};
+import { ArchetypeData } from "./hero-content";
 
 export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
   inocente: {
@@ -157,7 +129,7 @@ export const ARCHETYPES_CONTENT: Record<string, ArchetypeData> = {
     },
     selfPerceptionQuestions: [
       {
-        question: "Como você se sente quando diz 'não' a alguém?",
+        question: "Como você se sente quando diz 'no' a alguém?",
         options: [
           { label: "Extremamente culpado.", score: 3 },
           { label: "Desconfortável, mas necessário.", score: 2 },
