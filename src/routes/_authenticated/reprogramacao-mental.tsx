@@ -212,19 +212,32 @@ function Page() {
       </section>
 
       <section className="mx-4 mt-12 lg:mx-auto lg:max-w-6xl">
-        <div className="flex items-center justify-between mb-8">
-          <div className="space-y-1">
-            <h2 className="font-display text-2xl text-foreground">MAPA DO HERÓI INTERIOR</h2>
-            <p className="text-xs text-muted-foreground uppercase tracking-widest">Explore as estações da sua consciência</p>
+        <div className="mb-8 space-y-6">
+          <div className="relative overflow-hidden rounded-3xl border border-gold/20 shadow-glow bg-surface-elevated">
+            <div className="aspect-video w-full">
+              <iframe 
+                src={`https://www.youtube.com/embed/${youtubeId("https://youtu.be/Ql3H9jAvDrY")}?rel=0&modestbranding=1`}
+                className="h-full w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
           </div>
-          {(stats as any)?.archetypes_explored >= 6 && (
-            <Link 
-              to="/hero-journey/diagnostico"
-              className="rounded-full bg-gold/10 border border-gold/30 px-4 py-2 text-[10px] uppercase tracking-widest text-gold hover:bg-gold/20 transition-colors"
-            >
-              Iniciar Diagnóstico
-            </Link>
-          )}
+          
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h2 className="font-display text-2xl text-foreground">MAPA DO HERÓI INTERIOR</h2>
+              <p className="text-xs text-muted-foreground uppercase tracking-widest">Explore as estações da sua consciência</p>
+            </div>
+            {(stats as any)?.archetypes_explored >= 6 && (
+              <Link 
+                to="/hero-journey/diagnostico"
+                className="rounded-full bg-gold/10 border border-gold/30 px-4 py-2 text-[10px] uppercase tracking-widest text-gold hover:bg-gold/20 transition-colors"
+              >
+                Iniciar Diagnóstico
+              </Link>
+            )}
+          </div>
         </div>
 
         <div className="space-y-16">
@@ -291,20 +304,10 @@ function Page() {
       </section>
 
       <section className="mx-4 mt-20 lg:mx-auto lg:max-w-6xl">
-        <p className="mb-4 text-[10px] uppercase tracking-widest text-gold">Recurso Adicional</p>
-        <div className="relative overflow-hidden rounded-3xl border border-border shadow-elevated">
-          <div className="aspect-video w-full">
-            <iframe 
-              src={`https://www.youtube.com/embed/${youtubeId("https://youtu.be/Ql3H9jAvDrY")}?rel=0&modestbranding=1`}
-              className="h-full w-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          </div>
-          <div className="p-8 bg-surface">
-            <h3 className="font-display text-2xl text-foreground uppercase tracking-tight">Aula: Código da Mente Extraordinária</h3>
-            <p className="mt-2 max-w-lg text-sm text-muted-foreground">Assista à aula fundamental que serve como base para toda a jornada de reprogramação.</p>
-          </div>
+        <p className="mb-4 text-[10px] uppercase tracking-widest text-gold">Fundamentos</p>
+        <div className="rounded-3xl border border-border p-8 bg-surface shadow-elevated">
+          <h3 className="font-display text-2xl text-foreground uppercase tracking-tight">Código da Mente Extraordinária</h3>
+          <p className="mt-2 max-w-lg text-sm text-muted-foreground">Esta é a aula fundamental que serve como base para toda a jornada de reprogramação.</p>
         </div>
       </section>
     </main>
