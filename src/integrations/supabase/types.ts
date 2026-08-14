@@ -175,6 +175,33 @@ export type Database = {
         }
         Relationships: []
       }
+      hero_journey_certificates: {
+        Row: {
+          id: string
+          issue_date: string | null
+          predominant: Database["public"]["Enums"]["hero_archetype_name"]
+          secondary: Database["public"]["Enums"]["hero_archetype_name"] | null
+          user_id: string
+          verification_code: string | null
+        }
+        Insert: {
+          id?: string
+          issue_date?: string | null
+          predominant: Database["public"]["Enums"]["hero_archetype_name"]
+          secondary?: Database["public"]["Enums"]["hero_archetype_name"] | null
+          user_id: string
+          verification_code?: string | null
+        }
+        Update: {
+          id?: string
+          issue_date?: string | null
+          predominant?: Database["public"]["Enums"]["hero_archetype_name"]
+          secondary?: Database["public"]["Enums"]["hero_archetype_name"] | null
+          user_id?: string
+          verification_code?: string | null
+        }
+        Relationships: []
+      }
       hero_journey_diagnosis: {
         Row: {
           created_at: string | null
@@ -201,6 +228,36 @@ export type Database = {
           recommendation?: string | null
           results?: Json
           secondary?: Database["public"]["Enums"]["hero_archetype_name"] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hero_journey_quiz_responses: {
+        Row: {
+          answer_index: number
+          archetype: Database["public"]["Enums"]["hero_archetype_name"]
+          created_at: string | null
+          id: string
+          question_index: number
+          score: number
+          user_id: string
+        }
+        Insert: {
+          answer_index: number
+          archetype: Database["public"]["Enums"]["hero_archetype_name"]
+          created_at?: string | null
+          id?: string
+          question_index: number
+          score: number
+          user_id: string
+        }
+        Update: {
+          answer_index?: number
+          archetype?: Database["public"]["Enums"]["hero_archetype_name"]
+          created_at?: string | null
+          id?: string
+          question_index?: number
+          score?: number
           user_id?: string
         }
         Relationships: []
