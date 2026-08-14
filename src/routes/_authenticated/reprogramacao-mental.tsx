@@ -171,13 +171,12 @@ function Page() {
         <ArrowLeft className="h-4 w-4" />
       </Link>
 
-      <section className="relative h-[60vh] overflow-hidden">
+      <section className="relative h-[45vh] overflow-hidden flex items-end">
         <div className="absolute inset-0">
-          <iframe 
-            src={`https://www.youtube.com/embed/${youtubeId("https://youtu.be/Ql3H9jAvDrY")}?autoplay=1&mute=1&loop=1&playlist=${youtubeId("https://youtu.be/Ql3H9jAvDrY")}&controls=0&showinfo=0&rel=0&modestbranding=1`}
-            className="absolute inset-0 h-full w-full object-cover scale-[1.5]"
-            allow="autoplay; encrypted-media"
-            style={{ pointerEvents: 'none' }}
+          <img 
+            src={hero} 
+            alt="Hero Background"
+            className="h-full w-full object-cover"
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
