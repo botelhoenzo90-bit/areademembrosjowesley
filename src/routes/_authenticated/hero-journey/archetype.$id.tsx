@@ -309,10 +309,29 @@ function ArchetypeJourneyPage() {
 }
 
 function InfoCard({ title, content }: { title: string; content: string }) {
+  const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="rounded-2xl border border-border glass p-4 space-y-1">
-      <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{title}</span>
-      <p className="text-sm text-foreground leading-tight">{content}</p>
+    <div 
+      onClick={() => setIsOpen(!isOpen)}
+      className="rounded-2xl border border-border glass p-4 space-y-1 cursor-pointer hover:border-gold/50 transition-all"
+    >
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{title}</span>
+        <ChevronRight className={`h-3 w-3 transition-transform ${isOpen ? 'rotate-90' : ''}`} />
+      </div>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.p 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="text-sm text-foreground leading-tight overflow-hidden"
+          >
+            {content}
+          </motion.p>
+        )}
+      </AnimatePresence>
+      {!isOpen && <p className="text-sm text-foreground leading-tight truncate">Clique para ver...</p>}
     </div>
   );
 }
