@@ -43,6 +43,7 @@ function ArchetypeJourneyPage() {
   const [reflectionText, setReflectionText] = useState(currentArchData?.reflection_text || "");
   const [protocolSteps, setProtocolSteps] = useState<number[]>(currentArchData?.protocol_steps_completed || []);
   const [selectedPerception, setSelectedPerception] = useState<number | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   if (!archetype) {
     return <div>Arquétipo não encontrado.</div>;
@@ -109,12 +110,36 @@ function ArchetypeJourneyPage() {
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                <InfoCard title="Essência" content={archetype.essence} />
-                <InfoCard title="Objetivo" content={archetype.objective} />
-                <InfoCard title="Força" content={archetype.strength} />
-                <InfoCard title="Necessidade" content={archetype.need} />
-                <InfoCard title="Sombra" content={archetype.shadow} />
-                <InfoCard title="Ilusão" content={archetype.illusion} />
+                <InfoCard 
+                  title="Essência" 
+                  content={archetype.essence} 
+                  onDetails={() => setSelectedCategory('essence')}
+                />
+                <InfoCard 
+                  title="Objetivo" 
+                  content={archetype.objective} 
+                  onDetails={() => setSelectedCategory('objective')}
+                />
+                <InfoCard 
+                  title="Força" 
+                  content={archetype.strength} 
+                  onDetails={() => setSelectedCategory('strength')}
+                />
+                <InfoCard 
+                  title="Necessidade" 
+                  content={archetype.need} 
+                  onDetails={() => setSelectedCategory('need')}
+                />
+                <InfoCard 
+                  title="Sombra" 
+                  content={archetype.shadow} 
+                  onDetails={() => setSelectedCategory('shadow')}
+                />
+                <InfoCard 
+                  title="Ilusão" 
+                  content={archetype.illusion} 
+                  onDetails={() => setSelectedCategory('illusion')}
+                />
               </div>
 
               <div className="rounded-2xl border border-gold/30 bg-gold/5 p-6 text-center italic">
@@ -296,6 +321,65 @@ function ArchetypeJourneyPage() {
           )}
         </AnimatePresence>
 
+        <AnimatePresence>
+          {selectedCategory && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-background/95 backdrop-blur-md"
+            >
+              <motion.div 
+                initial={{ scale: 0.9, y: 20 }}
+                animate={{ scale: 1, y: 0 }}
+                className="w-full max-w-lg rounded-3xl border border-gold/20 bg-surface p-8 shadow-2xl relative"
+              >
+                <button 
+                  onClick={() => setSelectedCategory(null)}
+                  className="absolute top-4 right-4 rounded-full p-2 hover:bg-surface-elevated text-muted-foreground"
+                >
+                  <ArrowLeft className="h-5 w-5 rotate-90" />
+                </button>
+
+                <div className="space-y-6">
+                  <div className="space-y-2">
+                    <span className="text-[10px] uppercase tracking-[0.2em] text-gold font-medium">Aprofundamento</span>
+                    <h3 className="font-display text-3xl uppercase text-foreground">
+                      {selectedCategory === 'essence' && 'Essência'}
+                      {selectedCategory === 'objective' && 'Objetivo'}
+                      {selectedCategory === 'strength' && 'Força'}
+                      {selectedCategory === 'need' && 'Necessidade'}
+                      {selectedCategory === 'shadow' && 'Sombra'}
+                      {selectedCategory === 'illusion' && 'Ilusão'}
+                    </h3>
+                  </div>
+
+                  <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
+                    <p className="text-foreground text-lg">
+                      {archetype[selectedCategory as keyof typeof archetype] as string}
+                    </p>
+                    <p>
+                      {selectedCategory === 'essence' && "A essência representa o núcleo puro deste padrão em você. É a força vital que guia suas percepções mais profundas."}
+                      {selectedCategory === 'objective' && "Este é o 'norte' da sua bússola interna quando este arquétipo está ativo. É o que sua alma busca alcançar agora."}
+                      {selectedCategory === 'strength' && "Seu maior aliado. Esta habilidade natural permite que você navegue por desafios com uma vantagem única."}
+                      {selectedCategory === 'need' && "O que sustenta sua estrutura emocional. Ignorar esta necessidade pode gerar desequilíbrio na sua jornada."}
+                      {selectedCategory === 'shadow' && "A parte oculta. Não é ruim, mas precisa de consciência. Quando ignorada, ela pode sabotar seus resultados."}
+                      {selectedCategory === 'illusion' && "O véu que distorce a realidade. Reconhecer esta ilusão é o primeiro passo para o verdadeiro despertar."}
+                    </p>
+                  </div>
+
+                  <button 
+                    onClick={() => setSelectedCategory(null)}
+                    className="w-full py-4 rounded-full bg-foreground text-background text-sm font-medium hover:brightness-110 transition-all"
+                  >
+                    Entendi, continuar
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         <footer className="fixed bottom-0 left-0 right-0 p-6 glass-strong z-40">
           <button
             onClick={handleNext}
@@ -310,30 +394,30 @@ function ArchetypeJourneyPage() {
   );
 }
 
-function InfoCard({ title, content }: { title: string; content: string }) {
+function InfoCard({ title, content, onDetails }: { title: string; content: string; onDetails?: () => void }) {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <div 
-      onClick={() => setIsOpen(!isOpen)}
-      className="rounded-2xl border border-border glass p-4 space-y-1 cursor-pointer hover:border-gold/50 transition-all"
+      onClick={() => {
+        setIsOpen(!isOpen);
+        if (!isOpen && onDetails) {
+          // Pequeno delay para a animação do card antes de abrir o modal se for o caso
+          // ou simplesmente abrir o modal se preferir ação direta
+          onDetails();
+        }
+      }}
+      className="rounded-2xl border border-border glass p-4 space-y-1 cursor-pointer hover:border-gold/50 transition-all active:scale-95"
     >
       <div className="flex items-center justify-between">
         <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{title}</span>
         <ChevronRight className={`h-3 w-3 transition-transform ${isOpen ? 'rotate-90' : ''}`} />
       </div>
-      <AnimatePresence>
-        {isOpen && (
-          <motion.p 
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="text-sm text-foreground leading-tight overflow-hidden"
-          >
-            {content}
-          </motion.p>
-        )}
-      </AnimatePresence>
-      {!isOpen && <p className="text-sm text-foreground leading-tight truncate">Clique para ver...</p>}
+      <p className="text-sm text-foreground leading-tight font-medium">
+        {content}
+      </p>
+      <div className="pt-2 flex items-center gap-1 text-[9px] uppercase tracking-tighter text-gold opacity-70">
+        <Zap className="h-2.5 w-2.5" /> Clique para aprofundar
+      </div>
     </div>
   );
 }
