@@ -10,7 +10,7 @@ export const getPrinciplesData = createServerFn({ method: "GET" })
     const [principlesRes, progressRes, profileRes] = await Promise.all([
       supabase.from("principles").select("*").order("principle_number"),
       supabase.from("user_principle_progress").select("*").eq("user_id", userId),
-      supabase.from("profiles").select("full_name").eq("id", userId).single()
+      supabase.from("profiles").select("display_name").eq("id", userId).single()
     ]);
 
     if (principlesRes.error) throw principlesRes.error;
@@ -40,7 +40,7 @@ export const getPrinciplesData = createServerFn({ method: "GET" })
     return {
       principles: principlesRes.data || [],
       progress,
-      userName: profileRes.data?.full_name || 'Guerreiro'
+      userName: profileRes.data?.display_name || 'Guerreiro'
     };
   });
 
@@ -89,12 +89,12 @@ export const generatePrincipleDiagnosis = createServerFn({ method: "POST" })
     const [principleRes, responsesRes, profileRes] = await Promise.all([
       supabase.from("principles").select("*").eq("id", data.principleId).single(),
       supabase.from("user_principle_responses").select("*").eq("user_id", userId).eq("principle_id", data.principleId),
-      supabase.from("profiles").select("full_name").eq("id", userId).single()
+      supabase.from("profiles").select("display_name").eq("id", userId).single()
     ]);
 
     const principle = principleRes.data;
     const responses = responsesRes.data || [];
-    const userName = profileRes.data?.full_name || 'Guerreiro';
+    const userName = profileRes.data?.display_name || 'Guerreiro';
 
     // In a real app, we would call an AI model here (e.g., Gemini)
     // For this implementation, we'll generate a high-quality template diagnosis
