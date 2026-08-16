@@ -349,7 +349,21 @@ function ArchetypeJourneyPage() {
                     {['Perceber', 'Nomear', 'Questionar', 'Escolher', 'Praticar'].map((step, idx) => (
                       <button
                         key={idx}
-                        onClick={() => toggleProtocolStep(idx)}
+                        onClick={async () => {
+                          const newSteps = protocolSteps.includes(idx) 
+                            ? protocolSteps.filter(i => i !== idx) 
+                            : [...protocolSteps, idx];
+                          setProtocolSteps(newSteps);
+                          
+                          const { updateProtocol } = await import("@/lib/hero-journey.functions");
+                          await updateProtocol({ 
+                            data: { 
+                              archetype: id as any, 
+                              steps_completed: newSteps,
+                              is_completed: newSteps.length === 5
+                            } 
+                          });
+                        }}
                         className={`w-full flex items-center gap-4 rounded-2xl border p-4 transition-all ${
                           protocolSteps.includes(idx)
                             ? 'border-emerald-500/50 bg-emerald-500/5'
