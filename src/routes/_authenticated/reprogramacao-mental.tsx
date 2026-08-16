@@ -331,10 +331,10 @@ function Page() {
                <Brain className="h-6 w-6 mx-auto mb-2 text-muted-foreground group-hover:text-gold" />
                <span className="text-[10px] uppercase tracking-widest">Meu Mapa</span>
              </Link>
-             <button onClick={() => navigate({ to: '/hero-journey/resultado' })} className="rounded-2xl border border-border glass p-6 text-center group hover:border-gold/30 transition-all">
+             <Link to="/hero-journey/resultado" className="rounded-2xl border border-border glass p-6 text-center group hover:border-gold/30 transition-all">
                <FileText className="h-6 w-6 mx-auto mb-2 text-muted-foreground group-hover:text-gold" />
                <span className="text-[10px] uppercase tracking-widest">Reflexões</span>
-             </button>
+             </Link>
           </div>
         </div>
       </section>
