@@ -196,7 +196,7 @@ function PrincipleJourneyPage() {
                     </div>
 
                     <Button 
-                        className="w-full py-8 rounded-2xl text-xl bg-gold hover:bg-gold/90 text-black font-bold tracking-widest shadow-glow" 
+                        className="w-full h-auto py-6 px-4 rounded-2xl text-lg sm:text-xl bg-gold hover:bg-gold/90 text-black font-bold tracking-widest shadow-glow whitespace-normal text-center" 
                         onClick={handleStartQuiz}
                     >
                         CONCLUIR AULA & INICIAR MAPEAMENTO
@@ -225,7 +225,7 @@ function PrincipleJourneyPage() {
                                 {QUIZ_QUESTIONS[quizIndex].options.map((opt, i) => (
                                     <Button 
                                         key={i} variant="outline" 
-                                        className="py-6 rounded-2xl border-white/10 hover:border-gold/50 hover:bg-gold/5 text-lg"
+                                        className="h-auto py-4 px-6 rounded-2xl border-white/10 hover:border-gold/50 hover:bg-gold/5 text-base sm:text-lg whitespace-normal text-center"
                                         onClick={() => handleAnswer(opt.value)}
                                         disabled={processing}
                                     >
@@ -293,7 +293,7 @@ function PrincipleJourneyPage() {
                     </div>
 
                     <Button 
-                        className="w-full py-8 rounded-2xl text-xl bg-gold hover:bg-gold/90 text-black font-bold tracking-widest shadow-glow"
+                        className="w-full h-auto py-6 px-4 rounded-2xl text-lg sm:text-xl bg-gold hover:bg-gold/90 text-black font-bold tracking-widest shadow-glow whitespace-normal text-center"
                         onClick={handleCompleteProtocol}
                         disabled={processing}
                     >
