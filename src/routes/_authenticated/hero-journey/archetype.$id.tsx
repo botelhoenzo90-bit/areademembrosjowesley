@@ -43,7 +43,7 @@ function ArchetypeJourneyPage() {
   const [reflectionText, setReflectionText] = useState("");
   const [protocolSteps, setProtocolSteps] = useState<number[]>([]);
   const [selectedPerception, setSelectedPerception] = useState<number | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<'essence' | 'objective' | 'strength' | 'need' | 'shadow' | 'illusion' | null>(null);
   const [currentQuizStep, setCurrentQuizStep] = useState(0);
   const [quizResponses, setQuizResponses] = useState<{question_index: number, answer_index: number, score: number}[]>([]);
 
@@ -64,9 +64,14 @@ function ArchetypeJourneyPage() {
     if (currentIndex < stages.length - 1) {
       const nextStage = stages[currentIndex + 1];
       setStage(nextStage);
+      // Ensure we save progress on every step
       const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
       await updateProgress({ 
-        data: { archetype: id as any, progress, status: (progress === 100 ? 'completed' : 'in_progress') as any }
+        data: { 
+          archetype: id as any, 
+          progress: Math.min(progress, 100), 
+          status: (progress >= 100 ? 'completed' : 'in_progress') as any 
+        }
       });
       queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
       queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
@@ -108,7 +113,7 @@ function ArchetypeJourneyPage() {
                     { label: 'Sombra', key: 'shadow' },
                     { label: 'Ilusão', key: 'illusion' }
                   ].map(cat => (
-                    <button key={cat.label} onClick={() => setSelectedCategory(cat.key)} className="rounded-2xl border border-border glass p-4 text-left hover:border-gold/50 transition-all">
+                    <button key={cat.label} onClick={() => setSelectedCategory(cat.key as any)} className="rounded-2xl border border-border glass p-4 text-left hover:border-gold/50 transition-all">
                       <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{cat.label}</span>
                       <p className="text-sm font-medium leading-tight mt-1">{archetype[cat.key as keyof typeof archetype] as string}</p>
                     </button>
@@ -127,7 +132,8 @@ function ArchetypeJourneyPage() {
                   <BookOpen className="mx-auto h-12 w-12 text-gold" />
                   <h2 className="font-display text-2xl uppercase tracking-tight">Mini Mentoria</h2>
                 </div>
-                <div className="rounded-3xl border border-border glass p-8 text-sm leading-relaxed text-muted-foreground whitespace-pre-line">
+                <div className="rounded-3xl border border-border glass p-8 text-sm leading-relaxed text-muted-foreground whitespace-pre-line relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-gold/30" />
                   {archetype.mentorship}
                 </div>
               </motion.div>
@@ -302,12 +308,17 @@ function ArchetypeJourneyPage() {
         <div className="mt-12 pb-12">
           <button
             onClick={handleNext}
-            disabled={(stage === 'observe' && selectedPerception === null) || (stage === 'experiment' && reflectionText.length < 5) || (stage === 'implement' && protocolSteps.length < 5)}
+            disabled={
+              (stage === 'quiz' && quizResponses.length < archetype.quiz.length) ||
+              (stage === 'observe' && selectedPerception === null) || 
+              (stage === 'experiment' && reflectionText.length < 10) || 
+              (stage === 'implement' && protocolSteps.length < 5)
+            }
             className="w-full group relative flex items-center justify-center rounded-full bg-foreground px-8 py-5 text-sm font-bold text-background transition-all hover:scale-[1.02] active:scale-[0.98] shadow-glow disabled:opacity-50 disabled:grayscale"
           >
             <span className="relative z-10 tracking-[0.2em] uppercase">
               {stage === 'discover' && 'Entender Arquétipo'}
-              {stage === 'mentorship' && 'Observar no Dia a Dia'}
+              {stage === 'mentorship' && 'Aprofundar Percepção'}
               {stage === 'understand' && 'Iniciar Quiz'}
               {stage === 'quiz' && 'Avançar para Percepção'}
               {stage === 'observe' && 'Ir para Reflexão'}
@@ -330,7 +341,14 @@ function ArchetypeJourneyPage() {
               <div className="space-y-6">
                 <div className="space-y-2">
                   <span className="text-[10px] uppercase tracking-[0.2em] text-gold font-medium">Aprofundamento</span>
-                  <h3 className="font-display text-3xl uppercase text-foreground">{selectedCategory}</h3>
+                  <h3 className="font-display text-3xl uppercase text-foreground">
+                    {selectedCategory === 'essence' ? 'Essência' : 
+                     selectedCategory === 'objective' ? 'Objetivo' : 
+                     selectedCategory === 'strength' ? 'Força' : 
+                     selectedCategory === 'need' ? 'Necessidade' : 
+                     selectedCategory === 'shadow' ? 'Sombra' : 
+                     selectedCategory === 'illusion' ? 'Ilusão' : selectedCategory}
+                  </h3>
                 </div>
                 <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
                   <p className="text-foreground text-lg">{archetype[selectedCategory as keyof typeof archetype] as string}</p>

@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Play, Sparkles, Flame, Activity, Target, Shield, Compass, Lock, FileText } from "lucide-react";
 import heroAsset from "@/assets/cover-4.png.asset.json";
@@ -228,9 +229,9 @@ function Page() {
           <div className="relative overflow-hidden rounded-3xl border border-gold/20 shadow-glow bg-surface-elevated">
             <div className="aspect-video w-full">
               <iframe 
-                src={`https://www.youtube.com/embed/${youtubeId("https://youtu.be/Ql3H9jAvDrY")}?rel=0&modestbranding=1`}
+                src={`https://www.youtube.com/embed/${youtubeId("https://youtu.be/Ql3H9jAvDrY")}?rel=0&modestbranding=1&autoplay=0`}
                 className="h-full w-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
             </div>
@@ -331,10 +332,13 @@ function Page() {
                <Brain className="h-6 w-6 mx-auto mb-2 text-muted-foreground group-hover:text-gold" />
                <span className="text-[10px] uppercase tracking-widest">Meu Mapa</span>
              </Link>
-             <Link to="/hero-journey/resultado" className="rounded-2xl border border-border glass p-6 text-center group hover:border-gold/30 transition-all">
+             <button 
+               onClick={() => toast.info("Funcionalidade de reflexões em desenvolvimento.")}
+               className="rounded-2xl border border-border glass p-6 text-center group hover:border-gold/30 transition-all"
+             >
                <FileText className="h-6 w-6 mx-auto mb-2 text-muted-foreground group-hover:text-gold" />
                <span className="text-[10px] uppercase tracking-widest">Reflexões</span>
-             </Link>
+             </button>
           </div>
         </div>
       </section>
