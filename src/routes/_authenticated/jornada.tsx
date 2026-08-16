@@ -1,4 +1,5 @@
-import { createFileRoute, useNavigate, useParams, z } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
+import { z } from "zod";
 import { useEffect, useState } from "react";
 import { 
   ArrowLeft, CheckCircle2, Play, Trophy, Sparkles, 
