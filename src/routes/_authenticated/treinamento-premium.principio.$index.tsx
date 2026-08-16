@@ -57,8 +57,8 @@ function PrincipleJourneyPage() {
     getPrinciples()
       .then(res => {
         setData(res);
-        const principle = res.principles.find((p: any) => p.principle_number === principleNumber);
-        const prog = res.progress.find((p: any) => p.principle_id === principle?.id);
+        const currentPrinciple = res.principles.find((p: any) => p.principle_number === principleNumber);
+        const prog = res.progress.find((p: any) => p.principle_id === currentPrinciple?.id);
         
         if (prog?.status === 'locked' && principleNumber !== 1) {
           navigate({ to: "/treinamento-premium" });
@@ -66,9 +66,9 @@ function PrincipleJourneyPage() {
         }
 
         if (prog?.protocol_completed) setStep('concluido');
-        else if (prog?.quiz_completed) {
+        else if (prog?.quiz_completed && currentPrinciple) {
             // Fetch diagnosis if quiz is done
-            genDiagnosis({ data: { principleId: principle.id } }).then(setDiagnosis);
+            genDiagnosis({ data: { principleId: currentPrinciple.id } }).then(setDiagnosis);
             setStep('diagnostico');
         }
       })
