@@ -32,7 +32,7 @@ const QUIZ_QUESTIONS = [
 ];
 
 export function PrincipleJourneyPage() {
-  const { index } = useParams({ from: "/_authenticated/treinamento-premium-principio.$index" as any });
+  const { index } = useParams({ from: "/_authenticated/principio.$index" as any });
   const principleNumber = parseInt(index);
   const navigate = useNavigate();
   
@@ -321,7 +321,7 @@ export function PrincipleJourneyPage() {
                                     setQuizIndex(0);
                                     setAnswers([]);
                                     setDiagnosis(null);
-                                    navigate({ to: "/treinamento-premium-principio/$index" as any, params: { index: (principleNumber + 1).toString() } as any });
+                                    navigate({ to: "/principio/$index" as any, params: { index: (principleNumber + 1).toString() } as any });
                                 }}
                             >
                                 PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4" />
