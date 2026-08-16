@@ -132,7 +132,8 @@ function ArchetypeJourneyPage() {
                   <BookOpen className="mx-auto h-12 w-12 text-gold" />
                   <h2 className="font-display text-2xl uppercase tracking-tight">Mini Mentoria</h2>
                 </div>
-                <div className="rounded-3xl border border-border glass p-8 text-sm leading-relaxed text-muted-foreground whitespace-pre-line">
+                <div className="rounded-3xl border border-border glass p-8 text-sm leading-relaxed text-muted-foreground whitespace-pre-line relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-gold/30" />
                   {archetype.mentorship}
                 </div>
               </motion.div>
