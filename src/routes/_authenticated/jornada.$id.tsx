@@ -20,8 +20,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
 function PrincipleJourneyPage() {
-  const { slug } = useParams({ from: "/_authenticated/principio/$slug" });
-  const principleNumber = parseInt(slug);
+  const { id } = useParams({ from: "/_authenticated/jornada/$id" });
+  const principleNumber = parseInt(id);
   const navigate = useNavigate();
   
   const [loading, setLoading] = useState(true);
@@ -320,7 +320,7 @@ function PrincipleJourneyPage() {
                             <Button 
                                 className="bg-white text-black hover:bg-white/90 px-12 py-8 rounded-2xl text-xl font-bold tracking-widest uppercase shadow-glow"
                                 onClick={() => {
-                                    navigate({ to: "/_authenticated/principio/$slug" as any, params: { slug: (principleNumber + 1).toString() } as any });
+                                    navigate({ to: "/_authenticated/jornada/$id" as any, params: { id: (principleNumber + 1).toString() } as any });
                                 }}
                             >
                                 PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4" />
@@ -349,6 +349,6 @@ function PrincipleJourneyPage() {
   );
 }
 
-export const Route = createFileRoute("/_authenticated/principio/$slug")({
+export const Route = createFileRoute("/_authenticated/jornada/$id")({
   component: PrincipleJourneyPage,
 });

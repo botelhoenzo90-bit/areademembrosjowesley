@@ -24,8 +24,8 @@ import { Route as AuthenticatedComunidadeRouteImport } from './routes/_authentic
 import { Route as AuthenticatedCentroOperacionalRouteImport } from './routes/_authenticated/centro-operacional'
 import { Route as AuthenticatedCartaFuturoRouteImport } from './routes/_authenticated/carta-futuro'
 import { Route as AuthenticatedBonusRouteImport } from './routes/_authenticated/bonus'
-import { Route as AuthenticatedPrincipioSlugRouteImport } from './routes/_authenticated/principio.$slug'
 import { Route as AuthenticatedModuloSlugRouteImport } from './routes/_authenticated/modulo.$slug'
+import { Route as AuthenticatedJornadaIdRouteImport } from './routes/_authenticated/jornada.$id'
 import { Route as AuthenticatedHeroJourneyResultadoRouteImport } from './routes/_authenticated/hero-journey/resultado'
 import { Route as AuthenticatedHeroJourneyDiagnosticoRouteImport } from './routes/_authenticated/hero-journey/diagnostico'
 import { Route as AuthenticatedTreinamentoPremiumNivelSlugRouteImport } from './routes/_authenticated/treinamento-premium.nivel.$slug'
@@ -111,15 +111,14 @@ const AuthenticatedBonusRoute = AuthenticatedBonusRouteImport.update({
   path: '/bonus',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedPrincipioSlugRoute =
-  AuthenticatedPrincipioSlugRouteImport.update({
-    id: '/principio/$slug',
-    path: '/principio/$slug',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedModuloSlugRoute = AuthenticatedModuloSlugRouteImport.update({
   id: '/modulo/$slug',
   path: '/modulo/$slug',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedJornadaIdRoute = AuthenticatedJornadaIdRouteImport.update({
+  id: '/jornada/$id',
+  path: '/jornada/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedHeroJourneyResultadoRoute =
@@ -170,8 +169,8 @@ export interface FileRoutesByFullPath {
   '/api/chat': typeof ApiChatRoute
   '/hero-journey/diagnostico': typeof AuthenticatedHeroJourneyDiagnosticoRoute
   '/hero-journey/resultado': typeof AuthenticatedHeroJourneyResultadoRoute
+  '/jornada/$id': typeof AuthenticatedJornadaIdRoute
   '/modulo/$slug': typeof AuthenticatedModuloSlugRoute
-  '/principio/$slug': typeof AuthenticatedPrincipioSlugRoute
   '/hero-journey/archetype/$id': typeof AuthenticatedHeroJourneyArchetypeIdRoute
   '/treinamento-premium/camada/$layerNumber': typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute
   '/treinamento-premium/nivel/$slug': typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
@@ -193,8 +192,8 @@ export interface FileRoutesByTo {
   '/api/chat': typeof ApiChatRoute
   '/hero-journey/diagnostico': typeof AuthenticatedHeroJourneyDiagnosticoRoute
   '/hero-journey/resultado': typeof AuthenticatedHeroJourneyResultadoRoute
+  '/jornada/$id': typeof AuthenticatedJornadaIdRoute
   '/modulo/$slug': typeof AuthenticatedModuloSlugRoute
-  '/principio/$slug': typeof AuthenticatedPrincipioSlugRoute
   '/hero-journey/archetype/$id': typeof AuthenticatedHeroJourneyArchetypeIdRoute
   '/treinamento-premium/camada/$layerNumber': typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute
   '/treinamento-premium/nivel/$slug': typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
@@ -218,8 +217,8 @@ export interface FileRoutesById {
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/hero-journey/diagnostico': typeof AuthenticatedHeroJourneyDiagnosticoRoute
   '/_authenticated/hero-journey/resultado': typeof AuthenticatedHeroJourneyResultadoRoute
+  '/_authenticated/jornada/$id': typeof AuthenticatedJornadaIdRoute
   '/_authenticated/modulo/$slug': typeof AuthenticatedModuloSlugRoute
-  '/_authenticated/principio/$slug': typeof AuthenticatedPrincipioSlugRoute
   '/_authenticated/hero-journey/archetype/$id': typeof AuthenticatedHeroJourneyArchetypeIdRoute
   '/_authenticated/treinamento-premium/camada/$layerNumber': typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute
   '/_authenticated/treinamento-premium/nivel/$slug': typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
@@ -243,8 +242,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/hero-journey/diagnostico'
     | '/hero-journey/resultado'
+    | '/jornada/$id'
     | '/modulo/$slug'
-    | '/principio/$slug'
     | '/hero-journey/archetype/$id'
     | '/treinamento-premium/camada/$layerNumber'
     | '/treinamento-premium/nivel/$slug'
@@ -266,8 +265,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/hero-journey/diagnostico'
     | '/hero-journey/resultado'
+    | '/jornada/$id'
     | '/modulo/$slug'
-    | '/principio/$slug'
     | '/hero-journey/archetype/$id'
     | '/treinamento-premium/camada/$layerNumber'
     | '/treinamento-premium/nivel/$slug'
@@ -290,8 +289,8 @@ export interface FileRouteTypes {
     | '/api/chat'
     | '/_authenticated/hero-journey/diagnostico'
     | '/_authenticated/hero-journey/resultado'
+    | '/_authenticated/jornada/$id'
     | '/_authenticated/modulo/$slug'
-    | '/_authenticated/principio/$slug'
     | '/_authenticated/hero-journey/archetype/$id'
     | '/_authenticated/treinamento-premium/camada/$layerNumber'
     | '/_authenticated/treinamento-premium/nivel/$slug'
@@ -413,18 +412,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedBonusRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/principio/$slug': {
-      id: '/_authenticated/principio/$slug'
-      path: '/principio/$slug'
-      fullPath: '/principio/$slug'
-      preLoaderRoute: typeof AuthenticatedPrincipioSlugRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/modulo/$slug': {
       id: '/_authenticated/modulo/$slug'
       path: '/modulo/$slug'
       fullPath: '/modulo/$slug'
       preLoaderRoute: typeof AuthenticatedModuloSlugRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/jornada/$id': {
+      id: '/_authenticated/jornada/$id'
+      path: '/jornada/$id'
+      fullPath: '/jornada/$id'
+      preLoaderRoute: typeof AuthenticatedJornadaIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/hero-journey/resultado': {
@@ -495,8 +494,8 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTreinamentoPremiumRoute: typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   AuthenticatedHeroJourneyDiagnosticoRoute: typeof AuthenticatedHeroJourneyDiagnosticoRoute
   AuthenticatedHeroJourneyResultadoRoute: typeof AuthenticatedHeroJourneyResultadoRoute
+  AuthenticatedJornadaIdRoute: typeof AuthenticatedJornadaIdRoute
   AuthenticatedModuloSlugRoute: typeof AuthenticatedModuloSlugRoute
-  AuthenticatedPrincipioSlugRoute: typeof AuthenticatedPrincipioSlugRoute
   AuthenticatedHeroJourneyArchetypeIdRoute: typeof AuthenticatedHeroJourneyArchetypeIdRoute
 }
 
@@ -515,8 +514,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
     AuthenticatedHeroJourneyDiagnosticoRoute,
   AuthenticatedHeroJourneyResultadoRoute:
     AuthenticatedHeroJourneyResultadoRoute,
+  AuthenticatedJornadaIdRoute: AuthenticatedJornadaIdRoute,
   AuthenticatedModuloSlugRoute: AuthenticatedModuloSlugRoute,
-  AuthenticatedPrincipioSlugRoute: AuthenticatedPrincipioSlugRoute,
   AuthenticatedHeroJourneyArchetypeIdRoute:
     AuthenticatedHeroJourneyArchetypeIdRoute,
 }
