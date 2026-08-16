@@ -91,6 +91,7 @@ function PrincipleJourneyPage() {
     } else {
       setProcessing(true);
       try {
+        if (!principle.id) throw new Error("Principle ID not found");
         await saveResponses({ data: { principleId: principle.id, responses: newAnswers } });
         const diag = await genDiagnosis({ data: { principleId: principle.id } });
         setDiagnosis(diag);
