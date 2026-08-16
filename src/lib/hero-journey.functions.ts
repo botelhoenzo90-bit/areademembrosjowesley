@@ -59,8 +59,6 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
     status: z.enum(['locked', 'available', 'in_progress', 'completed']).optional(),
     progress: z.number().optional(),
     reflection_text: z.string().optional(),
-    mission_completed: z.boolean().optional(),
-    protocol_steps_completed: z.array(z.number()).optional(),
   }).parse(data))
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
@@ -75,12 +73,136 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
         }, { onConflict: 'user_id,archetype' });
 
       if (error) throw error;
+
+      // Update global stats
+      const { data: archs } = await supabase
+        .from('hero_journey_archetypes' as any)
+        .select('status, progress')
+        .eq('user_id', userId);
+      
+      const completedCount = archs?.filter((a: any) => a.status === 'completed').length || 0;
+      const totalProgress = Math.round((archs?.reduce((acc: number, a: any) => acc + (a.progress || 0), 0) || 0) / 6);
+
+      await supabase
+        .from('hero_journey_stats' as any)
+        .upsert({
+          user_id: userId,
+          archetypes_explored: completedCount,
+          total_progress: totalProgress,
+          consciousness_level: Math.min(6, completedCount + 1),
+          last_interaction: new Date().toISOString()
+        }, { onConflict: 'user_id' });
+
       return { success: true };
     } catch (err) {
       console.error("Server function error [updateArchetypeProgress]:", err);
       throw err;
     }
   });
+
+export const completeMission = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: any) => z.object({
+    archetype: z.enum(['inocente', 'orfao', 'guerreiro', 'altruista', 'nomade', 'mago']),
+  }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    try {
+      const { error } = await supabase
+        .from('hero_journey_missions' as any)
+        .upsert({
+          user_id: userId,
+          archetype: data.archetype,
+          status: 'completed',
+          completed_at: new Date().toISOString()
+        }, { onConflict: 'user_id,archetype' });
+      
+      if (error) throw error;
+
+      // Update stats
+      const { data: missions } = await supabase
+        .from('hero_journey_missions' as any)
+        .select('id')
+        .eq('user_id', userId)
+        .eq('status', 'completed');
+      
+      await supabase
+        .from('hero_journey_stats' as any)
+        .update({ missions_completed: missions?.length || 0 } as any)
+        .eq('user_id', userId);
+
+      return { success: true };
+    } catch (err) {
+      console.error("Server function error [completeMission]:", err);
+      throw err;
+    }
+  });
+
+export const updateProtocol = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: any) => z.object({
+    archetype: z.enum(['inocente', 'orfao', 'guerreiro', 'altruista', 'nomade', 'mago']),
+    steps_completed: z.array(z.number()),
+    is_completed: z.boolean()
+  }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    try {
+      const { error } = await supabase
+        .from('hero_journey_protocols' as any)
+        .upsert({
+          user_id: userId,
+          archetype: data.archetype,
+          steps_completed: data.steps_completed,
+          is_completed: data.is_completed,
+          completed_at: data.is_completed ? new Date().toISOString() : null
+        }, { onConflict: 'user_id,archetype' });
+      
+      if (error) throw error;
+
+      if (data.is_completed) {
+        const { data: protocols } = await supabase
+          .from('hero_journey_protocols' as any)
+          .select('id')
+          .eq('user_id', userId)
+          .eq('is_completed', true);
+        
+        await supabase
+          .from('hero_journey_stats' as any)
+          .update({ protocols_realized: protocols?.length || 0 } as any)
+          .eq('user_id', userId);
+      }
+
+      return { success: true };
+    } catch (err) {
+      console.error("Server function error [updateProtocol]:", err);
+      throw err;
+    }
+  });
+
+export const awardAchievement = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .validator((data: any) => z.object({
+    key: z.string(),
+  }).parse(data))
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+    try {
+      const { error } = await supabase
+        .from('hero_journey_achievements' as any)
+        .upsert({
+          user_id: userId,
+          achievement_key: data.key,
+        }, { onConflict: 'user_id,achievement_key' });
+      
+      if (error) throw error;
+      return { success: true };
+    } catch (err) {
+      console.error("Server function error [awardAchievement]:", err);
+      throw err;
+    }
+  });
+
 
 export const getDiagnosis = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
