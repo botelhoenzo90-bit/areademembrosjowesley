@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { 
   ArrowLeft, CheckCircle2, Play, Trophy, Sparkles, 
@@ -18,15 +18,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
-import { z } from "zod";
-
-const principleSearchSchema = z.object({
-  id: z.string().optional().default("1"),
-});
 
 function PrincipleJourneyPage() {
-  const { id } = useParams({ from: "/_authenticated/jornada/$id" as any });
-  const principleNumber = parseInt(id || "1");
+  const { id } = useParams({ from: "/_authenticated/jornada/$id" });
+  const principleNumber = parseInt(id);
   const navigate = useNavigate();
   
   const [loading, setLoading] = useState(true);
@@ -355,6 +350,5 @@ function PrincipleJourneyPage() {
 }
 
 export const Route = createFileRoute("/_authenticated/jornada/$id")({
-  
   component: PrincipleJourneyPage,
 });
