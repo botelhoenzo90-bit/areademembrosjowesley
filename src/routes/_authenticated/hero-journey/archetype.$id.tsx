@@ -73,26 +73,36 @@ function ArchetypeJourneyPage() {
       
       // Save specific data based on the current stage before moving forward
       if (stage === 'experiment') {
-        await updateProgress({ 
-          data: { 
-            archetype: id as any, 
-            reflection_text: reflectionText 
-          } 
-        });
-        toast.success("Reflexão salva com sucesso!");
+        try {
+          await updateProgress({ 
+            data: { 
+              archetype: id as any, 
+              reflection_text: reflectionText 
+            } 
+          });
+          toast.success("Reflexão salva com sucesso!");
+        } catch (error) {
+          console.error("Erro ao salvar reflexão:", error);
+          toast.error("Erro ao salvar reflexão. Tente novamente.");
+          return; // Stop progression if save fails
+        }
       }
 
       setStage(nextStage);
       
       // Ensure we save progress on every step
       const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
-      await updateProgress({ 
-        data: { 
-          archetype: id as any, 
-          progress: Math.min(progress, 100), 
-          status: (progress >= 100 ? 'completed' : 'in_progress') as any 
-        }
-      });
+      try {
+        await updateProgress({ 
+          data: { 
+            archetype: id as any, 
+            progress: Math.min(progress, 100), 
+            status: (progress >= 100 ? 'completed' : 'in_progress') as any 
+          }
+        });
+      } catch (error) {
+        console.error("Erro ao atualizar progresso:", error);
+      }
       
       queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
       queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
@@ -254,10 +264,18 @@ function ArchetypeJourneyPage() {
                     placeholder="Sua reflexão..."
                     className="w-full h-48 rounded-3xl border border-border glass p-6 text-sm outline-none focus:border-gold/50 resize-none bg-surface"
                   />
-                  <button onClick={async () => {
-                    await updateProgress({ data: { archetype: id as any, reflection_text: reflectionText } });
-                    toast.success("Reflexão salva!");
-                  }} className="w-full py-4 rounded-full border border-gold/30 text-[10px] uppercase tracking-widest text-gold">
+                  <button 
+                    disabled={reflectionText.length < 10}
+                    onClick={async () => {
+                      try {
+                        await updateProgress({ data: { archetype: id as any, reflection_text: reflectionText } });
+                        toast.success("Reflexão salva com sucesso!");
+                      } catch (error) {
+                        toast.error("Erro ao salvar reflexão.");
+                      }
+                    }} 
+                    className="w-full py-4 rounded-full border border-gold/30 text-[10px] uppercase tracking-widest text-gold disabled:opacity-50"
+                  >
                     Salvar Reflexão
                   </button>
                 </div>
