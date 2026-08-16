@@ -17,16 +17,21 @@ export const Route = createFileRoute("/_authenticated/treinamento-premium/camada
 
 function youtubeId(url: string | null): string | null {
   if (!url) return null;
-  // Improved regex to handle various YouTube URL formats including query parameters like ?is=...
+  console.log("Extracting ID from URL:", url);
   const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|youtu\.be\/|v=)([A-Za-z0-9_-]{11})/);
-  if (m) return m[1];
+  if (m) {
+    console.log("Match found:", m[1]);
+    return m[1];
+  }
   
-  // Fallback for very specific formats if regex fails
   try {
     const urlObj = new URL(url);
     if (urlObj.hostname === 'youtu.be') return urlObj.pathname.slice(1);
-    return urlObj.searchParams.get('v');
+    const id = urlObj.searchParams.get('v');
+    console.log("Search param 'v':", id);
+    return id;
   } catch (e) {
+    console.log("URL parsing failed");
     return null;
   }
 }
