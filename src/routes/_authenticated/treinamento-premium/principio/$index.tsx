@@ -32,13 +32,13 @@ const QUIZ_QUESTIONS = [
 ];
 
 export function PrincipleJourneyPage() {
-  const { index } = useParams({ from: "/_authenticated/treinamento-premium.principio.$index" as any });
+  const { index } = useParams({ from: "/_authenticated/treinamento-premium/principio/$index" });
   const principleNumber = parseInt(index);
   const navigate = useNavigate();
   
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<any>(null);
-  const [step, setStep] = useState<'aula' | 'quiz' | 'diagnostico' | 'protocolo' | 'concluido'>('aula');
+  const [step, setStep] = useState<'aula' | "quiz" | "diagnostico" | "protocolo" | "concluido">("aula");
   const [quizIndex, setQuizIndex] = useState(0);
   const [answers, setAnswers] = useState<any[]>([]);
   const [diagnosis, setDiagnosis] = useState<any>(null);
@@ -56,15 +56,15 @@ export function PrincipleJourneyPage() {
         const currentPrinciple = res.principles.find((p: any) => p.principle_number === principleNumber);
         const prog = res.progress.find((p: any) => p.principle_id === currentPrinciple?.id);
         
-        if (prog?.status === 'locked' && principleNumber !== 1) {
+        if (prog?.status === "locked" && principleNumber !== 1) {
           navigate({ to: "/treinamento-premium" });
           return;
         }
 
-        if (prog?.protocol_completed) setStep('concluido');
+        if (prog?.protocol_completed) setStep("concluido");
         else if (prog?.quiz_completed && currentPrinciple) {
             genDiagnosis({ data: { principleId: currentPrinciple.id } }).then(setDiagnosis);
-            setStep('diagnostico');
+            setStep("diagnostico");
         }
       })
       .finally(() => setLoading(false));
@@ -73,9 +73,9 @@ export function PrincipleJourneyPage() {
   if (loading || !data) return <div className="flex h-screen items-center justify-center bg-black"><Loader2 className="animate-spin text-gold" /></div>;
 
   const principle = data.principles.find((p: any) => p.principle_number === principleNumber) || { name: `Princípio ${principleNumber}`, id: null };
-  const userName = data.userName || 'Guerreiro';
+  const userName = data.userName || "Guerreiro";
 
-  const handleStartQuiz = () => setStep('quiz');
+  const handleStartQuiz = () => setStep("quiz");
 
   const handleAnswer = async (value: number) => {
     const newAnswers = [...answers, { questionId: QUIZ_QUESTIONS[quizIndex].id, answerValue: value }];
@@ -90,7 +90,7 @@ export function PrincipleJourneyPage() {
         await saveResponses({ data: { principleId: principle.id, responses: newAnswers } });
         const diag = await genDiagnosis({ data: { principleId: principle.id } });
         setDiagnosis(diag);
-        setStep('diagnostico');
+        setStep("diagnostico");
       } catch (e) {
         toast.error("Erro ao processar quiz.");
       } finally {
@@ -104,9 +104,9 @@ export function PrincipleJourneyPage() {
       particleCount: 150,
       spread: 70,
       origin: { y: 0.6 },
-      colors: ['#D4AF37', '#ffffff', '#3B82F6']
+      colors: ["#D4AF37", "#ffffff", "#3B82F6"]
     });
-    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+    const audio = new Audio("https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3");
     audio.play().catch(() => {});
   };
 
@@ -116,7 +116,7 @@ export function PrincipleJourneyPage() {
       if (!principle.id) throw new Error("Principle ID not found");
       await completeProtocol({ data: { principleId: principle.id, principleNumber } });
       triggerCelebration();
-      setStep('concluido');
+      setStep("concluido");
     } catch (e) {
       toast.error("Erro ao concluir protocolo.");
     } finally {
@@ -126,7 +126,6 @@ export function PrincipleJourneyPage() {
 
   const getYoutubeEmbedUrl = (url: string | null) => {
     if (!url) return null;
-    // Enhanced regex to handle ?is= and other complex params
     const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|v=|is=)([A-Za-z0-9_-]{11})/);
     if (m) return `https://www.youtube.com/embed/${m[1]}?rel=0&modestbranding=1&autoplay=0`;
     return null;
@@ -162,7 +161,7 @@ export function PrincipleJourneyPage() {
         </header>
 
         <AnimatePresence mode="wait">
-            {step === 'aula' && (
+            {step === "aula" && (
                 <motion.section 
                     key="aula" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
                     className="space-y-8"
@@ -187,7 +186,7 @@ export function PrincipleJourneyPage() {
                     <div className="glass-strong p-8 rounded-3xl border border-white/10 space-y-4">
                         <h3 className="text-xl font-display text-gold uppercase">A Sabedoria deste Princípio</h3>
                         <p className="text-muted-foreground leading-relaxed italic">
-                            "{userName}, você nasceu para atingir seu máximo potencial. Este princípio é a chave para o seu próximo nível."
+                            "${userName}, você nasceu para atingir seu máximo potencial. Este princípio é a chave para o seu próximo nível."
                         </p>
                     </div>
 
@@ -200,7 +199,7 @@ export function PrincipleJourneyPage() {
                 </motion.section>
             )}
 
-            {step === 'quiz' && (
+            {step === "quiz" && (
                 <motion.section 
                     key="quiz" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.05 }}
                     className="space-y-12"
@@ -234,7 +233,7 @@ export function PrincipleJourneyPage() {
                 </motion.section>
             )}
 
-            {step === 'diagnostico' && diagnosis && (
+            {step === "diagnostico" && diagnosis && (
                 <motion.section 
                     key="diagnostico" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                     className="space-y-12"
@@ -260,14 +259,14 @@ export function PrincipleJourneyPage() {
 
                     <Button 
                         className="w-full py-8 rounded-2xl text-xl bg-surface-elevated hover:bg-surface-elevated/80 text-white font-bold tracking-widest border border-white/10 shadow-glow"
-                        onClick={() => setStep('protocolo')}
+                        onClick={() => setStep("protocolo")}
                     >
                         VER PROTOCOLO PRÁTICO <ChevronRight className="ml-2" />
                     </Button>
                 </motion.section>
             )}
 
-            {step === 'protocolo' && diagnosis && (
+            {step === "protocolo" && diagnosis && (
                 <motion.section 
                     key="protocolo" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
                     className="space-y-12"
@@ -298,7 +297,7 @@ export function PrincipleJourneyPage() {
                 </motion.section>
             )}
 
-            {step === 'concluido' && (
+            {step === "concluido" && (
                 <motion.section 
                     key="concluido" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
                     className="text-center space-y-12 py-10"
@@ -317,11 +316,11 @@ export function PrincipleJourneyPage() {
                             <Button 
                                 className="bg-white text-black hover:bg-white/90 px-12 py-8 rounded-2xl text-xl font-bold tracking-widest uppercase shadow-glow"
                                 onClick={() => {
-                                    setStep('aula');
+                                    setStep("aula");
                                     setQuizIndex(0);
                                     setAnswers([]);
                                     setDiagnosis(null);
-                                    navigate({ to: "/treinamento-premium/principio/$index" as any, params: { index: (principleNumber + 1).toString() } as any });
+                                    navigate({ to: "/treinamento-premium/principio/$index", params: { index: (principleNumber + 1).toString() } });
                                 }}
                             >
                                 PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4" />
@@ -330,15 +329,7 @@ export function PrincipleJourneyPage() {
                             <div className="space-y-6">
                                 <Trophy className="h-24 w-24 text-gold mx-auto mb-4" />
                                 <h3 className="text-4xl font-display text-gold tracking-widest uppercase text-shadow-glow">JORNADA CONCLUÍDA</h3>
-                                <p className="text-lg text-muted-foreground leading-relaxed">
-                                    Parabéns, {userName}! Você atravessou os 18 princípios fundamentais da sua evolução. O seu máximo potencial não é mais um destino, é a sua nova realidade. Viva cada princípio, integre cada sabedoria e nunca pare de buscar a luz da consciência.
-                                </p>
-                                <Button 
-                                    className="bg-gold text-black hover:bg-gold/90 px-12 py-6 rounded-2xl text-lg font-bold shadow-glow"
-                                    onClick={() => navigate({ to: "/treinamento-premium" })}
-                                >
-                                    VOLTAR AO PAINEL
-                                </Button>
+                                <p className="text-muted-foreground">Você percorreu os 18 princípios e atingiu um novo patamar de evolução pessoal.</p>
                             </div>
                         )}
                     </div>
@@ -349,3 +340,7 @@ export function PrincipleJourneyPage() {
     </main>
   );
 }
+
+export const Route = createFileRoute("/_authenticated/treinamento-premium/principio/$index")({
+  component: PrincipleJourneyPage,
+});
