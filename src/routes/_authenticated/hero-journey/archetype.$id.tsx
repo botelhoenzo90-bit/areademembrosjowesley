@@ -109,7 +109,8 @@ function ArchetypeJourneyPage() {
         <div className="w-8" />
       </header>
 
-      <div className="pt-24 px-6 max-w-2xl mx-auto">
+      <div className="pt-24 px-6 max-w-2xl mx-auto flex flex-col min-h-[calc(100vh-6rem)]">
+        <div className="flex-1">
         <AnimatePresence mode="wait">
           {stage === 'discover' && (
             <motion.div
@@ -405,6 +406,47 @@ function ArchetypeJourneyPage() {
               </div>
 
               <div className="space-y-2">
+                <h2 className="font-display text-4xl uppercase">{archetype.name} Concluído</h2>
+                <div className="grid grid-cols-3 gap-4 py-8">
+                  <div className="text-center">
+                    <p className="text-gold text-xl font-display">+CONSCIÊNCIA</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-gold text-xl font-display">+EXP</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-gold text-xl font-display">+PROGRESSO</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-3xl border border-border glass p-8 text-sm leading-relaxed text-muted-foreground whitespace-pre-line text-left">
+                {archetype.gamificationText}
+              </div>
+            </motion.div>
+          )}
+        </div>
+
+        {/* Dynamic Navigation Button */}
+        <div className="mt-12 pb-12">
+          <button
+            onClick={handleNext}
+            className="w-full group relative flex items-center justify-center rounded-full bg-foreground px-8 py-5 text-sm font-bold text-background transition-all hover:scale-[1.02] active:scale-[0.98] shadow-glow"
+          >
+            <span className="relative z-10 tracking-[0.2em] uppercase">
+              {stage === 'discover' && 'Entender Arquétipo'}
+              {stage === 'mentorship' && 'Aprofundar Visão'}
+              {stage === 'understand' && 'Iniciar Quiz'}
+              {stage === 'quiz' && 'Continuar'}
+              {stage === 'observe' && 'Ir para Reflexão'}
+              {stage === 'experiment' && 'Iniciar Missão'}
+              {stage === 'implement' && 'Concluir Arquétipo'}
+              {stage === 'conclude' && 'Voltar ao Mapa'}
+            </span>
+            <ChevronRight className="relative z-10 ml-2 h-4 w-4" />
+          </button>
+        </div>
+      </div>
                 <h2 className="font-display text-3xl uppercase tracking-tighter">Arquétipo Concluído</h2>
                 <div className="flex justify-center gap-4 text-[10px] uppercase tracking-widest text-gold">
                   <span className="flex items-center gap-1"><Sparkles className="h-3 w-3" /> + Consciência</span>
