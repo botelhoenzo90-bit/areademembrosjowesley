@@ -13,7 +13,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-type Stage = 'discover' | 'mentorship' | 'quiz' | 'understand' | 'observe' | 'experiment' | 'implement' | 'conclude';
+type Stage = 'discover' | 'mentorship' | 'understand' | 'quiz' | 'observe' | 'experiment' | 'implement' | 'conclude';
 
 export const Route = createFileRoute("/_authenticated/hero-journey/archetype/$id")({
   loader: async ({ context }) => {
@@ -66,7 +66,7 @@ function ArchetypeJourneyPage() {
   }
 
   const handleNext = async () => {
-    const stages: Stage[] = ['discover', 'mentorship', 'quiz', 'understand', 'observe', 'experiment', 'implement', 'conclude'];
+    const stages: Stage[] = ['discover', 'mentorship', 'understand', 'quiz', 'observe', 'experiment', 'implement', 'conclude'];
     const currentIndex = stages.indexOf(stage);
     
     if (currentIndex < stages.length - 1) {
