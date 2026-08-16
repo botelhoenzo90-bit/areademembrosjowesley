@@ -1,53 +1,35 @@
 # Plano de Reestruturação: 18 Princípios para Você Evoluir
 
-Este plano reestrutura o módulo "Treinamento Premium" em uma jornada interativa de 18 princípios sequenciais, integrando aulas, quizzes, diagnósticos personalizados e protocolos práticos.
+O objetivo é garantir que a jornada interativa do módulo **Treinamento Premium** esteja 100% funcional, corrigindo problemas de navegação, visualização de vídeos e adicionando banners visuais para cada princípio.
 
-## Alterações no Banco de Dados (Lovable Cloud)
+## Alterações Tecnológicas
 
-1.  **Novas Tabelas:**
-    *   `principles`: Armazena os 18 princípios (nome, descrição, vídeo, ordem).
-    *   `user_principle_progress`: Rastreia o progresso individual (aula, quiz, diagnóstico, protocolo).
-    *   `principle_quizzes`: Armazena as 9 perguntas para cada princípio.
-    *   `user_principle_responses`: Armazena as respostas do usuário para o diagnóstico.
-    *   `principle_diagnoses`: Armazena os diagnósticos gerados e protocolos.
+### Banco de Dados (Supabase)
+- Criar uma migração para atualizar a tabela `public.principles` adicionando uma coluna `banner_url` se necessário, ou garantir que as imagens dos banners sejam integradas no frontend.
+- Garantir que todos os 18 princípios tenham seus nomes e URLs de vídeo corretos (iniciando com o Princípio 1).
 
-2.  **Migração Inicial:**
-    *   Inserir os 18 princípios conforme a lista fornecida.
-    *   Garantir que a aula de introdução existente (Layer 0 anterior) seja preservada como ponto de partida ou integrada.
+### Servidor (Server Functions)
+- Refinar `src/lib/principles.functions.ts` para garantir que a lógica de desbloqueio sequencial e geração de diagnóstico (2700+ caracteres) esteja robusta.
+- Adicionar suporte para retornar a `banner_url` de cada princípio.
 
-## Implementação Backend (TanStack Server Functions)
-
-*   `src/lib/principles.functions.ts`:
-    *   `getPrinciplesData`: Busca a lista de princípios e o progresso do usuário.
-    *   `savePrincipleResponse`: Salva respostas do quiz.
-    *   `generatePrincipleDiagnosis`: Gera o diagnóstico de ~2700 caracteres (usando IA/Gemini) e o protocolo prático.
-    *   `completePrincipleProtocol`: Marca o protocolo como concluído e desbloqueia o próximo princípio.
-
-## Desenvolvimento Frontend (React + TanStack Router)
-
-1.  **Dashboard de Princípios (`src/routes/_authenticated/treinamento-premium.tsx`):**
-    *   Nova interface estilo "Jornada de Desenvolvimento Pessoal".
-    *   Exibição progressiva (1/18).
-    *   Cards com estados: Bloqueado, Disponível, Concluído.
-
-2.  **Página do Princípio (`src/routes/_authenticated/treinamento-premium/principio.$index.tsx`):**
-    *   **Etapa 1: Aula**: Player de vídeo e botão de conclusão.
-    *   **Etapa 2: Quiz**: Interface interativa com 9 perguntas.
-    *   **Etapa 3: Diagnóstico**: Exibição do texto personalizado personalizado com o nome do usuário.
-    *   **Etapa 4: Protocolo**: Lista de ações práticas com checkbox de conclusão.
-    *   **Feedback Visual**: Banner de "PARABÉNS, [NOME]!" com animação de faíscas e som curto ao concluir.
-
-3.  **Lógica de Desbloqueio:**
-    *   Sequencial: Aula -> Quiz -> Diagnóstico -> Protocolo -> Próximo.
+### Frontend (React/TanStack Router)
+- **Painel Principal (`treinamento-premium.tsx`):**
+    - Adicionar o vídeo de introdução no topo com um player de destaque.
+    - Melhorar o visual dos cards dos princípios, incluindo um banner de fundo (imagem) para cada um, conforme solicitado.
+    - Garantir que o status (Bloqueado/Disponível/Concluído) esteja visualmente claro.
+- **Página do Princípio (`treinamento-premium.principio.$index.tsx`):**
+    - Corrigir a extração do ID do YouTube para suportar diversos formatos de URL.
+    - Implementar a transição suave entre as etapas: **Aula -> Quiz -> Diagnóstico -> Protocolo -> Conclusão**.
+    - Adicionar o efeito de celebração (`canvas-confetti`) e o banner "PARABÉNS!" ao concluir.
+    - Personalizar a experiência com o nome do usuário.
 
 ## Detalhes Técnicos
+- Utilizar `framer-motion` para animações de transição entre etapas.
+- Garantir que o diagnóstico gerado tenha o volume de texto solicitado (2700 caracteres).
+- Validar a navegação sequencial: Princípio N só abre após Princípio N-1 ser marcado como `completed`.
 
-*   **IA Gateway**: Utilização do Gemini para gerar diagnósticos profundos e protocolos específicos baseados nas respostas do quiz.
-*   **Framer Motion**: Para animações de transição entre etapas e o banner de conclusão.
-*   **Shadcn UI**: Uso de cards, buttons e progress bars personalizados.
-
-## Segurança e Performance
-
-*   RLS ativado em todas as novas tabelas.
-*   Garantia de que um usuário não pode acessar um princípio futuro sem completar o anterior no backend.
-*   Carregamento otimizado com cache do TanStack Query.
+## Esquema Visual dos Banners
+Vou utilizar imagens temáticas de alta qualidade para cada princípio, garantindo uma estética "Premium Dark".
+1. Responsabilidade: Montanha/Escalada
+2. Propósito: Bússola/Estrelas
+... e assim por diante para os 18.
