@@ -1,4 +1,5 @@
-import { createFileRoute, useNavigate, useParams, z } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
+import { z } from "zod";
 import { useEffect, useState } from "react";
 import { 
   ArrowLeft, CheckCircle2, Play, Trophy, Sparkles, 
@@ -321,7 +322,7 @@ function PrincipleJourneyPage() {
                                 className="bg-white text-black hover:bg-white/90 px-12 py-8 rounded-2xl text-xl font-bold tracking-widest uppercase shadow-glow"
                                 onClick={() => {
                                     const nextId = (principleNumber + 1).toString();
-                                    navigate({ to: "/_authenticated/jornada", search: { id: nextId } });
+                                    navigate({ to: "/jornada", search: { id: nextId } });
                                 }}
                             >
                                 PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4" />
