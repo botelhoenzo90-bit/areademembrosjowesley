@@ -116,7 +116,7 @@ function PrinciplesDashboard() {
               >
                 <button
                   disabled={!isAvailable}
-                  onClick={() => navigate({ to: `/treinamento-premium/principio/${principle.principle_number}` })}
+                  onClick={() => navigate({ to: `/treinamento-premium/principio/$index`, params: { index: principle.principle_number.toString() } })}
                   className={`w-full group relative text-left transition-all duration-500 rounded-[2.5rem] overflow-hidden ${
                     !isAvailable ? 'grayscale opacity-40 cursor-not-allowed' : 'hover:-translate-y-2'
                   }`}

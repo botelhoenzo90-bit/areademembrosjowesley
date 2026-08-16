@@ -294,7 +294,7 @@ function PrincipleJourneyPage() {
                     {principleNumber < 18 ? (
                         <Button 
                             className="bg-gold text-black hover:bg-gold/90 px-12 py-6 rounded-2xl text-lg font-bold"
-                            onClick={() => navigate({ to: `/treinamento-premium/principio/${principleNumber + 1}` })}
+                            onClick={() => navigate({ to: "/treinamento-premium/principio/$index", params: { index: (principleNumber + 1).toString() } })}
                         >
                             PRÓXIMO PRINCÍPIO <ChevronRight className="ml-2" />
                         </Button>
