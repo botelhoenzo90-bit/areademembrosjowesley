@@ -196,7 +196,7 @@ function PrincipleJourneyPage() {
                     </div>
 
                     <Button 
-                        className="w-full py-8 rounded-2xl text-xl bg-gold hover:bg-gold/90 text-black font-bold tracking-widest shadow-glow" 
+                        className="w-full h-auto py-6 px-4 rounded-2xl text-lg sm:text-xl bg-gold hover:bg-gold/90 text-black font-bold tracking-widest shadow-glow whitespace-normal text-center" 
                         onClick={handleStartQuiz}
                     >
                         CONCLUIR AULA & INICIAR MAPEAMENTO
@@ -225,7 +225,7 @@ function PrincipleJourneyPage() {
                                 {QUIZ_QUESTIONS[quizIndex].options.map((opt, i) => (
                                     <Button 
                                         key={i} variant="outline" 
-                                        className="py-6 rounded-2xl border-white/10 hover:border-gold/50 hover:bg-gold/5 text-lg"
+                                        className="h-auto py-4 px-6 rounded-2xl border-white/10 hover:border-gold/50 hover:bg-gold/5 text-base sm:text-lg whitespace-normal text-center"
                                         onClick={() => handleAnswer(opt.value)}
                                         disabled={processing}
                                     >
@@ -263,10 +263,10 @@ function PrincipleJourneyPage() {
                     </Card>
 
                     <Button 
-                        className="w-full py-8 rounded-2xl text-xl bg-surface-elevated hover:bg-surface-elevated/80 text-white font-bold tracking-widest border border-white/10 shadow-glow"
+                        className="w-full h-auto py-6 px-4 rounded-2xl text-lg sm:text-xl bg-surface-elevated hover:bg-surface-elevated/80 text-white font-bold tracking-widest border border-white/10 shadow-glow whitespace-normal text-center"
                         onClick={() => setStep('protocolo')}
                     >
-                        VER PROTOCOLO PRÁTICO <ChevronRight className="ml-2" />
+                        VER PROTOCOLO PRÁTICO <ChevronRight className="ml-2 shrink-0" />
                     </Button>
                 </motion.section>
             )}
@@ -293,7 +293,7 @@ function PrincipleJourneyPage() {
                     </div>
 
                     <Button 
-                        className="w-full py-8 rounded-2xl text-xl bg-gold hover:bg-gold/90 text-black font-bold tracking-widest shadow-glow"
+                        className="w-full h-auto py-6 px-4 rounded-2xl text-lg sm:text-xl bg-gold hover:bg-gold/90 text-black font-bold tracking-widest shadow-glow whitespace-normal text-center"
                         onClick={handleCompleteProtocol}
                         disabled={processing}
                     >
@@ -319,13 +319,13 @@ function PrincipleJourneyPage() {
 
                         {principleNumber < 18 ? (
                             <Button 
-                                className="bg-white text-black hover:bg-white/90 px-12 py-8 rounded-2xl text-xl font-bold tracking-widest uppercase shadow-glow"
+                                className="h-auto bg-white text-black hover:bg-white/90 px-8 py-6 rounded-2xl text-lg sm:text-xl font-bold tracking-widest uppercase shadow-glow whitespace-normal text-center"
                                 onClick={() => {
                                     const nextId = (principleNumber + 1).toString();
                                     navigate({ to: "/jornada", search: { id: nextId } });
                                 }}
                             >
-                                PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4" />
+                                PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4 shrink-0" />
                             </Button>
                         ) : (
                             <div className="space-y-6">
