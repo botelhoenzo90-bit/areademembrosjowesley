@@ -662,6 +662,7 @@ export type Database = {
       }
       principles: {
         Row: {
+          banner_url: string | null
           created_at: string | null
           description: string | null
           id: string
@@ -671,6 +672,7 @@ export type Database = {
           video_url: string | null
         }
         Insert: {
+          banner_url?: string | null
           created_at?: string | null
           description?: string | null
           id?: string
@@ -680,6 +682,7 @@ export type Database = {
           video_url?: string | null
         }
         Update: {
+          banner_url?: string | null
           created_at?: string | null
           description?: string | null
           id?: string
