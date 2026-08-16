@@ -107,6 +107,7 @@ function PrincipleJourneyPage() {
   const handleCompleteProtocol = async () => {
     setProcessing(true);
     try {
+      if (!principle.id) throw new Error("Principle ID not found");
       await completeProtocol({ data: { principleId: principle.id, principleNumber } });
       setShowCelebration(true);
       setTimeout(() => {
