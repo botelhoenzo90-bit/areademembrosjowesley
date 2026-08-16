@@ -41,9 +41,19 @@ function ArchetypeJourneyPage() {
   const currentArchData = (userArchetypes as any[]).find((a: any) => a.archetype === id);
   const initialStage: Stage = (currentArchData?.status === 'completed') ? 'conclude' : 'discover';
 
-  const [stage, setStage] = useState<Stage>(initialStage);
-  const [reflectionText, setReflectionText] = useState(currentArchData?.reflection_text || "");
-  const [protocolSteps, setProtocolSteps] = useState<number[]>(currentArchData?.protocol_steps_completed || []);
+  const [stage, setStage] = useState<Stage>('discover');
+  const [reflectionText, setReflectionText] = useState("");
+  const [protocolSteps, setProtocolSteps] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (currentArchData) {
+      if (currentArchData.status === 'completed') {
+        setStage('conclude');
+      }
+      setReflectionText(currentArchData.reflection_text || "");
+      setProtocolSteps(currentArchData.protocol_steps_completed || []);
+    }
+  }, [currentArchData]);
   const [selectedPerception, setSelectedPerception] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
