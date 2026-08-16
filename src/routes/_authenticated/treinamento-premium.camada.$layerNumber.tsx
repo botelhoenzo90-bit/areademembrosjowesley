@@ -75,7 +75,7 @@ function LayerPage() {
     </div>
   );
 
-  const prog = data.progress.find((p: any) => p.layer_id === currentLayer.id) || { status: 'locked' };
+  const prog = (data.progress && data.progress.find((p: any) => p.layer_id === currentLayer.id)) || { status: parseInt(layerNumber) === 0 ? 'available' : 'locked' };
   
   const handleCompleteLesson = async () => {
     setSaving(true);
