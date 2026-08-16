@@ -61,18 +61,33 @@ function PrincipleJourneyPage() {
       .then(res => {
         setData(res);
         const currentPrinciple = res.principles.find((p: any) => p.principle_number === principleNumber);
-        const prog = res.progress.find((p: any) => p.principle_id === currentPrinciple?.id);
         
-        if (prog?.status === 'locked' && principleNumber !== 1) {
+        if (!currentPrinciple) {
+          toast.error("Princípio não encontrado.");
           navigate({ to: "/treinamento-premium" });
           return;
         }
 
-        if (prog?.protocol_completed) setStep('concluido');
-        else if (prog?.quiz_completed && currentPrinciple) {
-            genDiagnosis({ data: { principleId: currentPrinciple.id } }).then(setDiagnosis);
-            setStep('diagnostico');
+        const prog = res.progress.find((p: any) => p.principle_id === currentPrinciple.id);
+        
+        if ((!prog || prog.status === 'locked') && principleNumber !== 1) {
+          navigate({ to: "/treinamento-premium" });
+          return;
         }
+
+        if (prog?.protocol_completed) {
+          setStep('concluido');
+        } else if (prog?.quiz_completed) {
+          setProcessing(true);
+          genDiagnosis({ data: { principleId: currentPrinciple.id } })
+            .then(setDiagnosis)
+            .then(() => setStep('diagnostico'))
+            .finally(() => setProcessing(false));
+        }
+      })
+      .catch((err) => {
+        console.error("Erro ao carregar jornada:", err);
+        toast.error("Erro ao carregar dados da jornada.");
       })
       .finally(() => setLoading(false));
   }, [principleNumber]);
