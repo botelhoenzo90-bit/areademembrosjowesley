@@ -35,7 +35,7 @@ const QUIZ_QUESTIONS = [
 ];
 
 function PrincipleJourneyPage() {
-  const { index } = useParams({ from: "/_authenticated/treinamento-premium/principio.$index" as any });
+  const { index } = useParams({ from: "/_authenticated/treinamento-premium/principio/$index" as any });
   const principleNumber = parseInt(index);
   const navigate = useNavigate();
   
