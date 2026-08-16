@@ -228,9 +228,9 @@ function Page() {
           <div className="relative overflow-hidden rounded-3xl border border-gold/20 shadow-glow bg-surface-elevated">
             <div className="aspect-video w-full">
               <iframe 
-                src={`https://www.youtube.com/embed/${youtubeId("https://youtu.be/Ql3H9jAvDrY")}?rel=0&modestbranding=1`}
+                src={`https://www.youtube.com/embed/${youtubeId("https://youtu.be/Ql3H9jAvDrY")}?rel=0&modestbranding=1&autoplay=0`}
                 className="h-full w-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               />
             </div>
