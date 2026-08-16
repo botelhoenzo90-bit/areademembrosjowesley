@@ -26,7 +26,7 @@ const principleSearchSchema = z.object({
 
 function PrincipleJourneyPage() {
   const { id } = Route.useSearch();
-  const principleNumber = parseInt(id as string);
+  const principleNumber = parseInt(id || "1");
   const navigate = useNavigate();
   
   const [loading, setLoading] = useState(true);
@@ -325,7 +325,7 @@ function PrincipleJourneyPage() {
                             <Button 
                                 className="bg-white text-black hover:bg-white/90 px-12 py-8 rounded-2xl text-xl font-bold tracking-widest uppercase shadow-glow"
                                 onClick={() => {
-                                    navigate({ to: "/_authenticated/jornada", search: { id: (principleNumber + 1).toString() } });
+                                    navigate({ to: "/_authenticated/jornada" as any, search: { id: (principleNumber + 1).toString() } as any });
                                 }}
                             >
                                 PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4" />
