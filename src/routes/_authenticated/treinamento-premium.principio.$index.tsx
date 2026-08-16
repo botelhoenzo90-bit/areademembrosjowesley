@@ -2,8 +2,8 @@ import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router"
 import { useEffect, useState } from "react";
 import { 
   ArrowLeft, CheckCircle2, Play, Trophy, Sparkles, 
-  ChevronRight, Brain, ClipboardList, Send, Loader2,
-  Lock, User, Star, Zap
+  ChevronRight, Brain, ClipboardList, Loader2,
+  Star, Zap
 } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { 
@@ -14,9 +14,10 @@ import {
 } from "@/lib/principles.functions";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import confetti from "canvas-confetti";
 
 export const Route = createFileRoute("/_authenticated/treinamento-premium/principio/$index")({
   component: PrincipleJourneyPage,
@@ -46,7 +47,6 @@ function PrincipleJourneyPage() {
   const [answers, setAnswers] = useState<any[]>([]);
   const [diagnosis, setDiagnosis] = useState<any>(null);
   const [processing, setProcessing] = useState(false);
-  const [showCelebration, setShowCelebration] = useState(false);
 
   const getPrinciples = useServerFn(getPrinciplesData);
   const saveResponses = useServerFn(savePrincipleResponse);
@@ -67,13 +67,12 @@ function PrincipleJourneyPage() {
 
         if (prog?.protocol_completed) setStep('concluido');
         else if (prog?.quiz_completed && currentPrinciple) {
-            // Fetch diagnosis if quiz is done
             genDiagnosis({ data: { principleId: currentPrinciple.id } }).then(setDiagnosis);
             setStep('diagnostico');
         }
       })
       .finally(() => setLoading(false));
-  }, [principleNumber, navigate]);
+  }, [principleNumber, navigate, getPrinciples, genDiagnosis]);
 
   if (loading || !data) return <div className="flex h-screen items-center justify-center bg-black"><Loader2 className="animate-spin text-gold" /></div>;
 
@@ -104,21 +103,36 @@ function PrincipleJourneyPage() {
     }
   };
 
+  const triggerCelebration = () => {
+    confetti({
+      particleCount: 150,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#D4AF37', '#ffffff', '#3B82F6']
+    });
+    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+    audio.play().catch(() => {});
+  };
+
   const handleCompleteProtocol = async () => {
     setProcessing(true);
     try {
       if (!principle.id) throw new Error("Principle ID not found");
       await completeProtocol({ data: { principleId: principle.id, principleNumber } });
-      setShowCelebration(true);
-      setTimeout(() => {
-        setShowCelebration(false);
-        setStep('concluido');
-      }, 5000);
+      triggerCelebration();
+      setStep('concluido');
     } catch (e) {
       toast.error("Erro ao concluir protocolo.");
     } finally {
       setProcessing(false);
     }
+  };
+
+  const getYoutubeEmbedUrl = (url: string | null) => {
+    if (!url) return null;
+    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|youtu\.be\/|v=|is=)([A-Za-z0-9_-]{11})/);
+    if (m) return `https://www.youtube.com/embed/${m[1]}`;
+    return null;
   };
 
   return (
@@ -143,7 +157,7 @@ function PrincipleJourneyPage() {
             </motion.span>
             <motion.h1 
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                className="text-4xl sm:text-6xl font-display mb-6 tracking-tighter"
+                className="text-4xl sm:text-6xl font-display mb-6 tracking-tighter uppercase"
             >
                 {principle.name}
             </motion.h1>
@@ -160,34 +174,23 @@ function PrincipleJourneyPage() {
                         {principle.video_url ? (
                             <iframe 
                                 className="w-full h-full"
-                                src={`https://www.youtube.com/embed/${(() => {
-                                    const url = principle.video_url;
-                                    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|youtu\.be\/|v=|is=)([A-Za-z0-9_-]{11})/);
-                                    if (m) return m[1];
-                                    try {
-                                        const urlObj = new URL(url);
-                                        if (urlObj.hostname === 'youtu.be') return urlObj.pathname.slice(1);
-                                        return urlObj.searchParams.get('v');
-                                    } catch (e) { return null; }
-                                })()}`}
+                                src={getYoutubeEmbedUrl(principle.video_url)!}
                                 title={principle.name}
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                 allowFullScreen
                             />
                         ) : (
-                            <>
-                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all cursor-pointer">
-                                    <Play className="h-20 w-20 text-gold fill-gold/20" />
-                                </div>
-                                <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1999" className="w-full h-full object-cover opacity-50" />
-                            </>
+                            <div className="w-full h-full flex flex-col items-center justify-center bg-black/40">
+                                <Play className="h-20 w-20 text-gold fill-gold/20 mb-4" />
+                                <p className="text-muted-foreground uppercase tracking-widest text-xs">Aula em breve</p>
+                            </div>
                         )}
                     </div>
                     
                     <div className="glass-strong p-8 rounded-3xl border border-white/10 space-y-4">
-                        <h3 className="text-xl font-display text-gold">A Sabedoria deste Princípio</h3>
+                        <h3 className="text-xl font-display text-gold uppercase">A Sabedoria deste Princípio</h3>
                         <p className="text-muted-foreground leading-relaxed italic">
-                            "A evolução não acontece por acaso, {userName}. Ela acontece por decisão. Este princípio é a chave para o seu próximo nível."
+                            "{userName}, você nasceu para atingir seu máximo potencial. Este princípio é a chave para o seu próximo nível."
                         </p>
                     </div>
 
@@ -207,7 +210,7 @@ function PrincipleJourneyPage() {
                 >
                     <div className="text-center space-y-4">
                         <Brain className="h-12 w-12 text-gold mx-auto animate-pulse" />
-                        <h3 className="text-2xl font-display">Mapeamento Individual</h3>
+                        <h3 className="text-2xl font-display uppercase tracking-widest">Mapeamento Individual</h3>
                         <Progress value={((quizIndex + 1) / QUIZ_QUESTIONS.length) * 100} className="h-2 bg-white/10" />
                         <p className="text-xs text-muted-foreground uppercase tracking-widest">Pergunta {quizIndex + 1} de {QUIZ_QUESTIONS.length}</p>
                     </div>
@@ -241,7 +244,7 @@ function PrincipleJourneyPage() {
                 >
                     <div className="text-center space-y-2">
                         <Star className="h-12 w-12 text-gold mx-auto" />
-                        <h3 className="text-3xl font-display tracking-tighter">Seu Diagnóstico Personalizado</h3>
+                        <h3 className="text-3xl font-display tracking-tighter uppercase">Seu Diagnóstico Personalizado</h3>
                     </div>
 
                     <Card className="glass-strong border-gold/30 p-10 rounded-[3rem] relative overflow-hidden">
@@ -249,7 +252,7 @@ function PrincipleJourneyPage() {
                             <Brain className="h-32 w-32" />
                         </div>
                         <CardContent className="p-0 space-y-6 relative z-10">
-                            <div className="prose prose-invert max-w-none text-muted-foreground leading-relaxed text-lg">
+                            <div className="prose prose-invert max-w-none text-muted-foreground leading-relaxed text-lg whitespace-pre-wrap">
                                 {diagnosis.diagnosisText}
                             </div>
                             <div className="pt-8 border-t border-white/10 text-center">
@@ -259,7 +262,7 @@ function PrincipleJourneyPage() {
                     </Card>
 
                     <Button 
-                        className="w-full py-8 rounded-2xl text-xl bg-surface-elevated hover:bg-surface-elevated/80 text-white font-bold tracking-widest border border-white/10"
+                        className="w-full py-8 rounded-2xl text-xl bg-surface-elevated hover:bg-surface-elevated/80 text-white font-bold tracking-widest border border-white/10 shadow-glow"
                         onClick={() => setStep('protocolo')}
                     >
                         VER PROTOCOLO PRÁTICO <ChevronRight className="ml-2" />
@@ -274,7 +277,7 @@ function PrincipleJourneyPage() {
                 >
                     <div className="text-center space-y-2">
                         <ClipboardList className="h-12 w-12 text-gold mx-auto" />
-                        <h3 className="text-3xl font-display tracking-tighter">Protocolo de Implementação</h3>
+                        <h3 className="text-3xl font-display tracking-tighter uppercase">Protocolo de Implementação</h3>
                     </div>
 
                     <div className="space-y-4">
@@ -300,84 +303,46 @@ function PrincipleJourneyPage() {
 
             {step === 'concluido' && (
                 <motion.section 
-                    key="concluido" initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                    className="text-center space-y-12 py-20"
+                    key="concluido" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
+                    className="text-center space-y-12 py-10"
                 >
-                    <div className="relative inline-block">
-                        <div className="absolute inset-0 bg-gold blur-3xl opacity-20 animate-pulse" />
-                        <CheckCircle2 className="h-32 w-32 text-green-500 relative z-10 mx-auto" />
-                    </div>
-                    <div className="space-y-4">
-                        <h2 className="text-4xl font-display">Princípio {principleNumber} Integrado</h2>
-                        <p className="text-xl text-muted-foreground italic">"Você agora é uma versão mais consciente de si mesmo."</p>
-                    </div>
-                    
-                    {principleNumber < 18 ? (
-                        <Button 
-                            className="bg-gold text-black hover:bg-gold/90 px-12 py-6 rounded-2xl text-lg font-bold"
-                            onClick={() => navigate({ to: "/treinamento-premium/principio/$index", params: { index: (principleNumber + 1).toString() } })}
-                        >
-                            PRÓXIMO PRINCÍPIO <ChevronRight className="ml-2" />
-                        </Button>
-                    ) : (
-                        <div className="glass-strong p-12 rounded-[3rem] border border-gold/30 space-y-6">
-                            <h3 className="text-4xl font-display text-gold tracking-widest">JORNADA CONCLUÍDA</h3>
-                            <p className="text-lg text-muted-foreground leading-relaxed">
-                                Parabéns, {userName}! Você atravessou os 18 princípios fundamentais da sua evolução. O seu máximo potencial não é mais um destino, é a sua nova realidade. Viva cada princípio, integre cada sabedoria e nunca pare de buscar a luz da consciência.
-                            </p>
-                        </div>
-                    )}
+                    <div className="glass-strong p-16 rounded-[4rem] border border-gold/30 relative overflow-hidden shadow-glow">
+                        <div className="absolute inset-0 bg-gold/5 animate-pulse" />
+                        <Zap className="h-20 w-20 text-gold mx-auto mb-6" />
+                        <h2 className="text-5xl font-display text-gold mb-4 uppercase tracking-tighter">PARABÉNS, {userName.toUpperCase()}!</h2>
+                        <h3 className="text-2xl font-display text-white mb-8 uppercase tracking-widest">VOCÊ CONCLUIU ESTE PRINCÍPIO.</h3>
+                        
+                        <p className="text-lg text-muted-foreground mb-12 italic">
+                            "Você agora integrou uma nova camada de consciência. Mantenha o foco e continue avançando em sua jornada de evolução."
+                        </p>
 
-                    <Button variant="ghost" className="text-muted-foreground" onClick={() => navigate({ to: "/treinamento-premium" })}>
-                        Voltar ao Dashboard da Jornada
-                    </Button>
+                        {principleNumber < 18 ? (
+                            <Button 
+                                className="bg-white text-black hover:bg-white/90 px-12 py-8 rounded-2xl text-xl font-bold tracking-widest uppercase shadow-glow"
+                                onClick={() => navigate({ to: "/treinamento-premium/principio/$index", params: { index: (principleNumber + 1).toString() } })}
+                            >
+                                PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4" />
+                            </Button>
+                        ) : (
+                            <div className="space-y-6">
+                                <Trophy className="h-24 w-24 text-gold mx-auto mb-4" />
+                                <h3 className="text-4xl font-display text-gold tracking-widest uppercase">JORNADA CONCLUÍDA</h3>
+                                <p className="text-lg text-muted-foreground leading-relaxed">
+                                    Parabéns, {userName}! Você atravessou os 18 princípios fundamentais da sua evolução. O seu máximo potencial não é mais um destino, é a sua nova realidade. Viva cada princípio, integre cada sabedoria e nunca pare de buscar a luz da consciência.
+                                </p>
+                                <Button 
+                                    className="bg-gold text-black hover:bg-gold/90 px-12 py-6 rounded-2xl text-lg font-bold"
+                                    onClick={() => navigate({ to: "/treinamento-premium" })}
+                                >
+                                    VOLTAR AO PAINEL
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                 </motion.section>
             )}
         </AnimatePresence>
       </div>
-
-      {/* Celebration Overlay */}
-      <AnimatePresence>
-        {showCelebration && (
-            <motion.div 
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-xl"
-            >
-                <div className="text-center space-y-8 p-12 relative">
-                    {/* Sparkles simulation */}
-                    {[...Array(20)].map((_, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ scale: 0, x: 0, y: 0 }}
-                            animate={{ 
-                                scale: [0, 1, 0],
-                                x: (Math.random() - 0.5) * 500,
-                                y: (Math.random() - 0.5) * 500,
-                                rotate: Math.random() * 360
-                            }}
-                            transition={{ duration: 2, repeat: Infinity, delay: Math.random() * 1 }}
-                            className="absolute left-1/2 top-1/2 text-gold opacity-40"
-                        >
-                            <Zap className="h-4 w-4" />
-                        </motion.div>
-                    ))}
-                    
-                    <motion.div
-                        initial={{ scale: 0.5, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ type: "spring", bounce: 0.5 }}
-                        className="space-y-6"
-                    >
-                        <Trophy className="h-32 w-32 text-gold mx-auto shadow-glow" />
-                        <h2 className="text-5xl font-display tracking-[0.2em] text-white">PARABÉNS, {userName.toUpperCase()}!</h2>
-                        <h3 className="text-2xl font-display text-gold/80 tracking-widest">VOCÊ CONCLUIU ESTE PRINCÍPIO.</h3>
-                        <div className="h-1 w-48 bg-gold mx-auto rounded-full" />
-                        <p className="text-muted-foreground text-lg animate-pulse">Integrando novos circuitos neurais...</p>
-                    </motion.div>
-                </div>
-            </motion.div>
-        )}
-      </AnimatePresence>
     </main>
   );
 }
