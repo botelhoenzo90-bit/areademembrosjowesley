@@ -1,0 +1,1 @@
+UPDATE principles SET video_url = 'https://youtu.be/Cs7ZzmaCmh8?is=qqf-OJ3_r3OVWKQk' WHERE principle_number = 1;
