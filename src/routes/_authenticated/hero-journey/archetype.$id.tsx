@@ -113,7 +113,7 @@ function ArchetypeJourneyPage() {
                     { label: 'Sombra', key: 'shadow' },
                     { label: 'Ilusão', key: 'illusion' }
                   ].map(cat => (
-                    <button key={cat.label} onClick={() => setSelectedCategory(cat.key)} className="rounded-2xl border border-border glass p-4 text-left hover:border-gold/50 transition-all">
+                    <button key={cat.label} onClick={() => setSelectedCategory(cat.key as any)} className="rounded-2xl border border-border glass p-4 text-left hover:border-gold/50 transition-all">
                       <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{cat.label}</span>
                       <p className="text-sm font-medium leading-tight mt-1">{archetype[cat.key as keyof typeof archetype] as string}</p>
                     </button>
