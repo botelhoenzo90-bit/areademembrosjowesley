@@ -162,7 +162,7 @@ function PrincipleJourneyPage() {
                                 className="w-full h-full"
                                 src={`https://www.youtube.com/embed/${(() => {
                                     const url = principle.video_url;
-                                    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|youtu\.be\/|v=)([A-Za-z0-9_-]{11})/);
+                                    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|youtu\.be\/|v=|is=)([A-Za-z0-9_-]{11})/);
                                     if (m) return m[1];
                                     try {
                                         const urlObj = new URL(url);

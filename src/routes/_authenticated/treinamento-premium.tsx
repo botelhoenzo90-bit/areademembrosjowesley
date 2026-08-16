@@ -99,6 +99,20 @@ function PrinciplesDashboard() {
         </div>
       </header>
 
+      {/* VÍDEO DE ABERTURA */}
+      <section className="max-w-6xl mx-auto px-6 mt-12">
+        <div className="relative overflow-hidden rounded-[2.5rem] border border-gold/20 shadow-glow bg-surface">
+          <div className="aspect-video w-full">
+            <iframe 
+              src="https://www.youtube.com/embed/Cs7ZzmaCmh8"
+              className="h-full w-full"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      </section>
+
       <section className="max-w-6xl mx-auto px-6 py-20 relative">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {principles.map((principle: any, idx: number) => {
