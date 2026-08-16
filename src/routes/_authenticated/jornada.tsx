@@ -57,20 +57,25 @@ function PrincipleJourneyPage() {
     setAnswers([]);
     setDiagnosis(null);
     
+    console.log("Loading journey for principle:", principleNumber);
     getPrinciples()
       .then(res => {
+        console.log("Journey data loaded:", res);
         setData(res);
         const currentPrinciple = res.principles.find((p: any) => p.principle_number === principleNumber);
         
         if (!currentPrinciple) {
+          console.error("Principle not found:", principleNumber);
           toast.error("Princípio não encontrado.");
           navigate({ to: "/treinamento-premium" });
           return;
         }
 
         const prog = res.progress.find((p: any) => p.principle_id === currentPrinciple.id);
+        console.log("Progress for current principle:", prog);
         
         if ((!prog || prog.status === 'locked') && principleNumber !== 1) {
+          console.warn("Principle locked, redirecting...");
           navigate({ to: "/treinamento-premium" });
           return;
         }
@@ -78,11 +83,20 @@ function PrincipleJourneyPage() {
         if (prog?.protocol_completed) {
           setStep('concluido');
         } else if (prog?.quiz_completed) {
+          console.log("Quiz already completed, generating diagnosis...");
           setProcessing(true);
           genDiagnosis({ data: { principleId: currentPrinciple.id } })
-            .then(setDiagnosis)
-            .then(() => setStep('diagnostico'))
+            .then(res => {
+              setDiagnosis(res);
+              setStep('diagnostico');
+            })
+            .catch(err => {
+              console.error("Error generating diagnosis:", err);
+              toast.error("Erro ao carregar diagnóstico.");
+            })
             .finally(() => setProcessing(false));
+        } else {
+          setStep('aula');
         }
       })
       .catch((err) => {
@@ -341,7 +355,7 @@ function PrincipleJourneyPage() {
                                 className="h-auto bg-white text-black hover:bg-white/90 px-8 py-6 rounded-2xl text-lg sm:text-xl font-bold tracking-widest uppercase shadow-glow whitespace-normal text-center"
                                 onClick={() => {
                                     const nextId = (principleNumber + 1).toString();
-                                    window.location.href = `/jornada?id=${nextId}`;
+                                    navigate({ to: "/jornada", search: { id: nextId } });
                                 }}
                             >
                                 PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4 shrink-0" />
