@@ -25,7 +25,7 @@ const principleSearchSchema = z.object({
 });
 
 function PrincipleJourneyPage() {
-  const { id } = Route.useSearch();
+  const { id } = useParams({ from: "/_authenticated/jornada/$id" as any });
   const principleNumber = parseInt(id || "1");
   const navigate = useNavigate();
   
@@ -325,7 +325,7 @@ function PrincipleJourneyPage() {
                             <Button 
                                 className="bg-white text-black hover:bg-white/90 px-12 py-8 rounded-2xl text-xl font-bold tracking-widest uppercase shadow-glow"
                                 onClick={() => {
-                                    navigate({ to: "/_authenticated/jornada" as any, search: { id: (principleNumber + 1).toString() } as any });
+                                    navigate({ to: "/_authenticated/jornada/$id" as any, params: { id: (principleNumber + 1).toString() } as any });
                                 }}
                             >
                                 PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4" />
@@ -354,7 +354,7 @@ function PrincipleJourneyPage() {
   );
 }
 
-export const Route = createFileRoute("/_authenticated/jornada")({
-  validateSearch: (search) => principleSearchSchema.parse(search),
+export const Route = createFileRoute("/_authenticated/jornada/$id")({
+  
   component: PrincipleJourneyPage,
 });
