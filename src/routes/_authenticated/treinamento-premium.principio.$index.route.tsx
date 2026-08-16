@@ -19,6 +19,18 @@ import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
+const QUIZ_QUESTIONS = [
+  { id: 'q1', text: "Com que frequência você assume total responsabilidade por seus resultados?", options: [{ label: "Sempre", value: 3 }, { label: "Às vezes", value: 2 }, { label: "Raramente", value: 1 }] },
+  { id: 'q2', text: "Você sente que suas ações estão alinhadas com seu propósito?", options: [{ label: "Totalmente", value: 3 }, { label: "Parcialmente", value: 2 }, { label: "Não sinto", value: 1 }] },
+  { id: 'q3', text: "Quão claro é o mapa dos seus objetivos?", options: [{ label: "Muito claro", value: 3 }, { label: "Vago", value: 2 }, { label: "Inexistente", value: 1 }] },
+  { id: 'q4', text: "Você pratica a projeção inteligente de seus desejos?", options: [{ label: "Sim, diariamente", value: 3 }, { label: "De vez em quando", value: 2 }, { label: "Nunca", value: 1 }] },
+  { id: 'q5', text: "Você busca a excelência mesmo nas pequenas tarefas?", options: [{ label: "Sempre", value: 3 }, { label: "Na maioria das vezes", value: 2 }, { label: "Apenas no que é importante", value: 1 }] },
+  { id: 'q6', text: "Qual a importância da leitura na sua rotina?", options: [{ label: "Fundamental", value: 3 }, { label: "Moderada", value: 2 }, { label: "Baixa", value: 1 }] },
+  { id: 'q7', text: "Você dedica tempo ao conhecimento diariamente?", options: [{ label: "Sim", value: 3 }, { label: "Às vezes", value: 2 }, { label: "Quase nunca", value: 1 }] },
+  { id: 'q8', text: "Você tem mentores que guiam sua evolução?", options: [{ label: "Sim, vários", value: 3 }, { label: "Tenho um", value: 2 }, { label: "Não tenho", value: 1 }] },
+  { id: 'q9', text: "Como você avalia sua conexão espiritual hoje?", options: [{ label: "Forte", value: 3 }, { label: "Em desenvolvimento", value: 2 }, { label: "Fraca", value: 1 }] }
+];
+
 export function PrincipleJourneyPage() {
   const { index } = useParams({ from: "/_authenticated/treinamento-premium/principio/$index" as any });
   const principleNumber = parseInt(index);
