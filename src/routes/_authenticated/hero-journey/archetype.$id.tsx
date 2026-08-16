@@ -71,6 +71,7 @@ function ArchetypeJourneyPage() {
     
     if (currentIndex < stages.length - 1) {
       const nextStage = stages[currentIndex + 1];
+      console.log(`Advancing to next stage: ${nextStage}`);
       setStage(nextStage);
       
       const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
@@ -84,6 +85,7 @@ function ArchetypeJourneyPage() {
       queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
       queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
     } else {
+      console.log("Jornada do arquétipo concluída, voltando...");
       navigate({ to: "/reprogramacao-mental" });
     }
   };
