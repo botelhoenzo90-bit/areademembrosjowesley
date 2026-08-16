@@ -131,14 +131,18 @@ function PrincipleJourneyPage() {
   };
 
   const handleCompleteProtocol = async () => {
+    if (processing) return;
     setProcessing(true);
     try {
       if (!principle.id) throw new Error("Principle ID not found");
+      console.log("Concluindo protocolo para princípio:", principle.id);
       await completeProtocol({ data: { principleId: principle.id, principleNumber } });
       triggerCelebration();
       setStep('concluido');
-    } catch (e) {
-      toast.error("Erro ao concluir protocolo.");
+      toast.success("Princípio concluído com sucesso!");
+    } catch (e: any) {
+      console.error("Erro ao concluir protocolo:", e);
+      toast.error(e.message || "Erro ao concluir protocolo.");
     } finally {
       setProcessing(false);
     }
