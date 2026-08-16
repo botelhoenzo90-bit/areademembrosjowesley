@@ -31,9 +31,9 @@ const QUIZ_QUESTIONS = [
   { id: 'q9', text: "Como você avalia sua conexão espiritual hoje?", options: [{ label: "Forte", value: 3 }, { label: "Em desenvolvimento", value: 2 }, { label: "Fraca", value: 1 }] }
 ];
 
-export function PrincipleJourneyPage() {
-  const { slug } = useParams({ from: "/_authenticated/principio/$slug" as any });
-  const principleNumber = parseInt(slug);
+function PrincipleJourneyPage() {
+  const { id } = Route.useSearch()({ from: "/_authenticated/jornada" as any });
+  const principleNumber = parseInt(id as string);
   const navigate = useNavigate();
   
   const [loading, setLoading] = useState(true);
@@ -321,7 +321,7 @@ export function PrincipleJourneyPage() {
                                     setQuizIndex(0);
                                     setAnswers([]);
                                     setDiagnosis(null);
-                                    navigate({ to: "/principio/$slug" as any, params: { id: (principleNumber + 1).toString() } as any });
+                                    navigate({ to: "/_authenticated/jornada", search: { id: (principleNumber + 1).toString() } as any, params: { id: (principleNumber + 1).toString() } as any });
                                 }}
                             >
                                 PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4" />
