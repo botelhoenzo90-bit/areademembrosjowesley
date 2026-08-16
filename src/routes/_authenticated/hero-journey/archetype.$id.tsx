@@ -2,18 +2,17 @@ import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-r
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  ArrowLeft, ChevronRight, Info, Eye, Zap, 
+  ArrowLeft, ChevronRight, Eye, Zap, 
   Target, Shield, CheckCircle2, Award, 
-  Sparkles, Heart, Compass, Sword, Wand2, Sun, Bandage,
-  BookOpen, HelpCircle
+  Sparkles, BookOpen, HelpCircle
 } from "lucide-react";
 import { ARCHETYPES_CONTENT } from "@/lib/hero-content";
-import { updateArchetypeProgress, getArchetypes, saveQuizResponses } from "@/lib/hero-journey.functions";
+import { updateArchetypeProgress, getArchetypes, saveQuizResponses, updateProtocol } from "@/lib/hero-journey.functions";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-type Stage = 'discover' | 'mentorship' | 'quiz' | 'understand' | 'observe' | 'experiment' | 'implement' | 'conclude';
+type Stage = 'discover' | 'mentorship' | 'understand' | 'quiz' | 'observe' | 'experiment' | 'implement' | 'conclude';
 
 export const Route = createFileRoute("/_authenticated/hero-journey/archetype/$id")({
   loader: async ({ context }) => {
@@ -32,6 +31,7 @@ function ArchetypeJourneyPage() {
   const queryClient = useQueryClient();
   const updateProgress = useServerFn(updateArchetypeProgress);
   const submitQuiz = useServerFn(saveQuizResponses);
+  const updateProto = useServerFn(updateProtocol);
 
   const { data: userArchetypes = [] } = useQuery({
     queryKey: ['hero_journey_archetypes'],
@@ -39,65 +39,44 @@ function ArchetypeJourneyPage() {
   });
 
   const currentArchData = (userArchetypes as any[]).find((a: any) => a.archetype === id);
-  const initialStage: Stage = (currentArchData?.status === 'completed') ? 'conclude' : 'discover';
-
   const [stage, setStage] = useState<Stage>('discover');
   const [reflectionText, setReflectionText] = useState("");
   const [protocolSteps, setProtocolSteps] = useState<number[]>([]);
+  const [selectedPerception, setSelectedPerception] = useState<number | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [currentQuizStep, setCurrentQuizStep] = useState(0);
+  const [quizResponses, setQuizResponses] = useState<{question_index: number, answer_index: number, score: number}[]>([]);
 
   useEffect(() => {
     if (currentArchData) {
-      if (currentArchData.status === 'completed') {
-        setStage('conclude');
-      }
+      if (currentArchData.status === 'completed') setStage('conclude');
       setReflectionText(currentArchData.reflection_text || "");
       setProtocolSteps(currentArchData.protocol_steps_completed || []);
     }
   }, [currentArchData]);
-  const [selectedPerception, setSelectedPerception] = useState<number | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  
-  // Quiz states
-  const [currentQuizStep, setCurrentQuizStep] = useState(0);
-  const [quizResponses, setQuizResponses] = useState<{question_index: number, answer_index: number, score: number}[]>([]);
 
-  if (!archetype) {
-    return <div>Arquétipo não encontrado.</div>;
-  }
+  if (!archetype) return <div>Arquétipo não encontrado.</div>;
 
   const handleNext = async () => {
-    const stages: Stage[] = ['discover', 'mentorship', 'quiz', 'understand', 'observe', 'experiment', 'implement', 'conclude'];
+    const stages: Stage[] = ['discover', 'mentorship', 'understand', 'quiz', 'observe', 'experiment', 'implement', 'conclude'];
     const currentIndex = stages.indexOf(stage);
     
     if (currentIndex < stages.length - 1) {
       const nextStage = stages[currentIndex + 1];
-      console.log(`Advancing to next stage: ${nextStage}`);
       setStage(nextStage);
-      
       const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
       await updateProgress({ 
-        data: {
-          archetype: id as any, 
-          progress, 
-          status: (progress === 100 ? 'completed' : 'in_progress') as any
-        }
+        data: { archetype: id as any, progress, status: (progress === 100 ? 'completed' : 'in_progress') as any }
       });
       queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
       queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
     } else {
-      console.log("Jornada do arquétipo concluída, voltando...");
       navigate({ to: "/reprogramacao-mental" });
     }
   };
 
-  const toggleProtocolStep = (index: number) => {
-    setProtocolSteps(prev => 
-      prev.includes(index) ? prev.filter(i => i !== index) : [...prev, index]
-    );
-  };
-
   return (
-    <main className="relative min-h-screen bg-background pb-24">
+    <main className="relative min-h-screen bg-background pb-24 text-foreground">
       <header className="fixed top-0 left-0 right-0 z-30 flex items-center justify-between p-4 glass">
         <Link to="/reprogramacao-mental" className="rounded-full p-2 text-foreground hover:bg-surface-elevated">
           <ArrowLeft className="h-4 w-4" />
@@ -109,467 +88,262 @@ function ArchetypeJourneyPage() {
         <div className="w-8" />
       </header>
 
-      <div className="pt-24 px-6 max-w-2xl mx-auto">
-        <AnimatePresence mode="wait">
-          {stage === 'discover' && (
-            <motion.div
-              key="discover"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-8"
-            >
-              <div className="text-center space-y-4">
-                <div className="mx-auto w-20 h-20 rounded-3xl bg-surface-elevated flex items-center justify-center text-4xl shadow-glow">
-                  {archetype.symbol}
+      <div className="pt-24 px-6 max-w-2xl mx-auto flex flex-col min-h-[calc(100vh-6rem)]">
+        <div className="flex-1">
+          <AnimatePresence mode="wait">
+            {stage === 'discover' && (
+              <motion.div key="discover" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+                <div className="text-center space-y-4">
+                  <div className="mx-auto w-20 h-20 rounded-3xl bg-surface-elevated flex items-center justify-center text-4xl shadow-glow">
+                    {archetype.symbol}
+                  </div>
+                  <h2 className="font-display text-3xl uppercase">Quem é {archetype.name}?</h2>
                 </div>
-                <h2 className="font-display text-3xl uppercase">Quem é {archetype.name}?</h2>
-              </div>
-
-              <div className="grid gap-4 sm:grid-cols-2">
-                <InfoCard 
-                  title="Essência" 
-                  content={archetype.essence} 
-                  onDetails={() => setSelectedCategory('essence')}
-                />
-                <InfoCard 
-                  title="Objetivo" 
-                  content={archetype.objective} 
-                  onDetails={() => setSelectedCategory('objective')}
-                />
-                <InfoCard 
-                  title="Força" 
-                  content={archetype.strength} 
-                  onDetails={() => setSelectedCategory('strength')}
-                />
-                <InfoCard 
-                  title="Necessidade" 
-                  content={archetype.need} 
-                  onDetails={() => setSelectedCategory('need')}
-                />
-                <InfoCard 
-                  title="Sombra" 
-                  content={archetype.shadow} 
-                  onDetails={() => setSelectedCategory('shadow')}
-                />
-                <InfoCard 
-                  title="Ilusão" 
-                  content={archetype.illusion} 
-                  onDetails={() => setSelectedCategory('illusion')}
-                />
-              </div>
-
-              <div className="rounded-2xl border border-gold/30 bg-gold/5 p-6 text-center italic">
-                <p className="text-gold">Pergunta Central:</p>
-                <p className="mt-2 text-xl font-display text-foreground">"{archetype.question}"</p>
-              </div>
-            </motion.div>
-          )}
-
-          {stage === 'mentorship' && (
-            <motion.div
-              key="mentorship"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-8"
-            >
-              <div className="text-center space-y-4">
-                <BookOpen className="mx-auto h-12 w-12 text-gold" />
-                <h2 className="font-display text-2xl uppercase tracking-tight">Mini Mentoria</h2>
-              </div>
-              <div className="rounded-3xl border border-border glass p-8 text-sm leading-relaxed text-muted-foreground whitespace-pre-line">
-                {archetype.mentorship}
-              </div>
-            </motion.div>
-          )}
-
-          {stage === 'quiz' && (
-            <motion.div
-              key="quiz"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-8"
-            >
-              <div className="text-center space-y-2">
-                <HelpCircle className="mx-auto h-12 w-12 text-gold" />
-                <h2 className="font-display text-2xl uppercase tracking-tight">Quiz do Herói</h2>
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Pergunta {currentQuizStep + 1} de {archetype.quiz.length}</p>
-              </div>
-
-              <div className="space-y-6">
-                <p className="text-lg text-foreground text-center">{archetype.quiz[currentQuizStep].question}</p>
-                <div className="grid gap-3">
-                  {archetype.quiz[currentQuizStep].options.map((opt, idx) => (
-                    <button
-                      key={idx}
-                      onClick={async () => {
-                        const newResponses = [...quizResponses, { 
-                          question_index: currentQuizStep, 
-                          answer_index: idx, 
-                          score: opt.score 
-                        }];
-                        setQuizResponses(newResponses);
-                        
-                        if (currentQuizStep < archetype.quiz.length - 1) {
-                          setCurrentQuizStep(prev => prev + 1);
-                        } else {
-                          await submitQuiz({ 
-                            data: { 
-                              archetype: id as any, 
-                              responses: newResponses 
-                            } 
-                          });
-                          toast.success("Quiz concluído!");
-                          handleNext();
-                        }
-                      }}
-                      className="w-full text-left rounded-2xl border border-border glass p-4 text-sm text-muted-foreground hover:border-gold/50 hover:text-foreground transition-all"
-                    >
-                      {opt.label}
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {[
+                    { label: 'Essência', key: 'essence' },
+                    { label: 'Objetivo', key: 'objective' },
+                    { label: 'Força', key: 'strength' },
+                    { label: 'Necessidade', key: 'need' },
+                    { label: 'Sombra', key: 'shadow' },
+                    { label: 'Ilusão', key: 'illusion' }
+                  ].map(cat => (
+                    <button key={cat.label} onClick={() => setSelectedCategory(cat.key)} className="rounded-2xl border border-border glass p-4 text-left hover:border-gold/50 transition-all">
+                      <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{cat.label}</span>
+                      <p className="text-sm font-medium leading-tight mt-1">{archetype[cat.key as keyof typeof archetype] as string}</p>
                     </button>
                   ))}
                 </div>
-              </div>
-            </motion.div>
-          )}
-
-          {stage === 'understand' && (
-            <motion.div
-              key="understand"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-8"
-            >
-              <h2 className="font-display text-2xl text-center uppercase tracking-tight">O Arquétipo em sua vida</h2>
-              <p className="text-center text-sm text-muted-foreground">Toque em cada categoria para revelar como esse padrão se manifesta.</p>
-              
-              <div className="grid gap-3">
-                {Object.entries(archetype.categories).map(([key, items]) => (
-                  <CategoryAccordion key={key} title={key} items={items as string[]} />
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {stage === 'observe' && (
-            <motion.div
-              key="observe"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-8"
-            >
-              <h2 className="font-display text-2xl text-center uppercase tracking-tight">Você se reconhece?</h2>
-              
-              <div className="space-y-6">
-                {archetype.selfPerceptionQuestions.map((q: any, idx: number) => (
-                  <div key={idx} className="space-y-4">
-                    <p className="text-lg text-foreground">{q.question}</p>
-                    <div className="grid gap-3">
-                      {q.options.map((opt: any, oIdx: number) => (
-                        <button
-                          key={oIdx}
-                          onClick={() => setSelectedPerception(oIdx)}
-                          className={`w-full text-left rounded-2xl border p-4 transition-all ${
-                            selectedPerception === oIdx 
-                              ? 'border-gold bg-gold/10 text-foreground' 
-                              : 'border-border glass text-muted-foreground hover:border-gold/50'
-                          }`}
-                        >
-                          {opt.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
-          )}
-
-          {stage === 'experiment' && (
-            <motion.div
-              key="experiment"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-8"
-            >
-              <div className="text-center space-y-2">
-                <Eye className="h-8 w-8 mx-auto text-gold" />
-                <h2 className="font-display text-2xl uppercase tracking-tight">Olhe para Dentro</h2>
-              </div>
-              
-              <div className="space-y-4">
-                <p className="text-foreground">{archetype.reflectionQuestion}</p>
-                <textarea
-                  value={reflectionText}
-                  onChange={(e) => setReflectionText(e.target.value)}
-                  placeholder="Escreva sua reflexão aqui..."
-                  className="w-full h-40 rounded-2xl border border-border glass p-4 text-sm outline-none focus:border-gold/50 resize-none"
-                />
-                <button 
-                  onClick={async () => {
-                    await updateProgress({ data: { archetype: id as any, reflection_text: reflectionText } });
-                    toast.success("Reflexão salva com sucesso.");
-                  }}
-                  className="w-full py-3 rounded-full border border-border glass text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Salvar Reflexão
-                </button>
-              </div>
-            </motion.div>
-          )}
-
-          {stage === 'implement' && (
-            <motion.div
-              key="implement"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -20 }}
-              className="space-y-8"
-            >
-              <div className="space-y-6">
-                <div className="rounded-3xl border border-border glass p-6 space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Target className="h-5 w-5 text-gold" />
-                    <h3 className="font-display text-xl uppercase">Sua Missão</h3>
-                  </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{archetype.mission}</p>
+                <div className="rounded-2xl border border-gold/30 bg-gold/5 p-6 text-center italic">
+                  <p className="text-gold text-[10px] uppercase tracking-widest mb-2">Pergunta Central</p>
+                  <p className="text-xl font-display">"{archetype.question}"</p>
                 </div>
+              </motion.div>
+            )}
 
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Shield className="h-5 w-5 text-gold" />
-                    <h3 className="font-display text-xl uppercase">Protocolo</h3>
-                  </div>
-                  <div className="space-y-3">
-                    {['Perceber', 'Nomear', 'Questionar', 'Escolher', 'Praticar'].map((step, idx) => (
+            {stage === 'mentorship' && (
+              <motion.div key="mentorship" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+                <div className="text-center space-y-4">
+                  <BookOpen className="mx-auto h-12 w-12 text-gold" />
+                  <h2 className="font-display text-2xl uppercase tracking-tight">Mini Mentoria</h2>
+                </div>
+                <div className="rounded-3xl border border-border glass p-8 text-sm leading-relaxed text-muted-foreground whitespace-pre-line">
+                  {archetype.mentorship}
+                </div>
+              </motion.div>
+            )}
+
+            {stage === 'understand' && (
+              <motion.div key="understand" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+                <h2 className="font-display text-2xl text-center uppercase tracking-tight">O Arquétipo em sua vida</h2>
+                <div className="grid gap-4">
+                  {Object.entries(archetype.categories).map(([key, items]) => (
+                    <div key={key} className="rounded-2xl border border-border glass p-6 space-y-3">
+                      <h3 className="text-[10px] uppercase tracking-widest text-gold font-bold">
+                        {key === 'thoughts' ? 'Pensamentos' : key === 'emotions' ? 'Emoções' : key === 'behaviors' ? 'Comportamentos' : key === 'relationships' ? 'Relacionamentos' : key === 'decisions' ? 'Decisões' : 'Identidade'}
+                      </h3>
+                      <ul className="space-y-2">
+                        {(items as string[]).map((item, i) => (
+                          <li key={i} className="text-sm text-muted-foreground flex items-start gap-2">
+                            <div className="h-1.5 w-1.5 rounded-full bg-gold/50 mt-1.5 shrink-0" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+
+            {stage === 'quiz' && (
+              <motion.div key="quiz" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+                <div className="text-center space-y-2">
+                  <HelpCircle className="mx-auto h-12 w-12 text-gold" />
+                  <h2 className="font-display text-2xl uppercase tracking-tight">Quiz do Herói</h2>
+                  <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Pergunta {currentQuizStep + 1} de {archetype.quiz.length}</p>
+                </div>
+                <div className="space-y-6">
+                  <p className="text-lg text-center">{archetype.quiz[currentQuizStep].question}</p>
+                  <div className="grid gap-3">
+                    {archetype.quiz[currentQuizStep].options.map((opt, idx) => (
                       <button
                         key={idx}
                         onClick={async () => {
-                          const newSteps = protocolSteps.includes(idx) 
-                            ? protocolSteps.filter(i => i !== idx) 
-                            : [...protocolSteps, idx];
-                          setProtocolSteps(newSteps);
-                          
-                          const { updateProtocol } = await import("@/lib/hero-journey.functions");
-                          await updateProtocol({ 
-                            data: { 
-                              archetype: id as any, 
-                              steps_completed: newSteps,
-                              is_completed: newSteps.length === 5
-                            } 
-                          });
+                          const newResponses = [...quizResponses, { question_index: currentQuizStep, answer_index: idx, score: opt.score }];
+                          setQuizResponses(newResponses);
+                          if (currentQuizStep < archetype.quiz.length - 1) {
+                            setCurrentQuizStep(prev => prev + 1);
+                          } else {
+                            await submitQuiz({ data: { archetype: id as any, responses: newResponses } });
+                            handleNext();
+                          }
                         }}
-                        className={`w-full flex items-center gap-4 rounded-2xl border p-4 transition-all ${
-                          protocolSteps.includes(idx)
-                            ? 'border-emerald-500/50 bg-emerald-500/5'
-                            : 'border-border glass'
-                        }`}
+                        className="w-full text-left rounded-2xl border border-border glass p-5 text-sm hover:border-gold/50 transition-all"
                       >
-                        <div className={`h-6 w-6 rounded-full flex items-center justify-center border ${
-                          protocolSteps.includes(idx) 
-                            ? 'bg-emerald-500 border-emerald-500 text-white' 
-                            : 'border-border'
-                        }`}>
-                          {protocolSteps.includes(idx) ? <CheckCircle2 className="h-4 w-4" /> : <span className="text-[10px]">{idx + 1}</span>}
-                        </div>
-                        <span className={`text-sm ${protocolSteps.includes(idx) ? 'text-foreground' : 'text-muted-foreground'}`}>{step}</span>
+                        {opt.label}
                       </button>
                     ))}
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          )}
+              </motion.div>
+            )}
 
-          {stage === 'conclude' && (
-            <motion.div
-              key="conclude"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="space-y-8 text-center"
-            >
-              <div className="relative mx-auto w-32 h-32">
-                <motion.div 
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
-                  className="absolute inset-0 rounded-full border-2 border-dashed border-gold/30"
-                />
-                <div className="absolute inset-2 rounded-full bg-gradient-primary flex items-center justify-center shadow-glow">
-                  <Award className="h-12 w-12 text-primary-foreground" />
+            {stage === 'observe' && (
+              <motion.div key="observe" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+                <h2 className="font-display text-2xl text-center uppercase tracking-tight">Você se reconhece?</h2>
+                <div className="space-y-8">
+                  {archetype.selfPerceptionQuestions.map((q, qIdx) => (
+                    <div key={qIdx} className="space-y-4">
+                      <p className="text-lg text-center">{q.question}</p>
+                      <div className="grid gap-3">
+                        {q.options.map((opt, oIdx) => (
+                          <button
+                            key={oIdx}
+                            onClick={() => setSelectedPerception(oIdx)}
+                            className={`w-full text-left rounded-2xl border p-5 transition-all ${selectedPerception === oIdx ? 'border-gold bg-gold/10' : 'border-border glass'}`}
+                          >
+                            {opt.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
+              </motion.div>
+            )}
 
-              <div className="space-y-2">
-                <h2 className="font-display text-3xl uppercase tracking-tighter">Arquétipo Concluído</h2>
-                <div className="flex justify-center gap-4 text-[10px] uppercase tracking-widest text-gold">
-                  <span className="flex items-center gap-1"><Sparkles className="h-3 w-3" /> + Consciência</span>
-                  <span className="flex items-center gap-1"><Zap className="h-3 w-3" /> + Experiência</span>
+            {stage === 'experiment' && (
+              <motion.div key="experiment" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+                <div className="text-center space-y-4">
+                  <Eye className="h-12 w-12 mx-auto text-gold" />
+                  <h2 className="font-display text-2xl uppercase tracking-tight">Olhe para Dentro</h2>
                 </div>
-              </div>
-
-              <div className="rounded-3xl border border-border glass p-8 text-sm leading-relaxed text-muted-foreground text-left max-h-[400px] overflow-y-auto scrollbar-hidden">
-                <p className="mb-6 text-foreground font-medium">{archetype.gamificationText}</p>
-                <div className="h-px w-full bg-border/50 mb-6" />
-                <p className="italic">{archetype.conclusionScript}</p>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {selectedCategory && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-background/95 backdrop-blur-md"
-            >
-              <motion.div 
-                initial={{ scale: 0.9, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                className="w-full max-w-lg rounded-3xl border border-gold/20 bg-surface p-8 shadow-2xl relative"
-              >
-                <button 
-                  onClick={() => setSelectedCategory(null)}
-                  className="absolute top-4 right-4 rounded-full p-2 hover:bg-surface-elevated text-muted-foreground"
-                >
-                  <ArrowLeft className="h-5 w-5 rotate-90" />
-                </button>
-
                 <div className="space-y-6">
-                  <div className="space-y-2">
-                    <span className="text-[10px] uppercase tracking-[0.2em] text-gold font-medium">Aprofundamento</span>
-                    <h3 className="font-display text-3xl uppercase text-foreground">
-                      {selectedCategory === 'essence' && 'Essência'}
-                      {selectedCategory === 'objective' && 'Objetivo'}
-                      {selectedCategory === 'strength' && 'Força'}
-                      {selectedCategory === 'need' && 'Necessidade'}
-                      {selectedCategory === 'shadow' && 'Sombra'}
-                      {selectedCategory === 'illusion' && 'Ilusão'}
-                    </h3>
-                  </div>
-
-                  <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
-                    <p className="text-foreground text-lg">
-                      {archetype[selectedCategory as keyof typeof archetype] as string}
-                    </p>
-                    <p>
-                      {selectedCategory === 'essence' && "A essência representa o núcleo puro deste padrão em você. É a força vital que guia suas percepções mais profundas."}
-                      {selectedCategory === 'objective' && "Este é o 'norte' da sua bússola interna quando este arquétipo está ativo. É o que sua alma busca alcançar agora."}
-                      {selectedCategory === 'strength' && "Seu maior aliado. Esta habilidade natural permite que você navegue por desafios com uma vantagem única."}
-                      {selectedCategory === 'need' && "O que sustenta sua estrutura emocional. Ignorar esta necessidade pode gerar desequilíbrio na sua jornada."}
-                      {selectedCategory === 'shadow' && "A parte oculta. Não é ruim, mas precisa de consciência. Quando ignorada, ela pode sabotar seus resultados."}
-                      {selectedCategory === 'illusion' && "O véu que distorce a realidade. Reconhecer esta ilusão é o primeiro passo para o verdadeiro despertar."}
-                    </p>
-                  </div>
-
-                  <button 
-                    onClick={() => setSelectedCategory(null)}
-                    className="w-full py-4 rounded-full bg-foreground text-background text-sm font-medium hover:brightness-110 transition-all"
-                  >
-                    Entendi, continuar
+                  <p className="text-lg text-center">{archetype.reflectionQuestion}</p>
+                  <textarea
+                    value={reflectionText}
+                    onChange={(e) => setReflectionText(e.target.value)}
+                    placeholder="Sua reflexão..."
+                    className="w-full h-48 rounded-3xl border border-border glass p-6 text-sm outline-none focus:border-gold/50 resize-none bg-surface"
+                  />
+                  <button onClick={async () => {
+                    await updateProgress({ data: { archetype: id as any, reflection_text: reflectionText } });
+                    toast.success("Reflexão salva!");
+                  }} className="w-full py-4 rounded-full border border-gold/30 text-[10px] uppercase tracking-widest text-gold">
+                    Salvar Reflexão
                   </button>
                 </div>
               </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            )}
 
-        <footer className="fixed bottom-0 left-0 right-0 p-6 glass-strong z-40">
+            {stage === 'implement' && (
+              <motion.div key="implement" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-8">
+                <div className="rounded-3xl border border-border glass p-8 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <Target className="h-6 w-6 text-gold" />
+                    <h3 className="font-display text-xl uppercase">Sua Missão</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{archetype.mission}</p>
+                </div>
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3">
+                    <Shield className="h-6 w-6 text-gold" />
+                    <h3 className="font-display text-xl uppercase">Protocolo</h3>
+                  </div>
+                  <div className="grid gap-3">
+                    {['Perceber', 'Nomear', 'Questionar', 'Escolher', 'Praticar'].map((step, idx) => (
+                      <button
+                        key={idx}
+                        onClick={async () => {
+                          const newSteps = protocolSteps.includes(idx) ? protocolSteps.filter(i => i !== idx) : [...protocolSteps, idx];
+                          setProtocolSteps(newSteps);
+                          await updateProto({ data: { archetype: id as any, steps_completed: newSteps, is_completed: newSteps.length === 5 } });
+                        }}
+                        className={`w-full flex items-center gap-4 rounded-2xl border p-5 transition-all ${protocolSteps.includes(idx) ? 'border-emerald-500/50 bg-emerald-500/5' : 'border-border glass'}`}
+                      >
+                        <div className={`h-6 w-6 rounded-full flex items-center justify-center border ${protocolSteps.includes(idx) ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-border'}`}>
+                          {protocolSteps.includes(idx) ? <CheckCircle2 className="h-4 w-4" /> : <span className="text-[10px]">{idx + 1}</span>}
+                        </div>
+                        <span className="text-sm uppercase tracking-widest">{step}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {stage === 'conclude' && (
+              <motion.div key="conclude" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="space-y-10 text-center pt-12">
+                <div className="relative mx-auto w-40 h-40">
+                  <motion.div animate={{ rotate: 360 }} transition={{ duration: 15, repeat: Infinity, ease: "linear" }} className="absolute inset-0 rounded-full border-2 border-dashed border-gold/20" />
+                  <div className="absolute inset-4 rounded-full bg-gradient-primary flex items-center justify-center shadow-glow shadow-gold/20">
+                    <Award className="h-16 w-16 text-primary-foreground" />
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <h2 className="font-display text-4xl uppercase">{archetype.name} Concluído</h2>
+                  <div className="flex justify-center gap-6 py-4">
+                    <div className="text-center"><p className="text-gold text-[10px] font-bold uppercase tracking-widest">+Consciência</p></div>
+                    <div className="text-center"><p className="text-gold text-[10px] font-bold uppercase tracking-widest">+EXP</p></div>
+                    <div className="text-center"><p className="text-gold text-[10px] font-bold uppercase tracking-widest">+Progresso</p></div>
+                  </div>
+                </div>
+                <div className="rounded-3xl border border-border glass p-8 text-sm text-left whitespace-pre-line text-muted-foreground leading-relaxed max-h-[400px] overflow-y-auto">
+                  <p className="text-foreground font-medium mb-6 text-lg">{archetype.gamificationText}</p>
+                  <div className="h-px w-full bg-border/50 my-6" />
+                  <p className="italic">{archetype.conclusionScript}</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <div className="mt-12 pb-12">
           <button
             onClick={handleNext}
-            disabled={stage === 'observe' && selectedPerception === null}
-            className="w-full flex items-center justify-center gap-2 rounded-full bg-foreground py-4 text-sm font-medium text-background transition-all hover:brightness-110 active:scale-95 disabled:opacity-50"
+            disabled={(stage === 'observe' && selectedPerception === null) || (stage === 'experiment' && reflectionText.length < 5) || (stage === 'implement' && protocolSteps.length < 5)}
+            className="w-full group relative flex items-center justify-center rounded-full bg-foreground px-8 py-5 text-sm font-bold text-background transition-all hover:scale-[1.02] active:scale-[0.98] shadow-glow disabled:opacity-50 disabled:grayscale"
           >
-            {stage === 'conclude' ? 'Concluir Jornada' : 'Continuar'} <ChevronRight className="h-4 w-4" />
+            <span className="relative z-10 tracking-[0.2em] uppercase">
+              {stage === 'discover' && 'Entender Arquétipo'}
+              {stage === 'mentorship' && 'Observar no Dia a Dia'}
+              {stage === 'understand' && 'Iniciar Quiz'}
+              {stage === 'quiz' && 'Avançar para Percepção'}
+              {stage === 'observe' && 'Ir para Reflexão'}
+              {stage === 'experiment' && 'Iniciar Missão Prática'}
+              {stage === 'implement' && 'Concluir Arquétipo'}
+              {stage === 'conclude' && 'Voltar ao Mapa do Herói'}
+            </span>
+            <ChevronRight className="relative z-10 ml-2 h-4 w-4" />
           </button>
-        </footer>
-      </div>
-    </main>
-  );
-}
-
-function InfoCard({ title, content, onDetails }: { title: string; content: string; onDetails?: () => void }) {
-  const [isOpen, setIsOpen] = useState(false);
-  return (
-    <div 
-      onClick={() => {
-        setIsOpen(!isOpen);
-        if (!isOpen && onDetails) {
-          // Pequeno delay para a animação do card antes de abrir o modal se for o caso
-          // ou simplesmente abrir o modal se preferir ação direta
-          onDetails();
-        }
-      }}
-      className="rounded-2xl border border-border glass p-4 space-y-1 cursor-pointer hover:border-gold/50 transition-all active:scale-95"
-    >
-      <div className="flex items-center justify-between">
-        <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{title}</span>
-        <ChevronRight className={`h-3 w-3 transition-transform ${isOpen ? 'rotate-90' : ''}`} />
-      </div>
-      <p className="text-sm text-foreground leading-tight font-medium">
-        {content}
-      </p>
-      <div className="pt-2 flex items-center gap-1 text-[9px] uppercase tracking-tighter text-gold opacity-70">
-        <Zap className="h-2.5 w-2.5" /> Clique para aprofundar
-      </div>
-    </div>
-  );
-}
-
-function CategoryAccordion({ title, items }: { title: string; items: string[] }) {
-  const [isOpen, setIsOpen] = useState(false);
-  
-  const translations: Record<string, { label: string; icon: any }> = {
-    thoughts: { label: 'Pensamentos', icon: Sparkles },
-    emotions: { label: 'Emoções', icon: Heart },
-    behaviors: { label: 'Comportamentos', icon: Zap },
-    relationships: { label: 'Relacionamentos', icon: Heart },
-    decisions: { label: 'Decisões', icon: Target },
-    identity: { label: 'Identidade', icon: Shield },
-  };
-
-  const info = translations[title] || { label: title, icon: Info };
-  const Icon = info.icon;
-
-  return (
-    <div className={`rounded-2xl border transition-all ${isOpen ? 'border-gold/30 bg-gold/5' : 'border-border glass'}`}>
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4"
-      >
-        <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-surface-elevated p-2">
-            <Icon className="h-4 w-4 text-gold" />
-          </div>
-          <span className="text-sm font-medium uppercase tracking-tight">{info.label}</span>
         </div>
-        <ChevronRight className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-90' : ''}`} />
-      </button>
+      </div>
+
       <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="p-4 pt-0 space-y-2">
-              {items.map((item, idx) => (
-                <div key={idx} className="flex gap-2 text-xs text-muted-foreground leading-relaxed">
-                  <div className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-gold" />
-                  {item}
+        {selectedCategory && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-background/95 backdrop-blur-md">
+            <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="w-full max-w-lg rounded-3xl border border-gold/20 bg-surface p-8 shadow-2xl relative">
+              <button onClick={() => setSelectedCategory(null)} className="absolute top-4 right-4 rounded-full p-2 hover:bg-surface-elevated text-muted-foreground">
+                <ArrowLeft className="h-5 w-5 rotate-90" />
+              </button>
+              <div className="space-y-6">
+                <div className="space-y-2">
+                  <span className="text-[10px] uppercase tracking-[0.2em] text-gold font-medium">Aprofundamento</span>
+                  <h3 className="font-display text-3xl uppercase text-foreground">{selectedCategory}</h3>
                 </div>
-              ))}
-            </div>
+                <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
+                  <p className="text-foreground text-lg">{archetype[selectedCategory as keyof typeof archetype] as string}</p>
+                  <p>Este pilar representa uma parte fundamental da manifestação do arquétipo na sua psique. Compreender este aspecto permite uma integração mais consciente do padrão em sua vida.</p>
+                </div>
+                <button onClick={() => setSelectedCategory(null)} className="w-full py-4 rounded-full bg-foreground text-background text-sm font-medium hover:brightness-110">
+                  Entendi, continuar
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+    </main>
   );
 }
