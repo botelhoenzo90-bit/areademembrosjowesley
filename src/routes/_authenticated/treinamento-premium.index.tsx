@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { motion } from "framer-motion";
 
-export const Route = createFileRoute("/_authenticated/treinamento-premium")({
+export const Route = createFileRoute("/_authenticated/treinamento-premium/")({
   component: PrinciplesDashboard,
 });
 
