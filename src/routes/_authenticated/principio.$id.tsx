@@ -32,7 +32,7 @@ const QUIZ_QUESTIONS = [
 ];
 
 export function PrincipleJourneyPage() {
-  const { id } = useParams({ from: "/_authenticated/aula/$id" as any });
+  const { id } = useParams({ from: "/_authenticated/principio/$id" as any });
   const principleNumber = parseInt(id);
   const navigate = useNavigate();
   
