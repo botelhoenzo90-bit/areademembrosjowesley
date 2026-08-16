@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { 
   ArrowLeft, CheckCircle2, Play, Trophy, Sparkles, 
@@ -18,21 +18,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
+import { z } from "zod";
 
-const QUIZ_QUESTIONS = [
-  { id: 'q1', text: "Com que frequência você assume total responsabilidade por seus resultados?", options: [{ label: "Sempre", value: 3 }, { label: "Às vezes", value: 2 }, { label: "Raramente", value: 1 }] },
-  { id: 'q2', text: "Você sente que suas ações estão alinhadas com seu propósito?", options: [{ label: "Totalmente", value: 3 }, { label: "Parcialmente", value: 2 }, { label: "Não sinto", value: 1 }] },
-  { id: 'q3', text: "Quão claro é o mapa dos seus objetivos?", options: [{ label: "Muito claro", value: 3 }, { label: "Vago", value: 2 }, { label: "Inexistente", value: 1 }] },
-  { id: 'q4', text: "Você pratica a projeção inteligente de seus desejos?", options: [{ label: "Sim, diariamente", value: 3 }, { label: "De vez em quando", value: 2 }, { label: "Nunca", value: 1 }] },
-  { id: 'q5', text: "Você busca a excelência mesmo nas pequenas tarefas?", options: [{ label: "Sempre", value: 3 }, { label: "Na maioria das vezes", value: 2 }, { label: "Apenas no que é importante", value: 1 }] },
-  { id: 'q6', text: "Qual a importância da leitura na sua rotina?", options: [{ label: "Fundamental", value: 3 }, { label: "Moderada", value: 2 }, { label: "Baixa", value: 1 }] },
-  { id: 'q7', text: "Você dedica tempo ao conhecimento diariamente?", options: [{ label: "Sim", value: 3 }, { label: "Às vezes", value: 2 }, { label: "Quase nunca", value: 1 }] },
-  { id: 'q8', text: "Você tem mentores que guiam sua evolução?", options: [{ label: "Sim, vários", value: 3 }, { label: "Tenho um", value: 2 }, { label: "Não tenho", value: 1 }] },
-  { id: 'q9', text: "Como você avalia sua conexão espiritual hoje?", options: [{ label: "Forte", value: 3 }, { label: "Em desenvolvimento", value: 2 }, { label: "Fraca", value: 1 }] }
-];
+const principleSearchSchema = z.object({
+  id: z.string().optional().default("1"),
+});
 
 function PrincipleJourneyPage() {
-  const { id } = Route.useSearch()({ from: "/_authenticated/jornada" as any });
+  const { id } = Route.useSearch();
   const principleNumber = parseInt(id as string);
   const navigate = useNavigate();
   
@@ -49,7 +42,25 @@ function PrincipleJourneyPage() {
   const genDiagnosis = useServerFn(generatePrincipleDiagnosis);
   const completeProtocol = useServerFn(completePrincipleProtocol);
 
+  const QUIZ_QUESTIONS = [
+    { id: 'q1', text: "Com que frequência você assume total responsabilidade por seus resultados?", options: [{ label: "Sempre", value: 3 }, { label: "Às vezes", value: 2 }, { label: "Raramente", value: 1 }] },
+    { id: 'q2', text: "Você sente que suas ações estão alinhadas com seu propósito?", options: [{ label: "Totalmente", value: 3 }, { label: "Parcialmente", value: 2 }, { label: "Não sinto", value: 1 }] },
+    { id: 'q3', text: "Quão claro é o mapa dos seus objetivos?", options: [{ label: "Muito claro", value: 3 }, { label: "Vago", value: 2 }, { label: "Inexistente", value: 1 }] },
+    { id: 'q4', text: "Você pratica a projeção inteligente de seus desejos?", options: [{ label: "Sim, diariamente", value: 3 }, { label: "De vez em quando", value: 2 }, { label: "Nunca", value: 1 }] },
+    { id: 'q5', text: "Você busca a excelência mesmo nas pequenas tarefas?", options: [{ label: "Sempre", value: 3 }, { label: "Na maioria das vezes", value: 2 }, { label: "Apenas no que é importante", value: 1 }] },
+    { id: 'q6', text: "Qual a importância da leitura na sua rotina?", options: [{ label: "Fundamental", value: 3 }, { label: "Moderada", value: 2 }, { label: "Baixa", value: 1 }] },
+    { id: 'q7', text: "Você dedica tempo ao conhecimento diariamente?", options: [{ label: "Sim", value: 3 }, { label: "Às vezes", value: 2 }, { label: "Quase nunca", value: 1 }] },
+    { id: 'q8', text: "Você tem mentores que guiam sua evolução?", options: [{ label: "Sim, vários", value: 3 }, { label: "Tenho um", value: 2 }, { label: "Não tenho", value: 1 }] },
+    { id: 'q9', text: "Como você avalia sua conexão espiritual hoje?", options: [{ label: "Forte", value: 3 }, { label: "Em desenvolvimento", value: 2 }, { label: "Fraca", value: 1 }] }
+  ];
+
   useEffect(() => {
+    setLoading(true);
+    setStep('aula');
+    setQuizIndex(0);
+    setAnswers([]);
+    setDiagnosis(null);
+    
     getPrinciples()
       .then(res => {
         setData(res);
@@ -68,7 +79,7 @@ function PrincipleJourneyPage() {
         }
       })
       .finally(() => setLoading(false));
-  }, [principleNumber, navigate, getPrinciples, genDiagnosis]);
+  }, [principleNumber]);
 
   if (loading || !data) return <div className="flex h-screen items-center justify-center bg-black"><Loader2 className="animate-spin text-gold" /></div>;
 
@@ -106,8 +117,6 @@ function PrincipleJourneyPage() {
       origin: { y: 0.6 },
       colors: ['#D4AF37', '#ffffff', '#3B82F6']
     });
-    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
-    audio.play().catch(() => {});
   };
 
   const handleCompleteProtocol = async () => {
@@ -126,7 +135,6 @@ function PrincipleJourneyPage() {
 
   const getYoutubeEmbedUrl = (url: string | null) => {
     if (!url) return null;
-    // Enhanced regex to handle ?is= and other complex params
     const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|v=|is=)([A-Za-z0-9_-]{11})/);
     if (m) return `https://www.youtube.com/embed/${m[1]}?rel=0&modestbranding=1&autoplay=0`;
     return null;
@@ -317,11 +325,7 @@ function PrincipleJourneyPage() {
                             <Button 
                                 className="bg-white text-black hover:bg-white/90 px-12 py-8 rounded-2xl text-xl font-bold tracking-widest uppercase shadow-glow"
                                 onClick={() => {
-                                    setStep('aula');
-                                    setQuizIndex(0);
-                                    setAnswers([]);
-                                    setDiagnosis(null);
-                                    navigate({ to: "/_authenticated/jornada", search: { id: (principleNumber + 1).toString() } as any, params: { id: (principleNumber + 1).toString() } as any });
+                                    navigate({ to: "/_authenticated/jornada", search: { id: (principleNumber + 1).toString() } });
                                 }}
                             >
                                 PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4" />
@@ -331,13 +335,13 @@ function PrincipleJourneyPage() {
                                 <Trophy className="h-24 w-24 text-gold mx-auto mb-4" />
                                 <h3 className="text-4xl font-display text-gold tracking-widest uppercase text-shadow-glow">JORNADA CONCLUÍDA</h3>
                                 <p className="text-lg text-muted-foreground leading-relaxed">
-                                    Parabéns, {userName}! Você atravessou os 18 princípios fundamentais da sua evolução. O seu máximo potencial não é mais um destino, é a sua nova realidade. Viva cada princípio, integre cada sabedoria e nunca pare de buscar a luz da consciência.
+                                    Você trilhou o caminho da evolução. O mundo aguarda sua nova versão.
                                 </p>
                                 <Button 
-                                    className="bg-gold text-black hover:bg-gold/90 px-12 py-6 rounded-2xl text-lg font-bold shadow-glow"
+                                    className="bg-gold text-black hover:bg-gold/90 px-12 py-8 rounded-2xl text-xl font-bold tracking-widest uppercase"
                                     onClick={() => navigate({ to: "/treinamento-premium" })}
                                 >
-                                    VOLTAR AO PAINEL
+                                    VOLTAR AO DASHBOARD
                                 </Button>
                             </div>
                         )}
@@ -349,3 +353,8 @@ function PrincipleJourneyPage() {
     </main>
   );
 }
+
+export const Route = createFileRoute("/_authenticated/jornada")({
+  validateSearch: (search) => principleSearchSchema.parse(search),
+  component: PrincipleJourneyPage,
+});
