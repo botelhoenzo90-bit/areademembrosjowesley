@@ -308,12 +308,17 @@ function ArchetypeJourneyPage() {
         <div className="mt-12 pb-12">
           <button
             onClick={handleNext}
-            disabled={(stage === 'observe' && selectedPerception === null) || (stage === 'experiment' && reflectionText.length < 5) || (stage === 'implement' && protocolSteps.length < 5)}
+            disabled={
+              (stage === 'quiz' && quizResponses.length < archetype.quiz.length) ||
+              (stage === 'observe' && selectedPerception === null) || 
+              (stage === 'experiment' && reflectionText.length < 10) || 
+              (stage === 'implement' && protocolSteps.length < 5)
+            }
             className="w-full group relative flex items-center justify-center rounded-full bg-foreground px-8 py-5 text-sm font-bold text-background transition-all hover:scale-[1.02] active:scale-[0.98] shadow-glow disabled:opacity-50 disabled:grayscale"
           >
             <span className="relative z-10 tracking-[0.2em] uppercase">
               {stage === 'discover' && 'Entender Arquétipo'}
-              {stage === 'mentorship' && 'Observar no Dia a Dia'}
+              {stage === 'mentorship' && 'Aprofundar Percepção'}
               {stage === 'understand' && 'Iniciar Quiz'}
               {stage === 'quiz' && 'Avançar para Percepção'}
               {stage === 'observe' && 'Ir para Reflexão'}
