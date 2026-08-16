@@ -1074,13 +1074,6 @@ export type Database = {
             referencedRelation: "principles"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "user_principle_responses_question_id_fkey"
-            columns: ["question_id"]
-            isOneToOne: false
-            referencedRelation: "principle_quizzes"
-            referencedColumns: ["id"]
-          },
         ]
       }
       user_workshop_progress: {
