@@ -50,6 +50,13 @@ function ArchetypeJourneyPage() {
   useEffect(() => {
     if (currentArchData) {
       if (currentArchData.status === 'completed') setStage('conclude');
+      // If we're not at the start, try to determine stage from progress
+      else if (currentArchData.progress > 0 && stage === 'discover') {
+        const stages: Stage[] = ['discover', 'mentorship', 'understand', 'quiz', 'observe', 'experiment', 'implement', 'conclude'];
+        const calculatedIndex = Math.floor((currentArchData.progress / 100) * (stages.length - 1));
+        setStage(stages[calculatedIndex] || 'discover');
+      }
+      
       setReflectionText(currentArchData.reflection_text || "");
       setProtocolSteps(currentArchData.protocol_steps_completed || []);
     }
@@ -63,7 +70,20 @@ function ArchetypeJourneyPage() {
     
     if (currentIndex < stages.length - 1) {
       const nextStage = stages[currentIndex + 1];
+      
+      // Save specific data based on the current stage before moving forward
+      if (stage === 'experiment') {
+        await updateProgress({ 
+          data: { 
+            archetype: id as any, 
+            reflection_text: reflectionText 
+          } 
+        });
+        toast.success("Reflexão salva com sucesso!");
+      }
+
       setStage(nextStage);
+      
       // Ensure we save progress on every step
       const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
       await updateProgress({ 
@@ -73,6 +93,7 @@ function ArchetypeJourneyPage() {
           status: (progress >= 100 ? 'completed' : 'in_progress') as any 
         }
       });
+      
       queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
       queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
     } else {
