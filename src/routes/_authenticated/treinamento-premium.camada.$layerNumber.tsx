@@ -17,7 +17,8 @@ export const Route = createFileRoute("/_authenticated/treinamento-premium/camada
 
 function youtubeId(url: string | null): string | null {
   if (!url) return null;
-  const m = url.match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([A-Za-z0-9_-]{11})/);
+  // Improved regex to handle various YouTube URL formats including query parameters like ?is=...
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|youtu\.be\/|v=)([A-Za-z0-9_-]{11})/);
   return m ? m[1] : null;
 }
 
