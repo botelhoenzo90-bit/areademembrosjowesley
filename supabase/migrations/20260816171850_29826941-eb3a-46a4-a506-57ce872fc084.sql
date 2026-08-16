@@ -1,0 +1,1 @@
+UPDATE public.principles SET video_url = 'https://youtu.be/Cs7ZzmaCmh8' WHERE principle_number = 1;
