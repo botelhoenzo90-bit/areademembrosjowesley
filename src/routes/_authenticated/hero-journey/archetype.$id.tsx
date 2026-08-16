@@ -64,9 +64,14 @@ function ArchetypeJourneyPage() {
     if (currentIndex < stages.length - 1) {
       const nextStage = stages[currentIndex + 1];
       setStage(nextStage);
+      // Ensure we save progress on every step
       const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
       await updateProgress({ 
-        data: { archetype: id as any, progress, status: (progress === 100 ? 'completed' : 'in_progress') as any }
+        data: { 
+          archetype: id as any, 
+          progress: Math.min(progress, 100), 
+          status: (progress >= 100 ? 'completed' : 'in_progress') as any 
+        }
       });
       queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
       queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
