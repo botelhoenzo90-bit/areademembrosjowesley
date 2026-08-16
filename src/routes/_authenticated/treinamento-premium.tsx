@@ -1,101 +1,49 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { ArrowLeft, Lock, CheckCircle2, Play, ChevronRight, Trophy, RefreshCw, Sparkles, MapPin } from "lucide-react";
+import { ArrowLeft, Lock, CheckCircle2, ChevronRight, Trophy, Sparkles, MapPin, Zap, Brain, ClipboardList, Play } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
-import { getPassportData, updateLayerProgress, unlockNextLayer, restartPassportJornada } from "@/lib/passport.functions";
+import { getPrinciplesData } from "@/lib/principles.functions";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/_authenticated/treinamento-premium")({
-  component: PassaportePage,
+  component: PrinciplesDashboard,
 });
 
-function PassaportePage() {
+function PrinciplesDashboard() {
   const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const getPassport = useServerFn(getPassportData);
+  const getPrinciples = useServerFn(getPrinciplesData);
 
   useEffect(() => {
-    getPassport()
-      .then((res) => {
-        if (!res.layers || res.layers.length === 0) {
-          setError("As camadas do passaporte não foram encontradas no banco de dados.");
-        } else {
-          setData(res);
-          setError(null);
-        }
-      })
-      .catch((err) => {
-        console.error("Error loading passport:", err);
-        setError(`Erro ao carregar os dados do passaporte: ${err.message || 'Verifique sua conexão'}`);
-      })
+    getPrinciples()
+      .then(setData)
       .finally(() => setLoading(false));
-  }, [getPassport]);
+  }, []);
 
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black">
         <div className="text-center space-y-4">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-gold border-t-transparent mx-auto" />
-          <p className="text-gold font-display tracking-widest animate-pulse">Carregando Passaporte...</p>
-          <div className="text-white/20 text-[10px] mt-4 max-w-xs mx-auto">
-            Garantindo que sua jornada de 9 camadas esteja pronta para começar.
-          </div>
+          <p className="text-gold font-display tracking-widest animate-pulse uppercase">Carregando Princípios...</p>
         </div>
       </div>
     );
   }
 
-  if (error || !data) {
-    console.error("Render error state:", error);
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-black p-6 text-center">
-        <div className="max-w-md space-y-6">
-          <h2 className="text-2xl font-display text-white">{error || "Algo deu errado"}</h2>
-          <p className="text-muted-foreground">Não foi possível carregar sua jornada no momento.</p>
-          <Button variant="outline" className="border-gold/50 text-gold" onClick={() => window.location.reload()}>
-            Tentar Novamente
-          </Button>
-          <Button variant="ghost" className="block w-full text-muted-foreground" onClick={() => navigate({ to: "/home" })}>
-            Voltar ao Início
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  const { layers, progress, userBadges, badges } = data;
-  
-  // Ensure we have layer 0 as the starting point if no progress exists
-  const introLayer = layers.find((l: any) => l.layer_number === 0);
-  const hasProgress = progress && progress.length > 0;
-  
-  // Create a display list where layer 0 is always unlocked if no progress
-  const processedProgress = hasProgress ? progress : (introLayer ? [{
-    layer_id: introLayer.id,
-    status: 'available',
-    points_earned: 0
-  }] : []);
-
-  const completedLayers = progress.filter((p: any) => p.status === 'completed' && p.layer_id !== introLayer?.id).length;
-  const totalLayersCount = layers.filter((l: any) => l.layer_number > 0).length;
-  const progressPercent = Math.round((completedLayers / totalLayersCount) * 100);
-  const totalPoints = progress.reduce((acc: number, p: any) => acc + (p.points_earned || 0), 0);
-
-  const getLevelName = (points: number) => {
-    if (points >= 350) return "TRANSFORMAÇÃO";
-    if (points >= 150) return "DESCOBERTA";
-    return "DESPERTAR";
-  };
+  const { principles, progress, userName } = data;
+  const completedCount = progress.filter((p: any) => p.status === 'completed').length;
+  const totalCount = principles.length;
+  const progressPercent = Math.round((completedCount / totalCount) * 100);
 
   return (
-    <main className="min-h-screen bg-black pb-20 text-foreground">
-      <header className="relative min-h-[400px] overflow-hidden flex flex-col justify-end">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2072')] bg-cover bg-center opacity-40" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+    <main className="min-h-screen bg-black pb-20 text-foreground overflow-x-hidden">
+      <header className="relative min-h-[500px] overflow-hidden flex flex-col justify-end">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070')] bg-cover bg-center opacity-30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
         
         <div className="relative z-10 p-6 md:p-12 max-w-6xl mx-auto w-full">
           <Button variant="ghost" className="mb-8 hover:bg-white/10 text-white" onClick={() => navigate({ to: "/home" })}>
@@ -103,31 +51,50 @@ function PassaportePage() {
           </Button>
           
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-            <div className="space-y-4">
-                <span className="inline-block px-3 py-1 rounded-full border border-gold/30 bg-gold/10 text-gold text-[10px] tracking-[0.3em] font-bold">PASSAPORTE DAS 9 CAMADAS</span>
-                <h1 className="font-display text-5xl md:text-7xl leading-tight">Sua Jornada pelas<br /><span className="text-gold">9 Camadas</span></h1>
-                <p className="text-xl text-muted-foreground max-w-xl">Uma camada por vez. Uma descoberta por vez. A travessia da sua própria consciência.</p>
+            <div className="space-y-6">
+                <motion.span 
+                    initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
+                    className="inline-block px-4 py-1 rounded-full border border-gold/30 bg-gold/10 text-gold text-[10px] tracking-[0.4em] font-bold uppercase"
+                >
+                    Jornada de Desenvolvimento Pessoal
+                </motion.span>
+                <motion.h1 
+                    initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
+                    className="font-display text-5xl md:text-8xl leading-tight tracking-tighter"
+                >
+                    18 Princípios para <br />
+                    <span className="text-gold">Você Evoluir</span>
+                </motion.h1>
+                <motion.p 
+                    initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}
+                    className="text-xl text-muted-foreground max-w-xl italic"
+                >
+                    "{userName}, você nasceu para atingir seu máximo potencial."
+                </motion.p>
             </div>
 
-            <div className="glass-strong p-6 rounded-3xl border border-white/10 min-w-[300px] space-y-4">
+            <motion.div 
+                initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 }}
+                className="glass-strong p-8 rounded-[2.5rem] border border-white/10 min-w-[320px] space-y-6"
+            >
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                        <Trophy className="h-4 w-4 text-gold" />
-                        <span className="text-sm font-medium">{totalPoints} XP</span>
+                        <Zap className="h-5 w-5 text-gold" />
+                        <span className="text-sm font-bold tracking-widest">{completedCount * 50} XP</span>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Sparkles className="h-4 w-4 text-gold" />
-                        <span className="text-sm font-medium">{getLevelName(totalPoints)}</span>
+                        <Sparkles className="h-5 w-5 text-gold" />
+                        <span className="text-sm font-bold tracking-widest uppercase">Nível {Math.floor(completedCount / 3) + 1}</span>
                     </div>
                 </div>
-                <div className="space-y-2">
-                    <div className="flex justify-between text-[10px] tracking-widest text-muted-foreground">
-                        <span>PROGRESSO DA JORNADA</span>
-                        <span>{completedLayers}/{totalLayersCount} CAMADAS</span>
+                <div className="space-y-3">
+                    <div className="flex justify-between text-[10px] tracking-[0.2em] text-muted-foreground font-bold">
+                        <span>PROGRESSO DA EVOLUÇÃO</span>
+                        <span>{completedCount}/{totalCount} ETAPAS</span>
                     </div>
-                    <Progress value={progressPercent} className="h-1.5 bg-white/10" />
+                    <Progress value={progressPercent} className="h-2 bg-white/10" />
                 </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </header>
