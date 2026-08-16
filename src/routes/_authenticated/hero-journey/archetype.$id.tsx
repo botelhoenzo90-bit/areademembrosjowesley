@@ -264,10 +264,18 @@ function ArchetypeJourneyPage() {
                     placeholder="Sua reflexão..."
                     className="w-full h-48 rounded-3xl border border-border glass p-6 text-sm outline-none focus:border-gold/50 resize-none bg-surface"
                   />
-                  <button onClick={async () => {
-                    await updateProgress({ data: { archetype: id as any, reflection_text: reflectionText } });
-                    toast.success("Reflexão salva!");
-                  }} className="w-full py-4 rounded-full border border-gold/30 text-[10px] uppercase tracking-widest text-gold">
+                  <button 
+                    disabled={reflectionText.length < 10}
+                    onClick={async () => {
+                      try {
+                        await updateProgress({ data: { archetype: id as any, reflection_text: reflectionText } });
+                        toast.success("Reflexão salva com sucesso!");
+                      } catch (error) {
+                        toast.error("Erro ao salvar reflexão.");
+                      }
+                    }} 
+                    className="w-full py-4 rounded-full border border-gold/30 text-[10px] uppercase tracking-widest text-gold disabled:opacity-50"
+                  >
                     Salvar Reflexão
                   </button>
                 </div>
