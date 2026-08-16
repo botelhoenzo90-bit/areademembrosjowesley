@@ -593,6 +593,103 @@ export type Database = {
           },
         ]
       }
+      principle_diagnoses: {
+        Row: {
+          created_at: string | null
+          diagnosis_text: string
+          id: string
+          principle_id: string
+          protocol_steps: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          diagnosis_text: string
+          id?: string
+          principle_id: string
+          protocol_steps: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          diagnosis_text?: string
+          id?: string
+          principle_id?: string
+          protocol_steps?: Json
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "principle_diagnoses_principle_id_fkey"
+            columns: ["principle_id"]
+            isOneToOne: false
+            referencedRelation: "principles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      principle_quizzes: {
+        Row: {
+          id: string
+          options: Json
+          order_index: number
+          principle_id: string
+          question_text: string
+        }
+        Insert: {
+          id?: string
+          options: Json
+          order_index: number
+          principle_id: string
+          question_text: string
+        }
+        Update: {
+          id?: string
+          options?: Json
+          order_index?: number
+          principle_id?: string
+          question_text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "principle_quizzes_principle_id_fkey"
+            columns: ["principle_id"]
+            isOneToOne: false
+            referencedRelation: "principles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      principles: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          name: string
+          principle_number: number
+          updated_at: string | null
+          video_url: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          principle_number: number
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          principle_number?: number
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -890,6 +987,95 @@ export type Database = {
             columns: ["badge_id"]
             isOneToOne: false
             referencedRelation: "passport_badges"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_principle_progress: {
+        Row: {
+          created_at: string | null
+          id: string
+          lesson_completed: boolean | null
+          points_earned: number | null
+          principle_id: string
+          protocol_completed: boolean | null
+          quiz_completed: boolean | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          lesson_completed?: boolean | null
+          points_earned?: number | null
+          principle_id: string
+          protocol_completed?: boolean | null
+          quiz_completed?: boolean | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          lesson_completed?: boolean | null
+          points_earned?: number | null
+          principle_id?: string
+          protocol_completed?: boolean | null
+          quiz_completed?: boolean | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_principle_progress_principle_id_fkey"
+            columns: ["principle_id"]
+            isOneToOne: false
+            referencedRelation: "principles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_principle_responses: {
+        Row: {
+          answer_value: number
+          created_at: string | null
+          id: string
+          principle_id: string
+          question_id: string
+          user_id: string
+        }
+        Insert: {
+          answer_value: number
+          created_at?: string | null
+          id?: string
+          principle_id: string
+          question_id: string
+          user_id: string
+        }
+        Update: {
+          answer_value?: number
+          created_at?: string | null
+          id?: string
+          principle_id?: string
+          question_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_principle_responses_principle_id_fkey"
+            columns: ["principle_id"]
+            isOneToOne: false
+            referencedRelation: "principles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_principle_responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "principle_quizzes"
             referencedColumns: ["id"]
           },
         ]
