@@ -325,7 +325,7 @@ function PrincipleJourneyPage() {
                                     setQuizIndex(0);
                                     setAnswers([]);
                                     setDiagnosis(null);
-                                    navigate({ to: "/treinamento-premium/principio/$index" as any, params: { index: (principleNumber + 1).toString() } });
+                                    navigate({ to: "/treinamento-premium/principio/$index" as any, params: { index: (principleNumber + 1).toString() } as any });
                                 }}
                             >
                                 PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4" />
