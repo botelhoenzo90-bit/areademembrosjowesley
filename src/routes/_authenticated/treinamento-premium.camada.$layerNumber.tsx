@@ -206,7 +206,7 @@ function LayerPage() {
                     <div className="w-full h-full flex flex-col items-center justify-center text-muted-foreground p-12 text-center">
                         <Sparkles className="h-12 w-12 mb-4 opacity-20" />
                         <p className="text-lg">Conteúdo em preparação.</p>
-                        <p className="text-sm">URL do vídeo: {currentLayer.video_url || 'Nenhuma'}</p>
+                        <p className="text-sm">URL bruta: {JSON.stringify(currentLayer.video_url)} | ID: {JSON.stringify(youtubeId(currentLayer.video_url))}</p>
                     </div>
                 )}
             </div>
