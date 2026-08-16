@@ -41,9 +41,19 @@ function ArchetypeJourneyPage() {
   const currentArchData = (userArchetypes as any[]).find((a: any) => a.archetype === id);
   const initialStage: Stage = (currentArchData?.status === 'completed') ? 'conclude' : 'discover';
 
-  const [stage, setStage] = useState<Stage>(initialStage);
-  const [reflectionText, setReflectionText] = useState(currentArchData?.reflection_text || "");
-  const [protocolSteps, setProtocolSteps] = useState<number[]>(currentArchData?.protocol_steps_completed || []);
+  const [stage, setStage] = useState<Stage>('discover');
+  const [reflectionText, setReflectionText] = useState("");
+  const [protocolSteps, setProtocolSteps] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (currentArchData) {
+      if (currentArchData.status === 'completed') {
+        setStage('conclude');
+      }
+      setReflectionText(currentArchData.reflection_text || "");
+      setProtocolSteps(currentArchData.protocol_steps_completed || []);
+    }
+  }, [currentArchData]);
   const [selectedPerception, setSelectedPerception] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   
@@ -61,6 +71,7 @@ function ArchetypeJourneyPage() {
     
     if (currentIndex < stages.length - 1) {
       const nextStage = stages[currentIndex + 1];
+      console.log(`Advancing to next stage: ${nextStage}`);
       setStage(nextStage);
       
       const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
@@ -74,6 +85,7 @@ function ArchetypeJourneyPage() {
       queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
       queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
     } else {
+      console.log("Jornada do arquétipo concluída, voltando...");
       navigate({ to: "/reprogramacao-mental" });
     }
   };
@@ -337,7 +349,21 @@ function ArchetypeJourneyPage() {
                     {['Perceber', 'Nomear', 'Questionar', 'Escolher', 'Praticar'].map((step, idx) => (
                       <button
                         key={idx}
-                        onClick={() => toggleProtocolStep(idx)}
+                        onClick={async () => {
+                          const newSteps = protocolSteps.includes(idx) 
+                            ? protocolSteps.filter(i => i !== idx) 
+                            : [...protocolSteps, idx];
+                          setProtocolSteps(newSteps);
+                          
+                          const { updateProtocol } = await import("@/lib/hero-journey.functions");
+                          await updateProtocol({ 
+                            data: { 
+                              archetype: id as any, 
+                              steps_completed: newSteps,
+                              is_completed: newSteps.length === 5
+                            } 
+                          });
+                        }}
                         className={`w-full flex items-center gap-4 rounded-2xl border p-4 transition-all ${
                           protocolSteps.includes(idx)
                             ? 'border-emerald-500/50 bg-emerald-500/5'
