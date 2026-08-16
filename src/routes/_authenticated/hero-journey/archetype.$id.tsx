@@ -2,9 +2,9 @@ import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-r
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
-  ArrowLeft, ChevronRight, Info, Eye, Zap, 
+  ArrowLeft, ChevronRight, Eye, Zap, 
   Target, Shield, CheckCircle2, Award, 
-  Sparkles, Heart, Compass, BookOpen, HelpCircle
+  Sparkles, BookOpen, HelpCircle
 } from "lucide-react";
 import { ARCHETYPES_CONTENT } from "@/lib/hero-content";
 import { updateArchetypeProgress, getArchetypes, saveQuizResponses, updateProtocol } from "@/lib/hero-journey.functions";
@@ -284,9 +284,9 @@ function ArchetypeJourneyPage() {
                 <div className="space-y-4">
                   <h2 className="font-display text-4xl uppercase">{archetype.name} Concluído</h2>
                   <div className="flex justify-center gap-6 py-4">
-                    <div className="text-center"><p className="text-gold text-xs font-bold uppercase tracking-widest">+Consciência</p></div>
-                    <div className="text-center"><p className="text-gold text-xs font-bold uppercase tracking-widest">+EXP</p></div>
-                    <div className="text-center"><p className="text-gold text-xs font-bold uppercase tracking-widest">+Progresso</p></div>
+                    <div className="text-center"><p className="text-gold text-[10px] font-bold uppercase tracking-widest">+Consciência</p></div>
+                    <div className="text-center"><p className="text-gold text-[10px] font-bold uppercase tracking-widest">+EXP</p></div>
+                    <div className="text-center"><p className="text-gold text-[10px] font-bold uppercase tracking-widest">+Progresso</p></div>
                   </div>
                 </div>
                 <div className="rounded-3xl border border-border glass p-8 text-sm text-left whitespace-pre-line text-muted-foreground leading-relaxed max-h-[400px] overflow-y-auto">
@@ -302,7 +302,7 @@ function ArchetypeJourneyPage() {
         <div className="mt-12 pb-12">
           <button
             onClick={handleNext}
-            disabled={(stage === 'observe' && selectedPerception === null) || (stage === 'experiment' && reflectionText.length < 10) || (stage === 'implement' && protocolSteps.length < 5)}
+            disabled={(stage === 'observe' && selectedPerception === null) || (stage === 'experiment' && reflectionText.length < 5) || (stage === 'implement' && protocolSteps.length < 5)}
             className="w-full group relative flex items-center justify-center rounded-full bg-foreground px-8 py-5 text-sm font-bold text-background transition-all hover:scale-[1.02] active:scale-[0.98] shadow-glow disabled:opacity-50 disabled:grayscale"
           >
             <span className="relative z-10 tracking-[0.2em] uppercase">
@@ -325,7 +325,7 @@ function ArchetypeJourneyPage() {
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-background/95 backdrop-blur-md">
             <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} className="w-full max-w-lg rounded-3xl border border-gold/20 bg-surface p-8 shadow-2xl relative">
               <button onClick={() => setSelectedCategory(null)} className="absolute top-4 right-4 rounded-full p-2 hover:bg-surface-elevated text-muted-foreground">
-                <ChevronRight className="h-5 w-5 rotate-90" />
+                <ArrowLeft className="h-5 w-5 rotate-90" />
               </button>
               <div className="space-y-6">
                 <div className="space-y-2">
