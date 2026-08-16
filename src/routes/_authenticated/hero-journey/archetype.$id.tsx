@@ -43,7 +43,7 @@ function ArchetypeJourneyPage() {
   const [reflectionText, setReflectionText] = useState("");
   const [protocolSteps, setProtocolSteps] = useState<number[]>([]);
   const [selectedPerception, setSelectedPerception] = useState<number | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<'essence' | 'objective' | 'strength' | 'need' | 'shadow' | 'illusion' | null>(null);
   const [currentQuizStep, setCurrentQuizStep] = useState(0);
   const [quizResponses, setQuizResponses] = useState<{question_index: number, answer_index: number, score: number}[]>([]);
 
