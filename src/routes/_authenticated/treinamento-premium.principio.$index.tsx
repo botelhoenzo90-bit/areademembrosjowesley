@@ -130,8 +130,9 @@ function PrincipleJourneyPage() {
 
   const getYoutubeEmbedUrl = (url: string | null) => {
     if (!url) return null;
-    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|youtu\.be\/|v=|is=)([A-Za-z0-9_-]{11})/);
-    if (m) return `https://www.youtube.com/embed/${m[1]}`;
+    // Enhanced regex to handle ?is= and other complex params
+    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|v=|is=)([A-Za-z0-9_-]{11})/);
+    if (m) return `https://www.youtube.com/embed/${m[1]}?rel=0&modestbranding=1&autoplay=0`;
     return null;
   };
 

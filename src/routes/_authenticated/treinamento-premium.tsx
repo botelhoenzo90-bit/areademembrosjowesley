@@ -101,14 +101,19 @@ function PrinciplesDashboard() {
 
       {/* VÍDEO DE ABERTURA */}
       <section className="max-w-6xl mx-auto px-6 mt-12">
-        <div className="relative overflow-hidden rounded-[2.5rem] border border-gold/20 shadow-glow bg-surface">
-          <div className="aspect-video w-full">
+        <div className="relative overflow-hidden rounded-[2.5rem] border border-gold/20 shadow-glow bg-surface group">
+          <div className="absolute inset-0 z-0 bg-gold/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+          <div className="aspect-video w-full relative z-10">
             <iframe 
-              src="https://www.youtube.com/embed/Cs7ZzmaCmh8"
+              src="https://www.youtube.com/embed/Cs7ZzmaCmh8?rel=0&modestbranding=1"
               className="h-full w-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
+          </div>
+          <div className="p-6 border-t border-gold/10 bg-black/40 backdrop-blur-sm">
+            <h2 className="text-xl font-display text-white tracking-widest uppercase">Comece por aqui: A Visão Geral</h2>
+            <p className="text-xs text-muted-foreground mt-1 uppercase tracking-widest">Assista a introdução antes de iniciar sua jornada.</p>
           </div>
         </div>
       </section>
@@ -131,13 +136,23 @@ function PrinciplesDashboard() {
                 <button
                   disabled={!isAvailable}
                   onClick={() => navigate({ to: `/treinamento-premium/principio/$index`, params: { index: principle.principle_number.toString() } })}
-                  className={`w-full group relative text-left transition-all duration-500 rounded-[2.5rem] overflow-hidden ${
+                  className={`w-full group relative text-left transition-all duration-500 rounded-[2.5rem] overflow-hidden aspect-[4/5] md:aspect-auto md:min-h-[320px] ${
                     !isAvailable ? 'grayscale opacity-40 cursor-not-allowed' : 'hover:-translate-y-2'
                   }`}
                 >
-                  <div className={`absolute inset-0 z-0 bg-surface border border-white/10 group-hover:border-gold/30 transition-colors`} />
+                  {/* Banner Image Background */}
+                  <div className="absolute inset-0 z-0">
+                    <img 
+                        src={principle.banner_url || "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070"} 
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                        alt={principle.name}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-black/20" />
+                  </div>
+
+                  <div className={`absolute inset-0 z-0 border border-white/10 group-hover:border-gold/30 transition-colors rounded-[2.5rem]`} />
                   
-                  <div className="relative z-10 p-8 flex flex-col h-full min-h-[280px]">
+                  <div className="relative z-10 p-8 flex flex-col h-full">
                     <div className="flex justify-between items-start mb-6">
                       <div className={`h-12 w-12 rounded-2xl flex items-center justify-center font-display text-xl border ${
                         isCompleted ? 'bg-gold/20 border-gold/50 text-gold' : 
