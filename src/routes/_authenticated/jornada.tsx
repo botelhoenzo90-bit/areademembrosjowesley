@@ -20,7 +20,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
 function PrincipleJourneyPage() {
-  const { id } = useParams({ from: "/_authenticated/jornada/$id" });
+  const { id } = Route.useSearch()({ from: "/_authenticated/jornada" });
   const principleNumber = parseInt(id);
   const navigate = useNavigate();
   
@@ -349,6 +349,6 @@ function PrincipleJourneyPage() {
   );
 }
 
-export const Route = createFileRoute("/_authenticated/jornada/$id")({
+export const Route = createFileRoute("/_authenticated/jornada")({
   component: PrincipleJourneyPage,
 });
