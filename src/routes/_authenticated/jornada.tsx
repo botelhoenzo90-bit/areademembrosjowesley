@@ -61,18 +61,33 @@ function PrincipleJourneyPage() {
       .then(res => {
         setData(res);
         const currentPrinciple = res.principles.find((p: any) => p.principle_number === principleNumber);
-        const prog = res.progress.find((p: any) => p.principle_id === currentPrinciple?.id);
         
-        if (prog?.status === 'locked' && principleNumber !== 1) {
+        if (!currentPrinciple) {
+          toast.error("Princípio não encontrado.");
           navigate({ to: "/treinamento-premium" });
           return;
         }
 
-        if (prog?.protocol_completed) setStep('concluido');
-        else if (prog?.quiz_completed && currentPrinciple) {
-            genDiagnosis({ data: { principleId: currentPrinciple.id } }).then(setDiagnosis);
-            setStep('diagnostico');
+        const prog = res.progress.find((p: any) => p.principle_id === currentPrinciple.id);
+        
+        if ((!prog || prog.status === 'locked') && principleNumber !== 1) {
+          navigate({ to: "/treinamento-premium" });
+          return;
         }
+
+        if (prog?.protocol_completed) {
+          setStep('concluido');
+        } else if (prog?.quiz_completed) {
+          setProcessing(true);
+          genDiagnosis({ data: { principleId: currentPrinciple.id } })
+            .then(setDiagnosis)
+            .then(() => setStep('diagnostico'))
+            .finally(() => setProcessing(false));
+        }
+      })
+      .catch((err) => {
+        console.error("Erro ao carregar jornada:", err);
+        toast.error("Erro ao carregar dados da jornada.");
       })
       .finally(() => setLoading(false));
   }, [principleNumber]);
@@ -116,14 +131,18 @@ function PrincipleJourneyPage() {
   };
 
   const handleCompleteProtocol = async () => {
+    if (processing) return;
     setProcessing(true);
     try {
       if (!principle.id) throw new Error("Principle ID not found");
+      console.log("Concluindo protocolo para princípio:", principle.id);
       await completeProtocol({ data: { principleId: principle.id, principleNumber } });
       triggerCelebration();
       setStep('concluido');
-    } catch (e) {
-      toast.error("Erro ao concluir protocolo.");
+      toast.success("Princípio concluído com sucesso!");
+    } catch (e: any) {
+      console.error("Erro ao concluir protocolo:", e);
+      toast.error(e.message || "Erro ao concluir protocolo.");
     } finally {
       setProcessing(false);
     }
@@ -322,7 +341,7 @@ function PrincipleJourneyPage() {
                                 className="h-auto bg-white text-black hover:bg-white/90 px-8 py-6 rounded-2xl text-lg sm:text-xl font-bold tracking-widest uppercase shadow-glow whitespace-normal text-center"
                                 onClick={() => {
                                     const nextId = (principleNumber + 1).toString();
-                                    navigate({ to: "/jornada", search: { id: nextId } });
+                                    window.location.href = `/jornada?id=${nextId}`;
                                 }}
                             >
                                 PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4 shrink-0" />
