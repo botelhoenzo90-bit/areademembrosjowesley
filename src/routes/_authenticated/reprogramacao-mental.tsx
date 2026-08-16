@@ -267,7 +267,7 @@ function Page() {
                   archetype={arch}
                   status={getStatus(arch.id)}
                   progress={getProgress(arch.id)}
-                  onClick={() => navigate({ to: `/hero-journey/archetype/${arch.id}` })}
+                  onClick={() => navigate({ to: "/hero-journey/archetype/$id", params: { id: arch.id } })}
                 />
               ))}
             </div>
@@ -287,7 +287,7 @@ function Page() {
                   archetype={arch}
                   status={getStatus(arch.id)}
                   progress={getProgress(arch.id)}
-                  onClick={() => navigate({ to: `/hero-journey/archetype/${arch.id}` })}
+                  onClick={() => navigate({ to: "/hero-journey/archetype/$id", params: { id: arch.id } })}
                 />
               ))}
             </div>
@@ -307,7 +307,7 @@ function Page() {
                   archetype={arch}
                   status={getStatus(arch.id)}
                   progress={getProgress(arch.id)}
-                  onClick={() => navigate({ to: `/hero-journey/archetype/${arch.id}` })}
+                  onClick={() => navigate({ to: "/hero-journey/archetype/$id", params: { id: arch.id } })}
                 />
               ))}
             </div>
