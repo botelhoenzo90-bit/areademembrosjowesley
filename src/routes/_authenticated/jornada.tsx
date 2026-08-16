@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useParams, z } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { 
   ArrowLeft, CheckCircle2, Play, Trophy, Sparkles, 
@@ -20,7 +20,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import confetti from "canvas-confetti";
 
 function PrincipleJourneyPage() {
-  const { id } = Route.useSearch()({ from: "/_authenticated/jornada" });
+  const { id } = Route.useSearch();
   const principleNumber = parseInt(id);
   const navigate = useNavigate();
   
@@ -320,7 +320,8 @@ function PrincipleJourneyPage() {
                             <Button 
                                 className="bg-white text-black hover:bg-white/90 px-12 py-8 rounded-2xl text-xl font-bold tracking-widest uppercase shadow-glow"
                                 onClick={() => {
-                                    navigate({ to: "/_authenticated/jornada/$id" as any, params: { id: (principleNumber + 1).toString() } as any });
+                                    const nextId = (principleNumber + 1).toString();
+                                    navigate({ to: "/_authenticated/jornada", search: { id: nextId } });
                                 }}
                             >
                                 PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4" />
@@ -350,5 +351,6 @@ function PrincipleJourneyPage() {
 }
 
 export const Route = createFileRoute("/_authenticated/jornada")({
+  validateSearch: (search) => z.object({ id: z.string().catch("1") }).parse(search),
   component: PrincipleJourneyPage,
 });
