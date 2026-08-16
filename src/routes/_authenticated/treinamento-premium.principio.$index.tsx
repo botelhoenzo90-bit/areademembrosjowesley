@@ -157,10 +157,31 @@ function PrincipleJourneyPage() {
                     className="space-y-8"
                 >
                     <div className="aspect-video w-full rounded-[2.5rem] overflow-hidden border border-white/10 shadow-glow bg-surface relative group">
-                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all cursor-pointer">
-                            <Play className="h-20 w-20 text-gold fill-gold/20" />
-                        </div>
-                        <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1999" className="w-full h-full object-cover opacity-50" />
+                        {principle.video_url ? (
+                            <iframe 
+                                className="w-full h-full"
+                                src={`https://www.youtube.com/embed/${(() => {
+                                    const url = principle.video_url;
+                                    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/)|youtu\.be\/|v=)([A-Za-z0-9_-]{11})/);
+                                    if (m) return m[1];
+                                    try {
+                                        const urlObj = new URL(url);
+                                        if (urlObj.hostname === 'youtu.be') return urlObj.pathname.slice(1);
+                                        return urlObj.searchParams.get('v');
+                                    } catch (e) { return null; }
+                                })()}`}
+                                title={principle.name}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                            />
+                        ) : (
+                            <>
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all cursor-pointer">
+                                    <Play className="h-20 w-20 text-gold fill-gold/20" />
+                                </div>
+                                <img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=1999" className="w-full h-full object-cover opacity-50" />
+                            </>
+                        )}
                     </div>
                     
                     <div className="glass-strong p-8 rounded-3xl border border-white/10 space-y-4">
