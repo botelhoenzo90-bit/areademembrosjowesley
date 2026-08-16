@@ -136,6 +136,27 @@ export type Database = {
         }
         Relationships: []
       }
+      hero_journey_achievements: {
+        Row: {
+          achievement_key: string
+          awarded_at: string | null
+          id: string
+          user_id: string
+        }
+        Insert: {
+          achievement_key: string
+          awarded_at?: string | null
+          id?: string
+          user_id: string
+        }
+        Update: {
+          achievement_key?: string
+          awarded_at?: string | null
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       hero_journey_archetypes: {
         Row: {
           archetype: Database["public"]["Enums"]["hero_archetype_name"]
@@ -228,6 +249,57 @@ export type Database = {
           recommendation?: string | null
           results?: Json
           secondary?: Database["public"]["Enums"]["hero_archetype_name"] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hero_journey_missions: {
+        Row: {
+          archetype: string
+          completed_at: string | null
+          id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          archetype: string
+          completed_at?: string | null
+          id?: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          archetype?: string
+          completed_at?: string | null
+          id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      hero_journey_protocols: {
+        Row: {
+          archetype: string
+          completed_at: string | null
+          id: string
+          is_completed: boolean
+          steps_completed: Json
+          user_id: string
+        }
+        Insert: {
+          archetype: string
+          completed_at?: string | null
+          id?: string
+          is_completed?: boolean
+          steps_completed?: Json
+          user_id: string
+        }
+        Update: {
+          archetype?: string
+          completed_at?: string | null
+          id?: string
+          is_completed?: boolean
+          steps_completed?: Json
           user_id?: string
         }
         Relationships: []
