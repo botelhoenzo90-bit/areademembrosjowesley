@@ -341,7 +341,7 @@ function PrincipleJourneyPage() {
                                 className="h-auto bg-white text-black hover:bg-white/90 px-8 py-6 rounded-2xl text-lg sm:text-xl font-bold tracking-widest uppercase shadow-glow whitespace-normal text-center"
                                 onClick={() => {
                                     const nextId = (principleNumber + 1).toString();
-                                    navigate({ to: "/jornada", search: { id: nextId } });
+                                    window.location.href = `/jornada?id=${nextId}`;
                                 }}
                             >
                                 PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4 shrink-0" />
