@@ -320,19 +320,25 @@ function PrincipleJourneyPage() {
                         {principleNumber < 18 ? (
                             <Button 
                                 className="bg-white text-black hover:bg-white/90 px-12 py-8 rounded-2xl text-xl font-bold tracking-widest uppercase shadow-glow"
-                                onClick={() => navigate({ to: "/treinamento-premium/principio/$index", params: { index: (principleNumber + 1).toString() } })}
+                                onClick={() => {
+                                    setStep('aula');
+                                    setQuizIndex(0);
+                                    setAnswers([]);
+                                    setDiagnosis(null);
+                                    navigate({ to: "/treinamento-premium/principio/$index", params: { index: (principleNumber + 1).toString() } });
+                                }}
                             >
                                 PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4" />
                             </Button>
                         ) : (
                             <div className="space-y-6">
                                 <Trophy className="h-24 w-24 text-gold mx-auto mb-4" />
-                                <h3 className="text-4xl font-display text-gold tracking-widest uppercase">JORNADA CONCLUÍDA</h3>
+                                <h3 className="text-4xl font-display text-gold tracking-widest uppercase text-shadow-glow">JORNADA CONCLUÍDA</h3>
                                 <p className="text-lg text-muted-foreground leading-relaxed">
                                     Parabéns, {userName}! Você atravessou os 18 princípios fundamentais da sua evolução. O seu máximo potencial não é mais um destino, é a sua nova realidade. Viva cada princípio, integre cada sabedoria e nunca pare de buscar a luz da consciência.
                                 </p>
                                 <Button 
-                                    className="bg-gold text-black hover:bg-gold/90 px-12 py-6 rounded-2xl text-lg font-bold"
+                                    className="bg-gold text-black hover:bg-gold/90 px-12 py-6 rounded-2xl text-lg font-bold shadow-glow"
                                     onClick={() => navigate({ to: "/treinamento-premium" })}
                                 >
                                     VOLTAR AO PAINEL
