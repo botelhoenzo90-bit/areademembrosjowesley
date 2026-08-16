@@ -108,8 +108,8 @@ function PrincipleJourneyPage() {
 
   if (loading || !data) return <div className="flex h-screen items-center justify-center bg-black"><Loader2 className="animate-spin text-gold" /></div>;
 
-  const principle = data.principles.find((p: any) => p.principle_number === principleNumber) || { name: `Princípio ${principleNumber}`, id: null };
-  const userName = data.userName || 'Guerreiro';
+  const principle = data?.principles?.find((p: any) => p.principle_number === principleNumber) || { name: `Princípio ${principleNumber}`, id: null };
+  const userName = data?.userName || 'Guerreiro';
 
   const handleStartQuiz = () => setStep('quiz');
 
@@ -151,6 +151,7 @@ function PrincipleJourneyPage() {
       if (!principle.id) throw new Error("Principle ID not found");
       console.log("Concluindo protocolo para princípio:", principle.id);
       await completeProtocol({ data: { principleId: principle.id, principleNumber } });
+      console.log("Protocol completion reported success");
       triggerCelebration();
       setStep('concluido');
       toast.success("Princípio concluído com sucesso!");
