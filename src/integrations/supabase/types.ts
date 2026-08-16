@@ -334,6 +334,30 @@ export type Database = {
         }
         Relationships: []
       }
+      hero_journey_reflections: {
+        Row: {
+          archetype: string
+          created_at: string | null
+          id: string
+          reflection_text: string | null
+          user_id: string
+        }
+        Insert: {
+          archetype: string
+          created_at?: string | null
+          id?: string
+          reflection_text?: string | null
+          user_id: string
+        }
+        Update: {
+          archetype?: string
+          created_at?: string | null
+          id?: string
+          reflection_text?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       hero_journey_stats: {
         Row: {
           archetypes_explored: number | null

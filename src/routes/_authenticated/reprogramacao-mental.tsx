@@ -1,17 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Play, Clock, Sparkles, Flame, ChevronRight, Activity, Target, Shield, Compass, Lock } from "lucide-react";
+import { ArrowLeft, Play, Sparkles, Flame, Activity, Target, Shield, Compass, Lock, FileText } from "lucide-react";
 import heroAsset from "@/assets/cover-4.png.asset.json";
 import { Splash } from "@/components/hero-journey/Splash";
 import { ArchetypeCard } from "@/components/hero-journey/ArchetypeCard";
 import { ARCHETYPES_CONTENT } from "@/lib/hero-content";
-import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { getJourneyStats, getArchetypes } from "@/lib/hero-journey.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 
 const hero = heroAsset.url;
-import s1 from "@/assets/level-1.jpg";
 
 export const Route = createFileRoute("/_authenticated/reprogramacao-mental")({
   head: () => ({
@@ -36,7 +35,6 @@ export const Route = createFileRoute("/_authenticated/reprogramacao-mental")({
       ]);
     } catch (e: any) {
       console.error("Hero Journey Loader Error:", e);
-      // Don't throw here, let the component handle it or show a more specific error
       return { error: e.message || "Unknown error" };
     }
   },
@@ -57,7 +55,7 @@ function Page() {
     queryKey: ['hero_journey_stats'],
     queryFn: () => getJourneyStats(),
   });
-  const stats = (statsData as any) || { total_progress: 0, archetypes_explored: 0, missions_completed: 0, consciousness_level: 1 };
+  const stats = (statsData as any) || { total_progress: 0, archetypes_explored: 0, missions_completed: 0, consciousness_level: 1, protocols_realized: 0 };
   
   const { data: userArchetypesData = [], error: archetypesError } = useSuspenseQuery({
     queryKey: ['hero_journey_archetypes'],
@@ -165,6 +163,15 @@ function Page() {
     return <Splash userName={userName} onStart={handleStart} />;
   }
 
+  const consciousnessLevels: Record<number, string> = {
+    1: "O Despertar",
+    2: "A Percepção",
+    3: "O Confronto",
+    4: "A Escolha",
+    5: "A Transformação",
+    6: "A Integração"
+  };
+
   return (
     <main className="relative min-h-screen pb-24 bg-background">
       <Link to="/home" className="fixed left-4 top-4 z-30 rounded-full glass p-2 text-foreground hover:bg-surface-elevated">
@@ -201,17 +208,23 @@ function Page() {
         </div>
       </section>
 
-      <section className="mx-4 -mt-10 relative z-10 grid grid-cols-2 gap-3 sm:grid-cols-4 lg:mx-auto lg:max-w-6xl">
-        <StatCard icon={<Activity className="h-4 w-4 text-gold" />} label="Progresso" value={`${(stats as any)?.total_progress ?? 0}%`} />
-        <StatCard icon={<Compass className="h-4 w-4 text-gold" />} label="Arquétipos" value={`${(stats as any)?.archetypes_explored ?? 0}/6`} />
-        <StatCard icon={<Target className="h-4 w-4 text-gold" />} label="Missões" value={(stats as any)?.missions_completed ?? 0} />
-        <Link to="/hero-journey/resultado">
-          <StatCard icon={<Shield className="h-4 w-4 text-gold" />} label="Consciência" value={`Nível ${(stats as any)?.consciousness_level ?? 1}`} />
-        </Link>
+      <section className="mx-4 -mt-10 relative z-10 grid grid-cols-2 gap-3 sm:grid-cols-5 lg:mx-auto lg:max-w-6xl">
+        <StatCard icon={<Activity className="h-4 w-4 text-gold" />} label="Progresso" value={`${stats.total_progress ?? 0}%`} />
+        <StatCard icon={<Compass className="h-4 w-4 text-gold" />} label="Arquétipos" value={`${stats.archetypes_explored ?? 0}/6`} />
+        <StatCard icon={<Target className="h-4 w-4 text-gold" />} label="Missões" value={stats.missions_completed ?? 0} />
+        <StatCard icon={<Shield className="h-4 w-4 text-gold" />} label="Consciência" value={`Nível ${stats.consciousness_level ?? 1}`} />
+        <StatCard icon={<FileText className="h-4 w-4 text-gold" />} label="Protocolos" value={stats.protocols_realized ?? 0} />
       </section>
 
       <section className="mx-4 mt-12 lg:mx-auto lg:max-w-6xl">
         <div className="mb-8 space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-2xl text-foreground uppercase tracking-tight">MINHA JORNADA</h2>
+            <div className="text-[10px] uppercase tracking-widest text-gold border border-gold/30 px-3 py-1 rounded-full glass">
+              {consciousnessLevels[stats.consciousness_level ?? 1]}
+            </div>
+          </div>
+
           <div className="relative overflow-hidden rounded-3xl border border-gold/20 shadow-glow bg-surface-elevated">
             <div className="aspect-video w-full">
               <iframe 
@@ -225,15 +238,15 @@ function Page() {
           
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
-              <h2 className="font-display text-2xl text-foreground">MAPA DO HERÓI INTERIOR</h2>
+              <h2 className="font-display text-2xl text-foreground uppercase tracking-tight">MAPA DO HERÓI INTERIOR</h2>
               <p className="text-xs text-muted-foreground uppercase tracking-widest">Explore as estações da sua consciência</p>
             </div>
-            {(stats as any)?.archetypes_explored >= 6 && (
+            {stats.archetypes_explored >= 6 && (
               <Link 
                 to="/hero-journey/diagnostico"
-                className="rounded-full bg-gold/10 border border-gold/30 px-4 py-2 text-[10px] uppercase tracking-widest text-gold hover:bg-gold/20 transition-colors"
+                className="rounded-full bg-gold/10 border border-gold/30 px-6 py-2 text-[10px] uppercase tracking-widest text-gold hover:bg-gold/20 transition-all shadow-glow shadow-gold/5"
               >
-                Iniciar Diagnóstico
+                Iniciar Diagnóstico Final
               </Link>
             )}
           </div>
@@ -302,12 +315,43 @@ function Page() {
         </div>
       </section>
 
-      <section className="mx-4 mt-20 lg:mx-auto lg:max-w-6xl">
-        <p className="mb-4 text-[10px] uppercase tracking-widest text-gold">Fundamentos</p>
-        <div className="rounded-3xl border border-border p-8 bg-surface shadow-elevated">
-          <h3 className="font-display text-2xl text-foreground uppercase tracking-tight">Código da Mente Extraordinária</h3>
-          <p className="mt-2 max-w-lg text-sm text-muted-foreground">Esta é a aula fundamental que serve como base para toda a jornada de reprogramação.</p>
+      <section className="mx-4 mt-20 lg:mx-auto lg:max-w-6xl grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
+          <p className="text-[10px] uppercase tracking-widest text-gold">Fundamentos</p>
+          <div className="rounded-3xl border border-border p-8 bg-surface shadow-elevated group hover:border-gold/30 transition-all">
+            <h3 className="font-display text-2xl text-foreground uppercase tracking-tight">Código da Mente Extraordinária</h3>
+            <p className="mt-2 text-sm text-muted-foreground">Esta é a aula fundamental que serve como base para toda a jornada de reprogramação.</p>
+          </div>
         </div>
+        
+        <div className="space-y-4">
+          <p className="text-[10px] uppercase tracking-widest text-gold">Ferramentas</p>
+          <div className="grid grid-cols-2 gap-4">
+             <Link to="/hero-journey/resultado" className="rounded-2xl border border-border glass p-6 text-center group hover:border-gold/30 transition-all">
+               <Brain className="h-6 w-6 mx-auto mb-2 text-muted-foreground group-hover:text-gold" />
+               <span className="text-[10px] uppercase tracking-widest">Meu Mapa</span>
+             </Link>
+             <button onClick={() => navigate({ to: '/hero-journey/resultado' })} className="rounded-2xl border border-border glass p-6 text-center group hover:border-gold/30 transition-all">
+               <FileText className="h-6 w-6 mx-auto mb-2 text-muted-foreground group-hover:text-gold" />
+               <span className="text-[10px] uppercase tracking-widest">Reflexões</span>
+             </button>
+          </div>
+        </div>
+      </section>
+      
+      <section className="mx-4 mt-12 lg:mx-auto lg:max-w-6xl border-t border-border pt-8 text-center">
+         <button 
+           onClick={async () => {
+             if (confirm("Tem certeza que deseja reiniciar sua jornada? Isso apagará todo o seu progresso.")) {
+               const { resetJourney } = await import("@/lib/hero-journey.functions");
+               await resetJourney();
+               window.location.reload();
+             }
+           }}
+           className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground hover:text-red-500 transition-colors"
+         >
+           Reiniciar Minha Jornada
+         </button>
       </section>
     </main>
   );
@@ -324,3 +368,21 @@ function StatCard({ icon, label, value }: { icon: React.ReactNode; label: string
     </div>
   );
 }
+
+const Brain = ({ className }: { className?: string }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    width="24" 
+    height="24" 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    className={className}
+  >
+    <path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-2.54Z"/>
+    <path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-2.54Z"/>
+  </svg>
+);

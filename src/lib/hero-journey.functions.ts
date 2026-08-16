@@ -68,11 +68,23 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
         .from('hero_journey_archetypes' as any)
         .upsert({
           user_id: userId,
-          ...data,
+          archetype: data.archetype,
+          status: data.status,
+          progress: data.progress,
           updated_at: new Date().toISOString(),
         }, { onConflict: 'user_id,archetype' });
 
       if (error) throw error;
+
+      if (data.reflection_text) {
+        await supabase
+          .from('hero_journey_reflections' as any)
+          .upsert({
+            user_id: userId,
+            archetype: data.archetype,
+            reflection_text: data.reflection_text,
+          }, { onConflict: 'user_id,archetype' });
+      }
 
       // Update global stats
       const { data: archs } = await supabase
@@ -81,7 +93,7 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
         .eq('user_id', userId);
       
       const completedCount = archs?.filter((a: any) => a.status === 'completed').length || 0;
-      const totalProgress = Math.round((archs?.reduce((acc: number, a: any) => acc + (a.progress || 0), 0) || 0) / 6);
+      const totalProgress = Math.round(((archs?.reduce((acc: number, a: any) => acc + (a.progress || 0), 0) || 0) / 600) * 100);
 
       await supabase
         .from('hero_journey_stats' as any)
@@ -119,7 +131,6 @@ export const completeMission = createServerFn({ method: "POST" })
       
       if (error) throw error;
 
-      // Update stats
       const { data: missions } = await supabase
         .from('hero_journey_missions' as any)
         .select('id')
@@ -160,18 +171,16 @@ export const updateProtocol = createServerFn({ method: "POST" })
       
       if (error) throw error;
 
-      if (data.is_completed) {
-        const { data: protocols } = await supabase
-          .from('hero_journey_protocols' as any)
-          .select('id')
-          .eq('user_id', userId)
-          .eq('is_completed', true);
-        
-        await supabase
-          .from('hero_journey_stats' as any)
-          .update({ protocols_realized: protocols?.length || 0 } as any)
-          .eq('user_id', userId);
-      }
+      const { data: protocols } = await supabase
+        .from('hero_journey_protocols' as any)
+        .select('id')
+        .eq('user_id', userId)
+        .eq('is_completed', true);
+      
+      await supabase
+        .from('hero_journey_stats' as any)
+        .update({ protocols_realized: protocols?.length || 0 } as any)
+        .eq('user_id', userId);
 
       return { success: true };
     } catch (err) {
@@ -193,6 +202,7 @@ export const awardAchievement = createServerFn({ method: "POST" })
         .upsert({
           user_id: userId,
           achievement_key: data.key,
+          earned_at: new Date().toISOString()
         }, { onConflict: 'user_id,achievement_key' });
       
       if (error) throw error;
