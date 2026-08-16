@@ -64,18 +64,24 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
     const { supabase, userId } = context;
 
     try {
+      // First update the main archetype record
+      const updateData: any = {
+        user_id: userId,
+        archetype: data.archetype,
+        updated_at: new Date().toISOString(),
+      };
+
+      if (data.status) updateData.status = data.status;
+      if (data.progress !== undefined) updateData.progress = data.progress;
+      if (data.reflection_text !== undefined) updateData.reflection_text = data.reflection_text;
+
       const { error } = await supabase
         .from('hero_journey_archetypes' as any)
-        .upsert({
-          user_id: userId,
-          archetype: data.archetype,
-          status: data.status,
-          progress: data.progress,
-          updated_at: new Date().toISOString(),
-        }, { onConflict: 'user_id,archetype' });
+        .upsert(updateData, { onConflict: 'user_id,archetype' });
 
       if (error) throw error;
 
+      // Also ensure it's synced to the specialized reflections table for history/details if text provided
       if (data.reflection_text) {
         await supabase
           .from('hero_journey_reflections' as any)
