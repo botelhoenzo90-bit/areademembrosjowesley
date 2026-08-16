@@ -335,7 +335,14 @@ function ArchetypeJourneyPage() {
               <div className="space-y-6">
                 <div className="space-y-2">
                   <span className="text-[10px] uppercase tracking-[0.2em] text-gold font-medium">Aprofundamento</span>
-                  <h3 className="font-display text-3xl uppercase text-foreground">{selectedCategory}</h3>
+                  <h3 className="font-display text-3xl uppercase text-foreground">
+                    {selectedCategory === 'essence' ? 'Essência' : 
+                     selectedCategory === 'objective' ? 'Objetivo' : 
+                     selectedCategory === 'strength' ? 'Força' : 
+                     selectedCategory === 'need' ? 'Necessidade' : 
+                     selectedCategory === 'shadow' ? 'Sombra' : 
+                     selectedCategory === 'illusion' ? 'Ilusão' : selectedCategory}
+                  </h3>
                 </div>
                 <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
                   <p className="text-foreground text-lg">{archetype[selectedCategory as keyof typeof archetype] as string}</p>
