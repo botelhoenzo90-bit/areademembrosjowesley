@@ -18,7 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
-export const Route = createFileRoute("/_authenticated/treinamento-premium/principio.$index")({
+export const Route = createFileRoute("/_authenticated/treinamento-premium/principio/$index")({
   component: PrincipleJourneyPage,
 });
 
@@ -35,7 +35,7 @@ const QUIZ_QUESTIONS = [
 ];
 
 function PrincipleJourneyPage() {
-  const { index } = useParams({ from: "/_authenticated/treinamento-premium/principio.$index" });
+  const { index } = useParams({ from: "/_authenticated/treinamento-premium/principio.$index" as any });
   const principleNumber = parseInt(index);
   const navigate = useNavigate();
   
@@ -77,7 +77,7 @@ function PrincipleJourneyPage() {
 
   if (loading || !data) return <div className="flex h-screen items-center justify-center bg-black"><Loader2 className="animate-spin text-gold" /></div>;
 
-  const principle = data.principles.find((p: any) => p.principle_number === principleNumber);
+  const principle = data.principles.find((p: any) => p.principle_number === principleNumber) || {};
   const userName = data.userName;
 
   const handleStartQuiz = () => setStep('quiz');

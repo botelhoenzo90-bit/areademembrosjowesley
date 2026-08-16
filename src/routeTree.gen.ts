@@ -28,6 +28,7 @@ import { Route as AuthenticatedBonusRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedModuloSlugRouteImport } from './routes/_authenticated/modulo.$slug'
 import { Route as AuthenticatedHeroJourneyResultadoRouteImport } from './routes/_authenticated/hero-journey/resultado'
 import { Route as AuthenticatedHeroJourneyDiagnosticoRouteImport } from './routes/_authenticated/hero-journey/diagnostico'
+import { Route as AuthenticatedTreinamentoPremiumPrincipioIndexRouteImport } from './routes/_authenticated/treinamento-premium.principio.$index'
 import { Route as AuthenticatedTreinamentoPremiumNivelSlugRouteImport } from './routes/_authenticated/treinamento-premium.nivel.$slug'
 import { Route as AuthenticatedTreinamentoPremiumCamadaLayerNumberRouteImport } from './routes/_authenticated/treinamento-premium.camada.$layerNumber'
 import { Route as AuthenticatedHeroJourneyArchetypeIdRouteImport } from './routes/_authenticated/hero-journey/archetype.$id'
@@ -133,6 +134,12 @@ const AuthenticatedHeroJourneyDiagnosticoRoute =
     path: '/hero-journey/diagnostico',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedTreinamentoPremiumPrincipioIndexRoute =
+  AuthenticatedTreinamentoPremiumPrincipioIndexRouteImport.update({
+    id: '/principio/$index',
+    path: '/principio/$index',
+    getParentRoute: () => AuthenticatedTreinamentoPremiumRoute,
+  } as any)
 const AuthenticatedTreinamentoPremiumNivelSlugRoute =
   AuthenticatedTreinamentoPremiumNivelSlugRouteImport.update({
     id: '/nivel/$slug',
@@ -174,6 +181,7 @@ export interface FileRoutesByFullPath {
   '/hero-journey/archetype/$id': typeof AuthenticatedHeroJourneyArchetypeIdRoute
   '/treinamento-premium/camada/$layerNumber': typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute
   '/treinamento-premium/nivel/$slug': typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
+  '/treinamento-premium/principio/$index': typeof AuthenticatedTreinamentoPremiumPrincipioIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -197,6 +205,7 @@ export interface FileRoutesByTo {
   '/hero-journey/archetype/$id': typeof AuthenticatedHeroJourneyArchetypeIdRoute
   '/treinamento-premium/camada/$layerNumber': typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute
   '/treinamento-premium/nivel/$slug': typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
+  '/treinamento-premium/principio/$index': typeof AuthenticatedTreinamentoPremiumPrincipioIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -222,6 +231,7 @@ export interface FileRoutesById {
   '/_authenticated/hero-journey/archetype/$id': typeof AuthenticatedHeroJourneyArchetypeIdRoute
   '/_authenticated/treinamento-premium/camada/$layerNumber': typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute
   '/_authenticated/treinamento-premium/nivel/$slug': typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
+  '/_authenticated/treinamento-premium/principio/$index': typeof AuthenticatedTreinamentoPremiumPrincipioIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -247,6 +257,7 @@ export interface FileRouteTypes {
     | '/hero-journey/archetype/$id'
     | '/treinamento-premium/camada/$layerNumber'
     | '/treinamento-premium/nivel/$slug'
+    | '/treinamento-premium/principio/$index'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -270,6 +281,7 @@ export interface FileRouteTypes {
     | '/hero-journey/archetype/$id'
     | '/treinamento-premium/camada/$layerNumber'
     | '/treinamento-premium/nivel/$slug'
+    | '/treinamento-premium/principio/$index'
   id:
     | '__root__'
     | '/'
@@ -294,6 +306,7 @@ export interface FileRouteTypes {
     | '/_authenticated/hero-journey/archetype/$id'
     | '/_authenticated/treinamento-premium/camada/$layerNumber'
     | '/_authenticated/treinamento-premium/nivel/$slug'
+    | '/_authenticated/treinamento-premium/principio/$index'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -440,6 +453,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHeroJourneyDiagnosticoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/treinamento-premium/principio/$index': {
+      id: '/_authenticated/treinamento-premium/principio/$index'
+      path: '/principio/$index'
+      fullPath: '/treinamento-premium/principio/$index'
+      preLoaderRoute: typeof AuthenticatedTreinamentoPremiumPrincipioIndexRouteImport
+      parentRoute: typeof AuthenticatedTreinamentoPremiumRoute
+    }
     '/_authenticated/treinamento-premium/nivel/$slug': {
       id: '/_authenticated/treinamento-premium/nivel/$slug'
       path: '/nivel/$slug'
@@ -467,6 +487,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedTreinamentoPremiumRouteChildren {
   AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute: typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute
   AuthenticatedTreinamentoPremiumNivelSlugRoute: typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
+  AuthenticatedTreinamentoPremiumPrincipioIndexRoute: typeof AuthenticatedTreinamentoPremiumPrincipioIndexRoute
 }
 
 const AuthenticatedTreinamentoPremiumRouteChildren: AuthenticatedTreinamentoPremiumRouteChildren =
@@ -475,6 +496,8 @@ const AuthenticatedTreinamentoPremiumRouteChildren: AuthenticatedTreinamentoPrem
       AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute,
     AuthenticatedTreinamentoPremiumNivelSlugRoute:
       AuthenticatedTreinamentoPremiumNivelSlugRoute,
+    AuthenticatedTreinamentoPremiumPrincipioIndexRoute:
+      AuthenticatedTreinamentoPremiumPrincipioIndexRoute,
   }
 
 const AuthenticatedTreinamentoPremiumRouteWithChildren =
