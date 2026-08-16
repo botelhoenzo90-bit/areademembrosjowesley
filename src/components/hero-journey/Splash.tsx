@@ -36,7 +36,7 @@ export function Splash({ userName, onStart }: SplashProps) {
             className="font-display text-5xl text-foreground sm:text-7xl leading-[1.1] tracking-tighter uppercase"
           >
             SUA JORNADA <br /> <span className="text-gold/90">COMEÇA AQUI</span>
-          </h1 >
+          </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
