@@ -32,8 +32,8 @@ const QUIZ_QUESTIONS = [
 ];
 
 export function PrincipleJourneyPage() {
-  const { id } = useParams({ from: "/_authenticated/jornada/$id" as any });
-  const principleNumber = parseInt(id);
+  const { slug } = useParams({ from: "/_authenticated/jornada/$slug" as any });
+  const principleNumber = parseInt(slug);
   const navigate = useNavigate();
   
   const [loading, setLoading] = useState(true);
