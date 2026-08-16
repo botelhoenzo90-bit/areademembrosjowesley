@@ -28,6 +28,8 @@ import { Route as AuthenticatedBonusRouteImport } from './routes/_authenticated/
 import { Route as AuthenticatedModuloSlugRouteImport } from './routes/_authenticated/modulo.$slug'
 import { Route as AuthenticatedHeroJourneyResultadoRouteImport } from './routes/_authenticated/hero-journey/resultado'
 import { Route as AuthenticatedHeroJourneyDiagnosticoRouteImport } from './routes/_authenticated/hero-journey/diagnostico'
+import { Route as AuthenticatedTreinamentoPremiumNivelSlugRouteImport } from './routes/_authenticated/treinamento-premium.nivel.$slug'
+import { Route as AuthenticatedTreinamentoPremiumCamadaLayerNumberRouteImport } from './routes/_authenticated/treinamento-premium.camada.$layerNumber'
 import { Route as AuthenticatedHeroJourneyArchetypeIdRouteImport } from './routes/_authenticated/hero-journey/archetype.$id'
 
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -131,6 +133,18 @@ const AuthenticatedHeroJourneyDiagnosticoRoute =
     path: '/hero-journey/diagnostico',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedTreinamentoPremiumNivelSlugRoute =
+  AuthenticatedTreinamentoPremiumNivelSlugRouteImport.update({
+    id: '/nivel/$slug',
+    path: '/nivel/$slug',
+    getParentRoute: () => AuthenticatedTreinamentoPremiumRoute,
+  } as any)
+const AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute =
+  AuthenticatedTreinamentoPremiumCamadaLayerNumberRouteImport.update({
+    id: '/camada/$layerNumber',
+    path: '/camada/$layerNumber',
+    getParentRoute: () => AuthenticatedTreinamentoPremiumRoute,
+  } as any)
 const AuthenticatedHeroJourneyArchetypeIdRoute =
   AuthenticatedHeroJourneyArchetypeIdRouteImport.update({
     id: '/hero-journey/archetype/$id',
@@ -152,12 +166,14 @@ export interface FileRoutesByFullPath {
   '/jornada': typeof AuthenticatedJornadaRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/reprogramacao-mental': typeof AuthenticatedReprogramacaoMentalRoute
-  '/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRoute
+  '/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/hero-journey/diagnostico': typeof AuthenticatedHeroJourneyDiagnosticoRoute
   '/hero-journey/resultado': typeof AuthenticatedHeroJourneyResultadoRoute
   '/modulo/$slug': typeof AuthenticatedModuloSlugRoute
   '/hero-journey/archetype/$id': typeof AuthenticatedHeroJourneyArchetypeIdRoute
+  '/treinamento-premium/camada/$layerNumber': typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute
+  '/treinamento-premium/nivel/$slug': typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -173,12 +189,14 @@ export interface FileRoutesByTo {
   '/jornada': typeof AuthenticatedJornadaRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/reprogramacao-mental': typeof AuthenticatedReprogramacaoMentalRoute
-  '/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRoute
+  '/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/hero-journey/diagnostico': typeof AuthenticatedHeroJourneyDiagnosticoRoute
   '/hero-journey/resultado': typeof AuthenticatedHeroJourneyResultadoRoute
   '/modulo/$slug': typeof AuthenticatedModuloSlugRoute
   '/hero-journey/archetype/$id': typeof AuthenticatedHeroJourneyArchetypeIdRoute
+  '/treinamento-premium/camada/$layerNumber': typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute
+  '/treinamento-premium/nivel/$slug': typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -196,12 +214,14 @@ export interface FileRoutesById {
   '/_authenticated/jornada': typeof AuthenticatedJornadaRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/reprogramacao-mental': typeof AuthenticatedReprogramacaoMentalRoute
-  '/_authenticated/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRoute
+  '/_authenticated/treinamento-premium': typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   '/api/chat': typeof ApiChatRoute
   '/_authenticated/hero-journey/diagnostico': typeof AuthenticatedHeroJourneyDiagnosticoRoute
   '/_authenticated/hero-journey/resultado': typeof AuthenticatedHeroJourneyResultadoRoute
   '/_authenticated/modulo/$slug': typeof AuthenticatedModuloSlugRoute
   '/_authenticated/hero-journey/archetype/$id': typeof AuthenticatedHeroJourneyArchetypeIdRoute
+  '/_authenticated/treinamento-premium/camada/$layerNumber': typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute
+  '/_authenticated/treinamento-premium/nivel/$slug': typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -225,6 +245,8 @@ export interface FileRouteTypes {
     | '/hero-journey/resultado'
     | '/modulo/$slug'
     | '/hero-journey/archetype/$id'
+    | '/treinamento-premium/camada/$layerNumber'
+    | '/treinamento-premium/nivel/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -246,6 +268,8 @@ export interface FileRouteTypes {
     | '/hero-journey/resultado'
     | '/modulo/$slug'
     | '/hero-journey/archetype/$id'
+    | '/treinamento-premium/camada/$layerNumber'
+    | '/treinamento-premium/nivel/$slug'
   id:
     | '__root__'
     | '/'
@@ -268,6 +292,8 @@ export interface FileRouteTypes {
     | '/_authenticated/hero-journey/resultado'
     | '/_authenticated/modulo/$slug'
     | '/_authenticated/hero-journey/archetype/$id'
+    | '/_authenticated/treinamento-premium/camada/$layerNumber'
+    | '/_authenticated/treinamento-premium/nivel/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -414,6 +440,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedHeroJourneyDiagnosticoRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/treinamento-premium/nivel/$slug': {
+      id: '/_authenticated/treinamento-premium/nivel/$slug'
+      path: '/nivel/$slug'
+      fullPath: '/treinamento-premium/nivel/$slug'
+      preLoaderRoute: typeof AuthenticatedTreinamentoPremiumNivelSlugRouteImport
+      parentRoute: typeof AuthenticatedTreinamentoPremiumRoute
+    }
+    '/_authenticated/treinamento-premium/camada/$layerNumber': {
+      id: '/_authenticated/treinamento-premium/camada/$layerNumber'
+      path: '/camada/$layerNumber'
+      fullPath: '/treinamento-premium/camada/$layerNumber'
+      preLoaderRoute: typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRouteImport
+      parentRoute: typeof AuthenticatedTreinamentoPremiumRoute
+    }
     '/_authenticated/hero-journey/archetype/$id': {
       id: '/_authenticated/hero-journey/archetype/$id'
       path: '/hero-journey/archetype/$id'
@@ -423,6 +463,24 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface AuthenticatedTreinamentoPremiumRouteChildren {
+  AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute: typeof AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute
+  AuthenticatedTreinamentoPremiumNivelSlugRoute: typeof AuthenticatedTreinamentoPremiumNivelSlugRoute
+}
+
+const AuthenticatedTreinamentoPremiumRouteChildren: AuthenticatedTreinamentoPremiumRouteChildren =
+  {
+    AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute:
+      AuthenticatedTreinamentoPremiumCamadaLayerNumberRoute,
+    AuthenticatedTreinamentoPremiumNivelSlugRoute:
+      AuthenticatedTreinamentoPremiumNivelSlugRoute,
+  }
+
+const AuthenticatedTreinamentoPremiumRouteWithChildren =
+  AuthenticatedTreinamentoPremiumRoute._addFileChildren(
+    AuthenticatedTreinamentoPremiumRouteChildren,
+  )
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedBonusRoute: typeof AuthenticatedBonusRoute
@@ -434,7 +492,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedJornadaRoute: typeof AuthenticatedJornadaRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedReprogramacaoMentalRoute: typeof AuthenticatedReprogramacaoMentalRoute
-  AuthenticatedTreinamentoPremiumRoute: typeof AuthenticatedTreinamentoPremiumRoute
+  AuthenticatedTreinamentoPremiumRoute: typeof AuthenticatedTreinamentoPremiumRouteWithChildren
   AuthenticatedHeroJourneyDiagnosticoRoute: typeof AuthenticatedHeroJourneyDiagnosticoRoute
   AuthenticatedHeroJourneyResultadoRoute: typeof AuthenticatedHeroJourneyResultadoRoute
   AuthenticatedModuloSlugRoute: typeof AuthenticatedModuloSlugRoute
@@ -451,7 +509,8 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedJornadaRoute: AuthenticatedJornadaRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedReprogramacaoMentalRoute: AuthenticatedReprogramacaoMentalRoute,
-  AuthenticatedTreinamentoPremiumRoute: AuthenticatedTreinamentoPremiumRoute,
+  AuthenticatedTreinamentoPremiumRoute:
+    AuthenticatedTreinamentoPremiumRouteWithChildren,
   AuthenticatedHeroJourneyDiagnosticoRoute:
     AuthenticatedHeroJourneyDiagnosticoRoute,
   AuthenticatedHeroJourneyResultadoRoute:
