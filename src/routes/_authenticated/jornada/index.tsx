@@ -1,4 +1,9 @@
-import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router'
+import { z } from "zod";
+export const Route = createFileRoute("/_authenticated/jornada/")({
+  validateSearch: (search) => z.object({ id: z.string().default("1") }).parse(search),
+  component: PrincipleJourneyPage,
+});
 import { useEffect, useState } from "react";
 import { 
   ArrowLeft, CheckCircle2, Play, Trophy, Sparkles, 
@@ -32,7 +37,7 @@ const QUIZ_QUESTIONS = [
 ];
 
 export function PrincipleJourneyPage() {
-  const { id } = useParams({ from: "/_authenticated/jornada/$id" as any });
+  const { id } = Route.useSearch();
   const principleNumber = parseInt(id);
   const navigate = useNavigate();
   
@@ -321,7 +326,7 @@ export function PrincipleJourneyPage() {
                                     setQuizIndex(0);
                                     setAnswers([]);
                                     setDiagnosis(null);
-                                    navigate({ to: "/_authenticated/jornada/$id" as any, params: { id: (principleNumber + 1).toString() } as any });
+                                    navigate({ to: "/_authenticated/jornada", search: { id: (principleNumber + 1).toString() } as any, search: { id: (principleNumber + 1).toString() } as any });
                                 }}
                             >
                                 PRÓXIMO PRINCÍPIO <ChevronRight className="ml-4" />
