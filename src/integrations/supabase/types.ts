@@ -307,7 +307,7 @@ export type Database = {
       hero_journey_quiz_responses: {
         Row: {
           answer_index: number
-          archetype: Database["public"]["Enums"]["hero_archetype_name"]
+          archetype: string
           created_at: string | null
           id: string
           question_index: number
@@ -316,7 +316,7 @@ export type Database = {
         }
         Insert: {
           answer_index: number
-          archetype: Database["public"]["Enums"]["hero_archetype_name"]
+          archetype: string
           created_at?: string | null
           id?: string
           question_index: number
@@ -325,7 +325,7 @@ export type Database = {
         }
         Update: {
           answer_index?: number
-          archetype?: Database["public"]["Enums"]["hero_archetype_name"]
+          archetype?: string
           created_at?: string | null
           id?: string
           question_index?: number
