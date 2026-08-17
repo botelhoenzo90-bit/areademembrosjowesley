@@ -68,7 +68,6 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
       const updateData: any = {
         user_id: userId,
         archetype: data.archetype,
-        updated_at: new Date().toISOString(),
       };
 
       if (data.status) updateData.status = data.status;
