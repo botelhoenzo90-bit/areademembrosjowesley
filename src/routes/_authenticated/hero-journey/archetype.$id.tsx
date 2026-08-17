@@ -275,25 +275,30 @@ function ArchetypeJourneyPage() {
                       try {
                         const stages: Stage[] = ['discover', 'mentorship', 'understand', 'quiz', 'observe', 'experiment', 'implement', 'conclude'];
                         const currentIndex = stages.indexOf(stage);
-                        const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
+                        const nextProgress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
                         
+                        console.log("Saving reflection manually. Progress:", nextProgress);
                         await updateProgress({ 
                           data: { 
                             archetype: id as any, 
                             reflection_text: reflectionText,
-                            progress: progress
+                            progress: nextProgress,
+                            status: 'in_progress'
                           } 
                         });
                         
                         toast.success("Reflexão salva com sucesso!");
                         setStage('implement');
+                        
+                        // Invalidate cache immediately
                         await queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
+                        await queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
                       } catch (error) {
                         console.error("Manual save error:", error);
-                        toast.error("Erro ao salvar reflexão.");
+                        toast.error("Erro ao salvar reflexão. Tente novamente.");
                       }
                     }} 
-                    className="w-full py-4 rounded-full border border-gold bg-gold/10 text-[12px] font-bold uppercase tracking-widest text-gold hover:bg-gold/20 transition-all shadow-glow shadow-gold/5"
+                    className="w-full py-5 rounded-2xl border border-gold bg-gold/10 text-[14px] font-bold uppercase tracking-widest text-gold hover:bg-gold/20 transition-all shadow-glow shadow-gold/5 active:scale-[0.98]"
                   >
                     Salvar Reflexão e Iniciar Missão
                   </button>

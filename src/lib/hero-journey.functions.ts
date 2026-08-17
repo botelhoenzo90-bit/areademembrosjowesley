@@ -75,11 +75,21 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
       if (data.progress !== undefined) updateData.progress = data.progress;
       if (data.reflection_text !== undefined) updateData.reflection_text = data.reflection_text;
 
+      // Ensure status is updated based on progress if not provided
+      if (!data.status && data.progress !== undefined) {
+        if (data.progress >= 100) updateData.status = 'completed';
+        else if (data.progress > 0) updateData.status = 'in_progress';
+      }
+
+      console.log("Upserting hero_journey_archetypes:", updateData);
       const { error } = await supabase
         .from('hero_journey_archetypes' as any)
         .upsert(updateData, { onConflict: 'user_id,archetype' });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase upsert error [hero_journey_archetypes]:", error);
+        throw error;
+      }
 
       // Also ensure it's synced to the specialized reflections table
       if (data.reflection_text) {
@@ -91,15 +101,20 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
             reflection_text: data.reflection_text,
           }, { onConflict: 'user_id,archetype' });
         
-        if (reflectionError) throw reflectionError;
+        if (reflectionError) {
+          console.error("Reflection upsert error:", reflectionError);
+          throw reflectionError;
+        }
       }
 
       // Update global stats
-      const { data: archs } = await supabase
+      const { data: archs, error: fetchError } = await supabase
         .from('hero_journey_archetypes' as any)
         .select('status, progress')
         .eq('user_id', userId);
       
+      if (fetchError) throw fetchError;
+
       const completedCount = archs?.filter((a: any) => a.status === 'completed').length || 0;
       const totalProgress = Math.round(((archs?.reduce((acc: number, a: any) => acc + (a.progress || 0), 0) || 0) / 600) * 100);
 
