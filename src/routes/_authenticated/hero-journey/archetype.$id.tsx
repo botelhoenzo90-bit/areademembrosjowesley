@@ -74,12 +74,15 @@ function ArchetypeJourneyPage() {
       // Save specific data based on the current stage before moving forward
       if (stage === 'experiment') {
         try {
-          await updateProgress({ 
+          console.log("Saving reflection for archetype:", id, "text:", reflectionText);
+          const result = await updateProgress({ 
             data: { 
               archetype: id as any, 
-              reflection_text: reflectionText 
+              reflection_text: reflectionText,
+              progress: Math.round(((currentIndex + 1) / (stages.length - 1)) * 100)
             } 
           });
+          console.log("Update progress result:", result);
           toast.success("Reflexão salva com sucesso!");
         } catch (error) {
           console.error("Erro ao salvar reflexão:", error);
@@ -90,22 +93,24 @@ function ArchetypeJourneyPage() {
 
       setStage(nextStage);
       
-      // Ensure we save progress on every step
-      const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
-      try {
-        await updateProgress({ 
-          data: { 
-            archetype: id as any, 
-            progress: Math.min(progress, 100), 
-            status: (progress >= 100 ? 'completed' : 'in_progress') as any 
-          }
-        });
-      } catch (error) {
-        console.error("Erro ao atualizar progresso:", error);
+      // For other stages, ensure we save progress
+      if (stage !== 'experiment') {
+        const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
+        try {
+          await updateProgress({ 
+            data: { 
+              archetype: id as any, 
+              progress: Math.min(progress, 100), 
+              status: (progress >= 100 ? 'completed' : 'in_progress') as any 
+            }
+          });
+        } catch (error) {
+          console.error("Erro ao atualizar progresso:", error);
+        }
       }
       
-      queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
-      queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
+      await queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
+      await queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
     } else {
       navigate({ to: "/reprogramacao-mental" });
     }
@@ -268,15 +273,28 @@ function ArchetypeJourneyPage() {
                     disabled={reflectionText.length < 10}
                     onClick={async () => {
                       try {
-                        await updateProgress({ data: { archetype: id as any, reflection_text: reflectionText } });
+                        const progress = Math.round(((6) / (7)) * 100); // Index of 'experiment' is 5, next is 6
+                        const result = await updateProgress({ 
+                          data: { 
+                            archetype: id as any, 
+                            reflection_text: reflectionText,
+                            progress: progress
+                          } 
+                        });
+                        console.log("Manual save result:", result);
                         toast.success("Reflexão salva com sucesso!");
+                        
+                        // Force local state update and move to next stage if successful
+                        setStage('implement');
+                        await queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
                       } catch (error) {
+                        console.error("Manual save error:", error);
                         toast.error("Erro ao salvar reflexão.");
                       }
                     }} 
-                    className="w-full py-4 rounded-full border border-gold/30 text-[10px] uppercase tracking-widest text-gold disabled:opacity-50"
+                    className="w-full py-4 rounded-full border border-gold bg-gold/10 text-[12px] font-bold uppercase tracking-widest text-gold hover:bg-gold/20 transition-all"
                   >
-                    Salvar Reflexão
+                    Salvar Reflexão e Iniciar Missão
                   </button>
                 </div>
               </motion.div>
