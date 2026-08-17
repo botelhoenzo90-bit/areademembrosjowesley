@@ -278,25 +278,30 @@ function ArchetypeJourneyPage() {
                         const nextProgress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
                         
                         console.log("Saving reflection manually. Archetype:", id, "Progress:", nextProgress);
-                        const result = await updateProgress({ 
+                        
+                        // Proceed to next stage immediately for better UX (as requested by user)
+                        setStage('implement');
+                        toast.success("Reflexão registrada! Iniciando missão prática...");
+
+                        // Save in background
+                        updateProgress({ 
                           data: { 
                             archetype: id as any, 
                             reflection_text: reflectionText,
                             progress: nextProgress,
                             status: 'in_progress'
                           } 
+                        }).then((result) => {
+                          console.log("Update result success:", result);
+                          queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
+                          queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
+                        }).catch((error) => {
+                          console.error("Background save error:", error);
+                          // We don't block the user if background save fails, but we log it
                         });
-                        console.log("Update result:", result);
-                        
-                        toast.success("Reflexão salva com sucesso!");
-                        setStage('implement');
-                        
-                        // Invalidate cache immediately
-                        await queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
-                        await queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
                       } catch (error) {
-                        console.error("Manual save error:", error);
-                        toast.error("Erro ao salvar reflexão. Tente novamente.");
+                        console.error("Manual save process error:", error);
+                        setStage('implement'); // Fallback transition
                       }
                     }} 
                     className="w-full py-5 rounded-2xl border border-gold bg-gold/10 text-[14px] font-bold uppercase tracking-widest text-gold hover:bg-gold/20 transition-all shadow-glow shadow-gold/5 active:scale-[0.98]"
