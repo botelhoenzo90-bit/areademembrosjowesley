@@ -71,31 +71,28 @@ function ArchetypeJourneyPage() {
     if (currentIndex < stages.length - 1) {
       const nextStage = stages[currentIndex + 1];
       
+      // Force immediate progress calculation
+      const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
+      
       // Save specific data based on the current stage before moving forward
       if (stage === 'experiment') {
         try {
           console.log("Saving reflection for archetype:", id, "text:", reflectionText);
-          const result = await updateProgress({ 
+          await updateProgress({ 
             data: { 
               archetype: id as any, 
               reflection_text: reflectionText,
-              progress: Math.round(((currentIndex + 1) / (stages.length - 1)) * 100)
+              progress: progress // Ensure progress is sent with reflection
             } 
           });
-          console.log("Update progress result:", result);
           toast.success("Reflexão salva com sucesso!");
         } catch (error) {
           console.error("Erro ao salvar reflexão:", error);
           toast.error("Erro ao salvar reflexão. Tente novamente.");
-          return; // Stop progression if save fails
+          return;
         }
-      }
-
-      setStage(nextStage);
-      
-      // For other stages, ensure we save progress
-      if (stage !== 'experiment') {
-        const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
+      } else {
+        // For other stages, ensure we save progress
         try {
           await updateProgress({ 
             data: { 
@@ -108,7 +105,10 @@ function ArchetypeJourneyPage() {
           console.error("Erro ao atualizar progresso:", error);
         }
       }
+
+      setStage(nextStage);
       
+      // Invalidate queries to ensure fresh data
       await queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
       await queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
     } else {
@@ -273,26 +273,32 @@ function ArchetypeJourneyPage() {
                     disabled={reflectionText.length < 10}
                     onClick={async () => {
                       try {
-                        const progress = Math.round(((6) / (7)) * 100); // Index of 'experiment' is 5, next is 6
-                        const result = await updateProgress({ 
+                        const stages: Stage[] = ['discover', 'mentorship', 'understand', 'quiz', 'observe', 'experiment', 'implement', 'conclude'];
+                        const currentIndex = stages.indexOf(stage);
+                        const nextProgress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
+                        
+                        console.log("Saving reflection manually. Progress:", nextProgress);
+                        await updateProgress({ 
                           data: { 
                             archetype: id as any, 
                             reflection_text: reflectionText,
-                            progress: progress
+                            progress: nextProgress,
+                            status: 'in_progress'
                           } 
                         });
-                        console.log("Manual save result:", result);
-                        toast.success("Reflexão salva com sucesso!");
                         
-                        // Force local state update and move to next stage if successful
+                        toast.success("Reflexão salva com sucesso!");
                         setStage('implement');
+                        
+                        // Invalidate cache immediately
                         await queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
+                        await queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
                       } catch (error) {
                         console.error("Manual save error:", error);
-                        toast.error("Erro ao salvar reflexão.");
+                        toast.error("Erro ao salvar reflexão. Tente novamente.");
                       }
                     }} 
-                    className="w-full py-4 rounded-full border border-gold bg-gold/10 text-[12px] font-bold uppercase tracking-widest text-gold hover:bg-gold/20 transition-all"
+                    className="w-full py-5 rounded-2xl border border-gold bg-gold/10 text-[14px] font-bold uppercase tracking-widest text-gold hover:bg-gold/20 transition-all shadow-glow shadow-gold/5 active:scale-[0.98]"
                   >
                     Salvar Reflexão e Iniciar Missão
                   </button>
