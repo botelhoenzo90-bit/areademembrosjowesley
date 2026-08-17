@@ -273,18 +273,19 @@ function ArchetypeJourneyPage() {
                     disabled={reflectionText.length < 10}
                     onClick={async () => {
                       try {
-                        const progress = Math.round(((6) / (7)) * 100); // Index of 'experiment' is 5, next is 6
-                        const result = await updateProgress({ 
+                        const stages: Stage[] = ['discover', 'mentorship', 'understand', 'quiz', 'observe', 'experiment', 'implement', 'conclude'];
+                        const currentIndex = stages.indexOf(stage);
+                        const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
+                        
+                        await updateProgress({ 
                           data: { 
                             archetype: id as any, 
                             reflection_text: reflectionText,
                             progress: progress
                           } 
                         });
-                        console.log("Manual save result:", result);
-                        toast.success("Reflexão salva com sucesso!");
                         
-                        // Force local state update and move to next stage if successful
+                        toast.success("Reflexão salva com sucesso!");
                         setStage('implement');
                         await queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
                       } catch (error) {
@@ -292,7 +293,7 @@ function ArchetypeJourneyPage() {
                         toast.error("Erro ao salvar reflexão.");
                       }
                     }} 
-                    className="w-full py-4 rounded-full border border-gold bg-gold/10 text-[12px] font-bold uppercase tracking-widest text-gold hover:bg-gold/20 transition-all"
+                    className="w-full py-4 rounded-full border border-gold bg-gold/10 text-[12px] font-bold uppercase tracking-widest text-gold hover:bg-gold/20 transition-all shadow-glow shadow-gold/5"
                   >
                     Salvar Reflexão e Iniciar Missão
                   </button>
