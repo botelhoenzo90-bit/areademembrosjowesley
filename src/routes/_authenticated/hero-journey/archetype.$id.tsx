@@ -277,8 +277,8 @@ function ArchetypeJourneyPage() {
                         const currentIndex = stages.indexOf(stage);
                         const nextProgress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
                         
-                        console.log("Saving reflection manually. Progress:", nextProgress);
-                        await updateProgress({ 
+                        console.log("Saving reflection manually. Archetype:", id, "Progress:", nextProgress);
+                        const result = await updateProgress({ 
                           data: { 
                             archetype: id as any, 
                             reflection_text: reflectionText,
@@ -286,6 +286,7 @@ function ArchetypeJourneyPage() {
                             status: 'in_progress'
                           } 
                         });
+                        console.log("Update result:", result);
                         
                         toast.success("Reflexão salva com sucesso!");
                         setStage('implement');
