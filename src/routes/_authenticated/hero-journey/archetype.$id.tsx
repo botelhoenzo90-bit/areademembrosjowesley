@@ -273,15 +273,28 @@ function ArchetypeJourneyPage() {
                     disabled={reflectionText.length < 10}
                     onClick={async () => {
                       try {
-                        await updateProgress({ data: { archetype: id as any, reflection_text: reflectionText } });
+                        const progress = Math.round(((6) / (7)) * 100); // Index of 'experiment' is 5, next is 6
+                        const result = await updateProgress({ 
+                          data: { 
+                            archetype: id as any, 
+                            reflection_text: reflectionText,
+                            progress: progress
+                          } 
+                        });
+                        console.log("Manual save result:", result);
                         toast.success("Reflexão salva com sucesso!");
+                        
+                        // Force local state update and move to next stage if successful
+                        setStage('implement');
+                        await queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
                       } catch (error) {
+                        console.error("Manual save error:", error);
                         toast.error("Erro ao salvar reflexão.");
                       }
                     }} 
-                    className="w-full py-4 rounded-full border border-gold/30 text-[10px] uppercase tracking-widest text-gold disabled:opacity-50"
+                    className="w-full py-4 rounded-full border border-gold bg-gold/10 text-[12px] font-bold uppercase tracking-widest text-gold hover:bg-gold/20 transition-all"
                   >
-                    Salvar Reflexão
+                    Salvar Reflexão e Iniciar Missão
                   </button>
                 </div>
               </motion.div>
