@@ -71,31 +71,28 @@ function ArchetypeJourneyPage() {
     if (currentIndex < stages.length - 1) {
       const nextStage = stages[currentIndex + 1];
       
+      // Force immediate progress calculation
+      const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
+      
       // Save specific data based on the current stage before moving forward
       if (stage === 'experiment') {
         try {
           console.log("Saving reflection for archetype:", id, "text:", reflectionText);
-          const result = await updateProgress({ 
+          await updateProgress({ 
             data: { 
               archetype: id as any, 
               reflection_text: reflectionText,
-              progress: Math.round(((currentIndex + 1) / (stages.length - 1)) * 100)
+              progress: progress // Ensure progress is sent with reflection
             } 
           });
-          console.log("Update progress result:", result);
           toast.success("Reflexão salva com sucesso!");
         } catch (error) {
           console.error("Erro ao salvar reflexão:", error);
           toast.error("Erro ao salvar reflexão. Tente novamente.");
-          return; // Stop progression if save fails
+          return;
         }
-      }
-
-      setStage(nextStage);
-      
-      // For other stages, ensure we save progress
-      if (stage !== 'experiment') {
-        const progress = Math.round(((currentIndex + 1) / (stages.length - 1)) * 100);
+      } else {
+        // For other stages, ensure we save progress
         try {
           await updateProgress({ 
             data: { 
@@ -108,7 +105,10 @@ function ArchetypeJourneyPage() {
           console.error("Erro ao atualizar progresso:", error);
         }
       }
+
+      setStage(nextStage);
       
+      // Invalidate queries to ensure fresh data
       await queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
       await queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
     } else {

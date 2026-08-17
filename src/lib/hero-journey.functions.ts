@@ -75,27 +75,23 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
       if (data.progress !== undefined) updateData.progress = data.progress;
       if (data.reflection_text !== undefined) updateData.reflection_text = data.reflection_text;
 
-      console.log("Upserting hero_journey_archetypes:", updateData);
-      const { data: upserted, error } = await supabase
+      const { error } = await supabase
         .from('hero_journey_archetypes' as any)
-        .upsert(updateData, { onConflict: 'user_id,archetype' })
-        .select();
+        .upsert(updateData, { onConflict: 'user_id,archetype' });
 
-      if (error) {
-        console.error("Supabase upsert error [hero_journey_archetypes]:", error);
-        throw error;
-      }
-      console.log("Upsert result:", upserted);
+      if (error) throw error;
 
-      // Also ensure it's synced to the specialized reflections table for history/details if text provided
+      // Also ensure it's synced to the specialized reflections table
       if (data.reflection_text) {
-        await supabase
+        const { error: reflectionError } = await supabase
           .from('hero_journey_reflections' as any)
           .upsert({
             user_id: userId,
             archetype: data.archetype,
             reflection_text: data.reflection_text,
           }, { onConflict: 'user_id,archetype' });
+        
+        if (reflectionError) throw reflectionError;
       }
 
       // Update global stats
@@ -107,7 +103,7 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
       const completedCount = archs?.filter((a: any) => a.status === 'completed').length || 0;
       const totalProgress = Math.round(((archs?.reduce((acc: number, a: any) => acc + (a.progress || 0), 0) || 0) / 600) * 100);
 
-      await supabase
+      const { error: statsError } = await supabase
         .from('hero_journey_stats' as any)
         .upsert({
           user_id: userId,
@@ -116,6 +112,8 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
           consciousness_level: Math.min(6, completedCount + 1),
           last_interaction: new Date().toISOString()
         }, { onConflict: 'user_id' });
+
+      if (statsError) throw statsError;
 
       return { success: true };
     } catch (err) {
