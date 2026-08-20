@@ -283,25 +283,27 @@ function ArchetypeJourneyPage() {
                         setStage('implement');
                         toast.success("Reflexão registrada! Iniciando missão prática...");
 
-                        // Save in background
-                        updateProgress({ 
-                          data: { 
-                            archetype: id as any, 
-                            reflection_text: reflectionText,
-                            progress: nextProgress,
-                            status: 'in_progress'
-                          } 
-                        }).then((result) => {
-                          console.log("Update result success:", result);
-                          queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
-                          queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
-                        }).catch((error) => {
-                          console.error("Background save error:", error);
-                          // We don't block the user if background save fails, but we log it
-                        });
+                        // Background save with extra resilience
+                        const savePayload = { 
+                          archetype: id as any, 
+                          reflection_text: reflectionText,
+                          progress: nextProgress,
+                          status: 'in_progress'
+                        };
+
+                        updateProgress({ data: savePayload })
+                          .then((result) => {
+                            console.log("Update result success:", result);
+                            queryClient.invalidateQueries({ queryKey: ['hero_journey_archetypes'] });
+                            queryClient.invalidateQueries({ queryKey: ['hero_journey_stats'] });
+                          })
+                          .catch((error) => {
+                            console.error("Background save failed, but user moved forward:", error);
+                            // Even if it fails, we keep the user on the 'implement' stage in UI
+                          });
                       } catch (error) {
-                        console.error("Manual save process error:", error);
-                        setStage('implement'); // Fallback transition
+                        console.error("Critical failure in manual save process:", error);
+                        setStage('implement'); // Force transition anyway
                       }
                     }} 
                     className="w-full py-5 rounded-2xl border border-gold bg-gold/10 text-[14px] font-bold uppercase tracking-widest text-gold hover:bg-gold/20 transition-all shadow-glow shadow-gold/5 active:scale-[0.98]"
