@@ -82,7 +82,7 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
 
       console.log("Upserting hero_journey_archetypes:", updateData);
       const { data: upsertResult, error } = await supabase
-        .from('hero_journey_archetypes' as any)
+        .from('hero_journey_archetypes')
         .upsert(updateData, { onConflict: 'user_id,archetype' })
         .select();
 
@@ -94,8 +94,9 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
 
       // Also ensure it's synced to the specialized reflections table
       if (data.reflection_text) {
+        console.log("Syncing to hero_journey_reflections:", data.reflection_text);
         const { error: reflectionError } = await supabase
-          .from('hero_journey_reflections' as any)
+          .from('hero_journey_reflections')
           .upsert({
             user_id: userId,
             archetype: data.archetype,
@@ -104,7 +105,8 @@ export const updateArchetypeProgress = createServerFn({ method: "POST" })
         
         if (reflectionError) {
           console.error("Reflection upsert error:", reflectionError);
-          throw reflectionError;
+          // Don't throw here to avoid blocking progress if reflections table has issues
+          // but archetypes table worked
         }
       }
 
