@@ -28,6 +28,7 @@ const JORNADA_COVERS = [j1Asset.url, j2Asset.url, j3Asset.url, j4Asset.url];
 import comunidadeAsset from "@/assets/comunidade-whatsapp.jpeg.asset.json";
 import cartaFuturoCover from "@/assets/cover-future-letter.jpeg.asset.json";
 import camadasCover from "@/assets/cover-9-camadas.jpeg.asset.json";
+import desbloqueieCover from "@/assets/desbloqueie-cover.png.asset.json";
 
 const CARTA_FUTURO_CARD: ModuleCardData = {
   slug: "carta-futuro",
@@ -58,7 +59,7 @@ const DESBLOQUEIE_CARD: ModuleCardData = {
   slug: "desbloqueie-o-poder",
   name: "Desbloqueie o Poder da Sua Mente",
   short_description: "Os 7 níveis da vida — diagnóstico, missão, ação e evolução.",
-  cover_url: "/desbloqueie-poder-banner.svg",
+  cover_url: desbloqueieCover.url,
   lessons_count: 70,
   percent: 0,
   accent_from: "#22d3ee",
