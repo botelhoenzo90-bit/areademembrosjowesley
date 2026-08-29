@@ -606,6 +606,27 @@ export type Database = {
         }
         Relationships: []
       }
+      power_journey_state: {
+        Row: {
+          created_at: string
+          state: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          state?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          state?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       premium_levels: {
         Row: {
           cover_key: string
