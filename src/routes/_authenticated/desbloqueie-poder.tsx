@@ -40,7 +40,7 @@ function buildQuestions():Question[]{
   {text:["Raramente ou ainda não tenho clareza","Ainda acontece de forma irregular","É uma prática consciente e consistente"][Math.min(2,Math.floor((i+li)%3))],score:1},
   {text:["Às vezes, quando consigo","Tenho melhorado, mas oscilo","Faço isso na maioria das vezes"][Math.min(2,Math.floor((i+1)%3))],score:2},
   {text:["Quero começar a mudar isso agora","Já tenho consciência e quero aprofundar","Faz parte das minhas escolhas e ações"][Math.min(2,Math.floor((i+2)%3))],score:3},
- ]}))));
+ ]})));
 }
 const questions=buildQuestions();
 
