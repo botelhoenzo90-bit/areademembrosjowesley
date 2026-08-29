@@ -21,6 +21,7 @@ import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedJornadaRouteImport } from './routes/_authenticated/jornada'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated/home'
 import { Route as AuthenticatedFerramentasRouteImport } from './routes/_authenticated/ferramentas'
+import { Route as AuthenticatedDesbloqueiePoderRouteImport } from './routes/_authenticated/desbloqueie-poder'
 import { Route as AuthenticatedComunidadeRouteImport } from './routes/_authenticated/comunidade'
 import { Route as AuthenticatedCentroOperacionalRouteImport } from './routes/_authenticated/centro-operacional'
 import { Route as AuthenticatedCartaFuturoRouteImport } from './routes/_authenticated/carta-futuro'
@@ -94,6 +95,12 @@ const AuthenticatedFerramentasRoute =
     path: '/ferramentas',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedDesbloqueiePoderRoute =
+  AuthenticatedDesbloqueiePoderRouteImport.update({
+    id: '/desbloqueie-poder',
+    path: '/desbloqueie-poder',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedComunidadeRoute = AuthenticatedComunidadeRouteImport.update({
   id: '/comunidade',
   path: '/comunidade',
@@ -161,6 +168,7 @@ export interface FileRoutesByFullPath {
   '/carta-futuro': typeof AuthenticatedCartaFuturoRoute
   '/centro-operacional': typeof AuthenticatedCentroOperacionalRoute
   '/comunidade': typeof AuthenticatedComunidadeRoute
+  '/desbloqueie-poder': typeof AuthenticatedDesbloqueiePoderRoute
   '/ferramentas': typeof AuthenticatedFerramentasRoute
   '/home': typeof AuthenticatedHomeRoute
   '/jornada': typeof AuthenticatedJornadaRoute
@@ -184,6 +192,7 @@ export interface FileRoutesByTo {
   '/carta-futuro': typeof AuthenticatedCartaFuturoRoute
   '/centro-operacional': typeof AuthenticatedCentroOperacionalRoute
   '/comunidade': typeof AuthenticatedComunidadeRoute
+  '/desbloqueie-poder': typeof AuthenticatedDesbloqueiePoderRoute
   '/ferramentas': typeof AuthenticatedFerramentasRoute
   '/home': typeof AuthenticatedHomeRoute
   '/jornada': typeof AuthenticatedJornadaRoute
@@ -209,6 +218,7 @@ export interface FileRoutesById {
   '/_authenticated/carta-futuro': typeof AuthenticatedCartaFuturoRoute
   '/_authenticated/centro-operacional': typeof AuthenticatedCentroOperacionalRoute
   '/_authenticated/comunidade': typeof AuthenticatedComunidadeRoute
+  '/_authenticated/desbloqueie-poder': typeof AuthenticatedDesbloqueiePoderRoute
   '/_authenticated/ferramentas': typeof AuthenticatedFerramentasRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/jornada': typeof AuthenticatedJornadaRoute
@@ -234,6 +244,7 @@ export interface FileRouteTypes {
     | '/carta-futuro'
     | '/centro-operacional'
     | '/comunidade'
+    | '/desbloqueie-poder'
     | '/ferramentas'
     | '/home'
     | '/jornada'
@@ -257,6 +268,7 @@ export interface FileRouteTypes {
     | '/carta-futuro'
     | '/centro-operacional'
     | '/comunidade'
+    | '/desbloqueie-poder'
     | '/ferramentas'
     | '/home'
     | '/jornada'
@@ -281,6 +293,7 @@ export interface FileRouteTypes {
     | '/_authenticated/carta-futuro'
     | '/_authenticated/centro-operacional'
     | '/_authenticated/comunidade'
+    | '/_authenticated/desbloqueie-poder'
     | '/_authenticated/ferramentas'
     | '/_authenticated/home'
     | '/_authenticated/jornada'
@@ -391,6 +404,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFerramentasRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/desbloqueie-poder': {
+      id: '/_authenticated/desbloqueie-poder'
+      path: '/desbloqueie-poder'
+      fullPath: '/desbloqueie-poder'
+      preLoaderRoute: typeof AuthenticatedDesbloqueiePoderRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/comunidade': {
       id: '/_authenticated/comunidade'
       path: '/comunidade'
@@ -487,6 +507,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCartaFuturoRoute: typeof AuthenticatedCartaFuturoRoute
   AuthenticatedCentroOperacionalRoute: typeof AuthenticatedCentroOperacionalRoute
   AuthenticatedComunidadeRoute: typeof AuthenticatedComunidadeRoute
+  AuthenticatedDesbloqueiePoderRoute: typeof AuthenticatedDesbloqueiePoderRoute
   AuthenticatedFerramentasRoute: typeof AuthenticatedFerramentasRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedJornadaRoute: typeof AuthenticatedJornadaRoute
@@ -504,6 +525,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCartaFuturoRoute: AuthenticatedCartaFuturoRoute,
   AuthenticatedCentroOperacionalRoute: AuthenticatedCentroOperacionalRoute,
   AuthenticatedComunidadeRoute: AuthenticatedComunidadeRoute,
+  AuthenticatedDesbloqueiePoderRoute: AuthenticatedDesbloqueiePoderRoute,
   AuthenticatedFerramentasRoute: AuthenticatedFerramentasRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedJornadaRoute: AuthenticatedJornadaRoute,
