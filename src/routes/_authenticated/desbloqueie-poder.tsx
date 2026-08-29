@@ -129,9 +129,10 @@ function DesbloqueiePoder() {
   useEffect(() => {
     (async () => {
       try {
-        const res = await load({ data: {} } as any);
+        const res: any = await load({ data: {} } as any);
         if (res?.name) setName(res.name);
-        if (res?.state && Object.keys(res.state).length) setState({ ...blankState(), ...(res.state as SavedState) });
+        const parsed = res?.stateJson ? JSON.parse(res.stateJson) : null;
+        if (parsed && Object.keys(parsed).length) setState({ ...blankState(), ...(parsed as SavedState) });
       } catch { /* segue com estado local */ }
       setReady(true);
     })();
@@ -140,7 +141,7 @@ function DesbloqueiePoder() {
   const persist = useCallback((next: SavedState) => {
     setState(next);
     dirty.current = true;
-    save({ data: { state: { ...next, lastAt: new Date().toISOString() } } } as any).catch(() => setToast("Não foi possível sincronizar agora — tentaremos novamente."));
+    save({ data: { state: JSON.stringify({ ...next, lastAt: new Date().toISOString() }) } } as any).catch(() => setToast("Não foi possível sincronizar agora — tentaremos novamente."));
   }, [save]);
 
   useEffect(() => { if (toast) { const t = setTimeout(() => setToast(""), 5000); return () => clearTimeout(t); } }, [toast]);

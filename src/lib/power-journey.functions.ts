@@ -20,17 +20,17 @@ export const loadPowerState = createServerFn({ method: "POST" })
       .select("display_name")
       .eq("id", userId)
       .maybeSingle();
-    return { state: (row?.state as Record<string, unknown>) ?? null, name: profile?.display_name ?? "" };
+    return { stateJson: JSON.stringify(row?.state ?? null), name: (profile?.display_name ?? "") as string };
   });
 
 export const savePowerState = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ state: z.any() }).parse(d))
+  .inputValidator((d) => z.object({ state: z.string() }).parse(d))
   .middleware([requireSupabaseAuth])
   .handler(async ({ context, data }) => {
     const { supabase, userId } = context;
     const { error } = await supabase
       .from("power_journey_state")
-      .upsert({ user_id: userId, state: data.state, updated_at: new Date().toISOString() }, { onConflict: "user_id" });
+      .upsert({ user_id: userId, state: JSON.parse(data.state), updated_at: new Date().toISOString() }, { onConflict: "user_id" });
     if (error) throw new Error(error.message);
     return { ok: true };
   });
