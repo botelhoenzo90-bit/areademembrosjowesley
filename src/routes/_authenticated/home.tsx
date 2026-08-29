@@ -54,7 +54,17 @@ const COMUNIDADE_CARD: ModuleCardData = {
   to: "/comunidade",
 };
 
-
+const DESBLOQUEIE_CARD: ModuleCardData = {
+  slug: "desbloqueie-o-poder",
+  name: "Desbloqueie o Poder da Sua Mente",
+  short_description: "Os 7 níveis da vida — diagnóstico, missão, ação e evolução.",
+  cover_url: "/desbloqueie-poder-banner.svg",
+  lessons_count: 70,
+  percent: 0,
+  accent_from: "#22d3ee",
+  accent_to: "#2563eb",
+  to: "/desbloqueie-poder",
+};
 
 export const Route = createFileRoute("/_authenticated/home")({
   head: () => ({
@@ -148,10 +158,9 @@ function HomePage() {
   }, []);
 
   const inProgress = modules.filter((m) => m.percent > 0 && m.percent < 100);
-  const featured = modules[0]; // "SEJA BEM-VINDOS" as default hero
+  const featured = modules[0];
 
   void search;
-
 
   const firstName = displayName?.split(" ")[0] ?? "";
 
@@ -170,15 +179,12 @@ function HomePage() {
 
   return (
     <main className="relative">
-      {/* TOP BAR */}
       <header className="relative z-20 flex items-center justify-between px-5 pt-6">
         <div className="flex items-center gap-3">
           <div className="relative h-10 w-10">
             <div className="absolute inset-0 rounded-full bg-gradient-primary" />
             <div className="absolute inset-0.5 rounded-full bg-background/70 backdrop-blur flex items-center justify-center">
-              <span className="text-xs font-semibold text-gold">
-                {firstName.slice(0, 1).toUpperCase() || "N"}
-              </span>
+              <span className="text-xs font-semibold text-gold">{firstName.slice(0, 1).toUpperCase() || "N"}</span>
             </div>
           </div>
           <div>
@@ -186,54 +192,30 @@ function HomePage() {
             <p className="font-display text-base leading-tight text-foreground">{greet(firstName)}</p>
           </div>
         </div>
-        <div className="rounded-full glass p-2">
-          <Sparkles className="h-4 w-4 text-gold" />
-        </div>
+        <div className="rounded-full glass p-2"><Sparkles className="h-4 w-4 text-gold" /></div>
       </header>
 
-      {/* Motivational */}
-      <p className="mt-3 px-5 text-sm italic text-muted-foreground animate-fade-in">
-        “{quote}”
-      </p>
+      <p className="mt-3 px-5 text-sm italic text-muted-foreground animate-fade-in">“{quote}”</p>
 
-      {/* HERO */}
       {featured && (
         <section className="relative mx-4 mt-5 overflow-hidden rounded-3xl border border-border shadow-elevated animate-scale-in">
           <div className="relative aspect-[16/10] w-full sm:aspect-[21/9]">
-            <img
-              src={heroImg}
-              alt="Módulo em destaque"
-              width={1920}
-              height={1080}
-              className="h-full w-full object-cover"
-            />
+            <img src={heroImg} alt="Módulo em destaque" width={1920} height={1080} className="h-full w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" aria-hidden />
             <div className="absolute inset-0 bg-gradient-to-r from-background/80 to-transparent" aria-hidden />
-
             <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8">
-              <span className="mb-3 inline-flex w-fit items-center gap-1.5 rounded-full glass px-3 py-1 text-[10px] uppercase tracking-widest text-gold">
-                <Flame className="h-3 w-3" /> Módulo em destaque
-              </span>
-              <h2 className="font-display text-3xl leading-tight text-foreground sm:text-5xl">
-                {featured.name}
-              </h2>
-              <p className="mt-2 max-w-md text-sm text-muted-foreground sm:text-base">
-                {featured.short_description}
-              </p>
+              <span className="mb-3 inline-flex w-fit items-center gap-1.5 rounded-full glass px-3 py-1 text-[10px] uppercase tracking-widest text-gold"><Flame className="h-3 w-3" /> Módulo em destaque</span>
+              <h2 className="font-display text-3xl leading-tight text-foreground sm:text-5xl">{featured.name}</h2>
+              <p className="mt-2 max-w-md text-sm text-muted-foreground sm:text-base">{featured.short_description}</p>
               <div className="mt-5 flex flex-wrap items-center gap-3">
-                <button className="group inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-all hover:brightness-110 active:scale-95">
-                  <Play className="h-4 w-4 fill-current" /> Continuar Assistindo
-                </button>
-                <button className="inline-flex items-center gap-2 rounded-full glass-strong px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-surface-elevated active:scale-95">
-                  <Info className="h-4 w-4" /> Ver Detalhes
-                </button>
+                <button onClick={() => navigate({ to: "/desbloqueie-poder" })} className="group inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-all hover:brightness-110 active:scale-95"><Play className="h-4 w-4 fill-current" /> Continuar Assistindo</button>
+                <button onClick={() => navigate({ to: "/desbloqueie-poder" })} className="inline-flex items-center gap-2 rounded-full glass-strong px-6 py-3 text-sm font-medium text-foreground transition-all hover:bg-surface-elevated active:scale-95"><Info className="h-4 w-4" /> Ver Detalhes</button>
               </div>
             </div>
           </div>
         </section>
       )}
 
-      {/* PROGRESS STRIP */}
       <section className="mx-4 mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
         <ProgressStat label="Jornada Geral" value={`${overallPercent}%`} highlight />
         <ProgressStat label="Módulos concluídos" value={`${completedModules}`} />
@@ -241,98 +223,42 @@ function HomePage() {
         <ProgressStat label="Dias de evolução" value={"1"} />
       </section>
 
-      {/* SEARCH */}
       <section className="mx-4 mt-6">
         <div className="glass flex items-center gap-3 rounded-full px-4 py-3">
           <Search className="h-4 w-4 text-muted-foreground" />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="O que deseja aprender hoje?"
-            className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
-          />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="O que deseja aprender hoje?" className="flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground" />
         </div>
       </section>
 
-      {/* NEURO CONSCIÊNCIA */}
       <SectionRow title="Neuro Consciência" icon={<Sparkles className="h-4 w-4 text-gold" />}>
-        {/* Ordem solicitada: 
-            1. Seja bem vindos (slug: seja-bem-vindos)
-            2. Comunidade (fixo: COMUNIDADE_CARD)
-            3. Carta para o futuro (fixo: CARTA_FUTURO_CARD)
-            4. Reprogramação Mental (slug: reprogramacao-mental)
-            5. Treinamento Premium (slug: treinamento-premium)
-            6. Bônus Exclusivo (slug: bonus-exclusivos)
-        */}
-        
-        {/* 1. Seja bem vindos */}
-        {modules.filter(m => m.slug === "seja-bem-vindos").map((m) => (
-          <ModuleCard key={`novo-${m.slug}`} data={m} />
-        ))}
-        
-        {/* 2. Comunidade */}
+        <ModuleCard key="desbloqueie-o-poder" data={DESBLOQUEIE_CARD} />
+        {modules.filter(m => m.slug === "seja-bem-vindos").map((m) => <ModuleCard key={`novo-${m.slug}`} data={m} />)}
         <ModuleCard key="comunidade" data={COMUNIDADE_CARD} />
-        
-        {/* 3. Carta para o futuro */}
         <ModuleCard key="carta-futuro" data={CARTA_FUTURO_CARD} />
-        
-        {/* 4, 5, 6. Reprogramação, Treinamento, Bônus */}
         {modules.filter(m => ["reprogramacao-mental", "treinamento-premium", "bonus-exclusivos"].includes(m.slug))
-          .sort((a, b) => {
-            const order = { "reprogramacao-mental": 1, "treinamento-premium": 2, "bonus-exclusivos": 3 };
-            return (order[a.slug as keyof typeof order] || 0) - (order[b.slug as keyof typeof order] || 0);
-          })
-          .map((m) => (
-            <ModuleCard key={`novo-${m.slug}`} data={m} />
-          ))}
+          .sort((a, b) => { const order = { "reprogramacao-mental": 1, "treinamento-premium": 2, "bonus-exclusivos": 3 }; return (order[a.slug as keyof typeof order] || 0) - (order[b.slug as keyof typeof order] || 0); })
+          .map((m) => <ModuleCard key={`novo-${m.slug}`} data={m} />)}
       </SectionRow>
 
-
-      {/* CONTINUE WATCHING */}
       {inProgress.length > 0 && (
         <SectionRow title="Continuar assistindo" icon={<Play className="h-4 w-4 text-gold" />}>
-          {inProgress.map((m) => (
-            <ModuleCard key={m.slug} data={m} />
-          ))}
+          {inProgress.map((m) => <ModuleCard key={m.slug} data={m} />)}
         </SectionRow>
       )}
 
-
-      {/* MY JOURNEY */}
       <SectionRow title="Caminho Evolutivo" icon={<BookOpen className="h-4 w-4 text-gold" />}>
-        {modules.filter((m) => !m.locked).slice(0, 4).map((m, i) => (
-          <ModuleCard key={m.slug} bare data={{ ...m, cover_url: JORNADA_COVERS[i] ?? m.cover_url, locked: false, lockLabel: undefined }} />
-        ))}
+        {modules.filter((m) => !m.locked).slice(0, 4).map((m, i) => <ModuleCard key={m.slug} bare data={{ ...m, cover_url: JORNADA_COVERS[i] ?? m.cover_url, locked: false, lockLabel: undefined }} />)}
       </SectionRow>
 
-
-      <p className="mt-10 px-5 pb-4 text-center text-[10px] uppercase tracking-widest text-muted-foreground">
-        Instituto Neuroconsciência
-      </p>
+      <p className="mt-10 px-5 pb-4 text-center text-[10px] uppercase tracking-widest text-muted-foreground">Instituto Neuroconsciência</p>
     </main>
   );
 }
 
 function ProgressStat({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
-  return (
-    <div className={`rounded-2xl border border-border p-4 ${highlight ? "bg-gradient-primary shadow-glow" : "glass"}`}>
-      <p className={`text-[10px] uppercase tracking-widest ${highlight ? "text-primary-foreground/80" : "text-muted-foreground"}`}>{label}</p>
-      <p className={`mt-1 font-display text-2xl ${highlight ? "text-primary-foreground" : "text-foreground"}`}>{value}</p>
-    </div>
-  );
+  return <div className={`rounded-2xl border border-border p-4 ${highlight ? "bg-gradient-primary shadow-glow" : "glass"}`}><p className={`text-[10px] uppercase tracking-widest ${highlight ? "text-primary-foreground/80" : "text-muted-foreground"}`}>{label}</p><p className={`mt-1 font-display text-2xl ${highlight ? "text-primary-foreground" : "text-foreground"}`}>{value}</p></div>;
 }
 
 function SectionRow({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
-  return (
-    <section className="mt-8">
-      <div className="mb-3 flex items-center gap-2 px-5">
-        {icon}
-        <h2 className="font-display text-xl text-foreground">{title}</h2>
-      </div>
-      <div className="scrollbar-hidden flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2">
-        {children}
-      </div>
-    </section>
-  );
+  return <section className="mt-8"><div className="mb-3 flex items-center gap-2 px-5">{icon}<h2 className="font-display text-xl text-foreground">{title}</h2></div><div className="scrollbar-hidden flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2">{children}</div></section>;
 }
-// force rebuild
